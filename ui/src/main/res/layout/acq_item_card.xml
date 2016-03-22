@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="?acqItemsStyle"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"/>
+
+    <TextView
+        android:layout_marginLeft="8dp"
+        android:id="@+id/tv_card_name"
+        style="?acqTitleTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"/>
+
+    <ImageView
+        android:id="@+id/iv_daw"
+        android:src="@drawable/acq_che"
+        android:scaleType="centerInside"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="KeyView">
+        <attr name="keyText" format="string"/>
+        <attr name="keyImage" format="reference"/>
+        <attr name="keyCode" format="integer"/>
+        <attr name="keyTextSize" format="dimension"/>
+        <attr name="keyTextFontFamily" format="string"/>
+    </declare-styleable>
+
+</resources>

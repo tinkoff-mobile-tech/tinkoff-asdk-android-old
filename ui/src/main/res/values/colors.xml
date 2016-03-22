@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="acq_colorMain">#3e4757</color>
+    <color name="acq_colorButton">#ffdd2d</color>
+    <color name="acq_colorButtonPressed">#55ffdd2d</color>
+    <color name="acq_colorButtonDisable">#cccccc</color>
+    <color name="acq_colorTitle">#333333</color>
+    <color name="acq_colorDescription">#9299a2</color>
+
+    <color name="acq_colorCursor">#004eff</color>
+
+    <color name="acq_colorPrice">#f6f7f8</color>
+    <color name="acq_colorButtonText">#009ecf</color>
+    <color name="acq_colorCardText">#333333</color>
+
+    <color name="acq_colorNfcBackground">@color/acq_colorMain</color>
+    <color name="acq_colorNfcTint">#FFFFFF</color>
+    <color name="acq_colorNfcTintPressed">#8CFFFFFF</color>
+
+    <color name="acq_colorKeyText">#FFFFFF</color>
+    <color name="acq_colorKeyCircle">#2CFFFFFF</color>
+    <color name="acq_colorKeyboardBackground">@color/acq_colorMain</color>
 </resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BookTitle">
+        <item name="android:textColor">@color/book_dark_text</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="BookAuthorName">
+        <item name="android:textColor">@color/common_gray</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="BookDetailsInfoTitle">
+        <item name="android:textColor">@color/common_gray</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="BookDetailsInfoValue" parent="BookAuthorName">
+        <item name="android:textColor">@color/book_dark_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="BookYear" parent="BookAuthorName">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/common_white</item>
+    </style>
+
+    <style name="BookAnnotation">
+        <item name="android:textColor">@color/common_gray</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="BookPriceText" parent="BookAnnotation">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/common_white</item>
+    </style>
+
+</resources>

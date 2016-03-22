@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_book_cover"
+        style="@style/BookCoverImageView"
+        android:src="@drawable/cover_1" />
+
+    <TextView
+        android:id="@+id/tv_book_title"
+        style="@style/BookTitleTextView"
+        tools:text="Название книги" />
+
+    <TextView
+        android:id="@+id/tv_book_author_year"
+        style="@style/BookListItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/BookAuthorName"
+        tools:text="Автор книги" />
+
+    <TextView
+        android:id="@+id/tv_book_annotation"
+        style="@style/BookAnnotationTextView"
+        android:ellipsize="end"
+        android:maxLines="7"
+        tools:text="Аннотация на 7 строк" />
+
+    <View style="@style/Divider"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        style="@style/BookListItem"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_book_price"
+            style="@style/PriceBlueTextView"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            tools:text="1 024 P" />
+
+        <TextView
+            android:id="@+id/tv_book_details"
+            android:layout_marginLeft="4dp"
+            style="@style/YellowButton"
+            android:text="@string/book_details"/>
+
+    </LinearLayout>
+
+</LinearLayout>

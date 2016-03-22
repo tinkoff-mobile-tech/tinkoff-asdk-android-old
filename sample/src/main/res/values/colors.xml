@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#009ecf</color>
+    <color name="colorPrimaryDark">#009ecf</color>
+
+    <color name="book_dark_text">#333333</color>
+    <color name="transparent">#00000000</color>
+    <color name="cover_frame_gray">#C7C9CC</color>
+    <color name="price_text">@color/colorPrimary</color>
+    <color name="dividers_color">#c7c9cc</color>
+    <color name="grey_button_bg">#eaecee</color>
+    <color name="grey_button_bg_pressed">#8ceaecee</color>
+    <color name="grey_button_text">#9299a2</color>
+
+    <color name="common_gray">#9299A2</color>
+    <color name="common_yellow">#ffdd2d</color>
+    <color name="common_yellow_semitransparent">#8cffdd2d</color>
+
+    <color name="common_white">#FFFFFF</color>
+    <color name="common_white_semitransparent">#8CFFFFFF</color>
 </resources>

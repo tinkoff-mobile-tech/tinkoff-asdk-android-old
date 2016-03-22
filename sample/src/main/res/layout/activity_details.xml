@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="16dp">
+
+            <ImageView
+                android:id="@+id/iv_book_cover"
+                style="@style/BookCoverImageView"
+                android:src="@drawable/cover_1" />
+
+            <TextView
+                android:id="@+id/tv_book_title"
+                style="@style/BookTitleTextView"
+                tools:text="Название книги" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
+                style="@style/BookListItem">
+
+                <TextView
+                    style="@style/BookDetailsInfoTitleTextView"
+                    android:text="@string/author"/>
+
+                <TextView
+                    android:id="@+id/tv_book_author"
+                    style="@style/BookDetailsInfoValueTextView"
+                    tools:text="Имя Автора"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                style="@style/BookListItem">
+
+                <TextView
+                    style="@style/BookDetailsInfoTitleTextView"
+                    android:text="@string/year"/>
+
+                <TextView
+                    android:id="@+id/tv_book_year"
+                    style="@style/BookDetailsInfoValueTextView"
+                    tools:text="Год выпуска"/>
+
+            </LinearLayout>
+
+            <View style="@style/Divider"/>
+
+            <TextView
+                android:id="@+id/tv_book_annotation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/BookAnnotation"
+                style="@style/BookListItem"
+                tools:text="Аннотация на " />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        style="@style/PriceBottomLayer">
+
+        <TextView
+            android:id="@+id/tv_book_price"
+            style="@style/PriceWhiteTextView"
+            tools:text="100500 тенге" />
+
+        <TextView
+            android:id="@+id/btn_add_to_cart"
+            style="@style/WhiteButtonBorderless"
+            android:text="@string/add_to_cart"/>
+
+        <TextView
+            android:id="@+id/btn_buy_now"
+            style="@style/WhiteButton"
+            android:text="@string/buy_now"/>
+
+    </LinearLayout>
+
+</LinearLayout>

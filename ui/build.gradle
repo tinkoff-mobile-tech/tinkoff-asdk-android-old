@@ -1,11 +1,32 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'io.card:android-sdk:5.2.0'
+    compile 'com.github.devnied:bit-lib4j:1.4.10'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile(name:'core-nfc-3.0.1', ext:'aar')
+
+    compile project(':core')
+}
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+        encoding 'windows-1251'
+    }
+
     defaultConfig {
-        applicationId "ru.tinkoff.acquiring.sdk"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
@@ -17,11 +38,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':core')
-}
+

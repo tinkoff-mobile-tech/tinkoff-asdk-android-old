@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/acq_gl_keys"
+    android:layout_width="wrap_content"
+    android:layout_height="240dp"
+    android:paddingLeft="40dp"
+    android:paddingRight="40dp"
+    android:layout_gravity="center"
+    android:columnCount="3"
+    android:orientation="horizontal"
+    android:rowCount="4"
+    android:background="?colorPrimary">
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="1"
+        app:keyText="1" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="2"
+        app:keyText="2" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="3"
+        app:keyText="3" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="4"
+        app:keyText="4" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="5"
+        app:keyText="5" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="6"
+        app:keyText="6" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="7"
+        app:keyText="7" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="8"
+        app:keyText="8" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:keyCode="9"
+        app:keyText="9" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_column="1"
+        app:keyCode="0"
+        app:keyText="0" />
+
+    <ru.tinkoff.acquiring.sdk.views.KeyView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_column="2"
+        app:keyCode="10"
+        app:keyImage="@drawable/acq_back_arrow"/>
+
+
+</GridLayout>
+

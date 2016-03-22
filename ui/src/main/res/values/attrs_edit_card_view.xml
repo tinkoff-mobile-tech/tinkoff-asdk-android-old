@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="EditCardView">
+        <attr name="numberHint" format="string"/>
+        <attr name="dateHint" format="string"/>
+        <attr name="cvcHint" format="string"/>
+    </declare-styleable>
+
+</resources>

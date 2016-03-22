@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/lv_cart_items"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <LinearLayout style="@style/PriceBottomLayer">
+
+        <TextView
+            android:id="@+id/tv_total_price"
+            style="@style/PriceWhiteTextView"
+            tools:text="100500 тенге" />
+
+        <TextView
+            android:id="@+id/btn_pay"
+            style="@style/WhiteButton"
+            android:text="@string/pay" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <attr name="acqTitleTextViewStyle" format="integer"/>
+    <attr name="acqTextViewStyle" format="integer"/>
+    <attr name="acqEditTextStyle" format="integer"/>
+    <attr name="acqContentViewStyle" format="integer"/>
+    <attr name="acqButtonStyle" format="integer"/>
+    <attr name="acqAccentTextStyle" format="integer"/>
+    <attr name="acqItemsStyle" format="integer"/>
+    <attr name="acqItemsDividerStyle" format="integer"/>
+    <attr name="acqPriceLayoutStyle" format="integer"/>
+    <attr name="acqViewDivider" format="dimension"/>
+    <attr name="acqContentBlockDivider" format="dimension"/>
+    <attr name="acqPayFormTitle" format="string"/>
+
+    <attr name="acqCardIcons" format="integer"/>
+    <attr name="acqVisaIcon" format="reference"/>
+    <attr name="acqMasterCardIcon" format="reference"/>
+    <attr name="acqMaestroIcon" format="reference"/>
+
+
+</resources>

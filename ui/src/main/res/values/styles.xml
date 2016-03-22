@@ -3,9 +3,104 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+
+
+    <style name="AcquiringTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/acq_colorMain</item>
+        <item name="colorPrimaryDark">@color/acq_colorMain</item>
+        <item name="colorAccent">@color/acq_colorButtonText</item>
+        <item name="acqTitleTextViewStyle">@style/AcquiringTitleStyle</item>
+        <item name="acqTextViewStyle">@style/AcquiringDescriptionStyle</item>
+        <item name="acqEditTextStyle">@style/AcquiringFieldStyle</item>
+        <item name="acqContentViewStyle">@style/AcquiringContentView</item>
+        <item name="acqButtonStyle">@style/AcquiringButtonStyle</item>
+        <item name="acqAccentTextStyle">@style/AcquiringAccentTextStyle</item>
+        <item name="acqItemsStyle">@style/AcquiringListItems</item>
+        <item name="acqItemsDividerStyle">@style/AcquiringItemsDivider</item>
+        <item name="acqPriceLayoutStyle">@style/AcquiringPriceLayoutStyle</item>
+        <item name="acqViewDivider">16dp</item>
+        <item name="acqContentBlockDivider">20dp</item>
+        <item name="acqPayFormTitle">@string/acq_screen_title</item>
+        <item name="acqCardIcons">@style/AcquiringCardSystemsIcons</item>
+    </style>
+
+    <style name="AcquiringNfcTheme" parent="AcquiringTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="AcquiringFieldStyle" parent="Base.V7.Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/acq_colorTitle</item>
+        <item name="android:textColorHint">@color/acq_colorDescription</item>
+        <item name="android:background">@drawable/acq_edit_text_bg</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button">
+        <item name="android:background">@drawable/acq_button_bg</item>
+    </style>
+
+    <style name="AcquiringTitleStyle">
+        <item name="android:textColor">@color/acq_colorTitle</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AcquiringDescriptionStyle">
+        <item name="android:textColor">@color/acq_colorDescription</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AcquiringAccentTextStyle" parent="AcquiringTitleStyle">
+        <item name="android:textColor">?colorAccent</item>
+    </style>
+
+    <style name="AcquiringPriceLayoutStyle">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="AcquiringContentView">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="AcquiringItemsDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+        <item name="android:background">@color/acq_colorDescription</item>
+    </style>
+
+    <style name="AcquiringListItems">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+
+    <style name="AcquiringCardSystemsIcons">
+        <item name="acqMaestroIcon">@drawable/acq_maestro</item>
+        <item name="acqVisaIcon">@drawable/acq_visalogo</item>
+        <item name="acqMasterCardIcon">@drawable/acq_master</item>
+    </style>
+
+    <style name="AcquiringNfcDescriptionTextStyle">
+        <item name="android:textColor">@drawable/acq_nfc_tint_color_pressable</item>
+        <item name="android:textSize">18dp</item>
     </style>
 
 </resources>

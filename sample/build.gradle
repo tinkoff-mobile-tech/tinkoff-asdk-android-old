@@ -1,14 +1,32 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+        encoding 'windows-1251'
+    }
+
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 
     defaultConfig {
         applicationId "ru.tinkoff.acquiring.sample"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
+        versionCode 12
         versionName "1.0"
     }
     buildTypes {
@@ -21,6 +39,16 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+    Project p = project(':ui')
+    repositories{
+        flatDir {
+            dirs p.projectDir.absolutePath + '/libs'
+        }
+    }
+
+    compile p
+
+    androidTestCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }

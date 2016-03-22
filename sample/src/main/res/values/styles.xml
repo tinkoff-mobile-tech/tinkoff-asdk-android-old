@@ -5,7 +5,102 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="ButtonWithBackground">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="WhiteButton" parent="ButtonWithBackground">
+        <item name="android:background">@drawable/bg_white_button</item>
+        <item name="android:textColor">?colorPrimary</item>
+    </style>
+
+    <style name="WhiteButtonBorderless" parent="ButtonWithBackground">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@drawable/white_color_pressable</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+
+    <style name="YellowButton" parent="ButtonWithBackground">
+        <item name="android:background">@drawable/bg_yellow_button</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="GreyButton" parent="ButtonWithBackground">
+        <item name="android:background">@drawable/bg_grey_button</item>
+        <item name="android:textColor">@color/grey_button_text</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/dividers_color</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="BookListItem">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="BookCoverImageView" parent="BookListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/book_cover_bg</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="BookTitleTextView" parent="BookListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/BookTitle</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+
+    <style name="BookAnnotationTextView" parent="BookListItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/BookAnnotation</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="BookDetailsInfoTitleTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">0.5</item>
+        <item name="android:textAppearance">@style/BookDetailsInfoTitle</item>
+    </style>
+
+    <style name="BookDetailsInfoValueTextView" parent="BookDetailsInfoTitleTextView">
+        <item name="android:textAppearance">@style/BookDetailsInfoValue</item>
+    </style>
+
+    <style name="PriceBottomLayer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">?colorPrimary</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="PriceWhiteTextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">@style/BookPriceText</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="PriceBlueTextView" parent="PriceWhiteTextView">
+        <item name="android:textColor">?colorPrimary</item>
     </style>
 
 </resources>
