@@ -3,7 +3,8 @@ apply plugin: 'com.android.library'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'io.card:android-sdk:5.2.0'
     compile 'com.github.devnied:bit-lib4j:1.4.10'
     compile 'org.apache.commons:commons-lang3:3.4'
@@ -13,7 +14,7 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 22
     buildToolsVersion "23.0.2"
 
     lintOptions {
@@ -28,7 +29,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
