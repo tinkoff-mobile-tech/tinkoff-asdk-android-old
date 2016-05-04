@@ -43,7 +43,7 @@
         <item name="android:paddingBottom">2dp</item>
     </style>
 
-    <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button">
+    <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Button">
         <item name="android:background">@drawable/acq_button_bg</item>
     </style>
 
