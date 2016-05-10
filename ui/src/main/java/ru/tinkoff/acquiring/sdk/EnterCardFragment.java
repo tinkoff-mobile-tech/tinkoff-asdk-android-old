@@ -149,7 +149,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                     return;
                 }
 
-                Card srcCard = ((PayFormActivity) v.getContext()).getSourceCard();
+                final PayFormActivity activity = (PayFormActivity) getActivity();
+
+                Card srcCard = activity.getSourceCard();
                 CardData cardData = null;
 
                 if (srcCard == null) {
@@ -160,7 +162,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                     cardData = new CardData(cardId, cvc);
                 }
 
-                ((PayFormActivity) getActivity()).showProgressDialog();
+                activity.showProgressDialog();
                 initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail, reccurentPayment);
             }
         });

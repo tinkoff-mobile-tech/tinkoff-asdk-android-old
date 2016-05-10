@@ -104,7 +104,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     private static class CardsAdapter extends BaseAdapter {
 
         private List<Item> items = new ArrayList<>();
-        private Context context;
+        private Activity context;
         private CardLogoCache cardLogoCache;
 
         public CardsAdapter(Activity context) {
@@ -167,7 +167,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 String name = card.getPan();
                 ((ImageView) (convertView.findViewById(R.id.iv_icon))).setImageBitmap(cardLogoCache.getLogoByNumber(context, name));
                 ((TextView) (convertView.findViewById(R.id.tv_card_name))).setText(name);
-                convertView.findViewById(R.id.iv_daw).setVisibility(((PayFormActivity)convertView.getContext()).getSourceCard() == card ? View.VISIBLE : View.GONE);
+                convertView.findViewById(R.id.iv_daw).setVisibility(((PayFormActivity) context).getSourceCard() == card ? View.VISIBLE : View.GONE);
                 return convertView;
             } else if (type == Item.NEW_CARD) {
                 if (convertView == null) {
