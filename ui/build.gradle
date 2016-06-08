@@ -29,8 +29,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
     }
     buildTypes {
         release {
@@ -42,3 +42,4 @@ android {
 }
 
 
+apply from: '../gradle/publish-android-lib.gradle'
