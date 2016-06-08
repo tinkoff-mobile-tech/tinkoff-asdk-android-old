@@ -20,6 +20,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 
+import java.util.Locale;
+
 import ru.tinkoff.acquiring.sdk.Money;
 
 /**
@@ -123,7 +125,7 @@ public class Book implements Parcelable {
     }
 
     public String getAnnounce() {
-        return String.format("\"%s\" (%s, %d)", getTitle(), getAuthor(), getYear());
+        return String.format(Locale.getDefault(), "\"%s\" (%s, %d)", getTitle(), getAuthor(), getYear());
     }
 
     @Override

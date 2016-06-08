@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.R;
@@ -63,7 +64,7 @@ public class BooksListAdapter extends BaseBooksListAdapter {
         protected void fillWith(final Book book) {
             super.fillWith(book);
 
-            textViewAuthor.setText(String.format("%s, %d", book.getAuthor(), book.getYear()));
+            textViewAuthor.setText(String.format(Locale.getDefault(), "%s, %d", book.getAuthor(), book.getYear()));
             textViewAnnotation.setText(book.getAnnotation());
         }
 

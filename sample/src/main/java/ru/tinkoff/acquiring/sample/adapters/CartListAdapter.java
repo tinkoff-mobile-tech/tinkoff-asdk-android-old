@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.Cart;
@@ -65,7 +66,7 @@ public class CartListAdapter extends BaseBooksListAdapter {
             Cart.CartEntry thisBook = ((Cart.CartEntry) book);
             int count = thisBook.getCount();
             if (count > 1) {
-                CharSequence countPart = String.format("%d шт. ", count);
+                CharSequence countPart = String.format(Locale.getDefault(), "%d шт. ", count);
                 CharSequence pricePart = super.createPriceString(book);
                 SpannableStringBuilder result = new SpannableStringBuilder(countPart);
                 result.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.common_gray)), 0, countPart.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

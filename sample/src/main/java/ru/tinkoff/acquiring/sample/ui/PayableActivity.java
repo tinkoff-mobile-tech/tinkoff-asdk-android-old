@@ -33,7 +33,7 @@ import ru.tinkoff.acquiring.sdk.PayFormActivity;
 /**
  * @author Mikhail Artemyev
  */
-public class PayableActivity extends AppCompatActivity implements OnPaymentListener {
+public abstract class PayableActivity extends AppCompatActivity implements OnPaymentListener {
 
     private static final int REQUEST_CODE_PAY = 1;
 

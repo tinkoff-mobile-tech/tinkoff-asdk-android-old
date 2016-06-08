@@ -16,6 +16,8 @@
 
 package ru.tinkoff.acquiring.sample;
 
+import android.annotation.SuppressLint;
+
 import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sdk.Money;
@@ -31,6 +33,7 @@ public class Cart extends ArrayList<Cart.CartEntry> {
         return instance;
     }
 
+    @SuppressLint("ParcelCreator")
     public static class CartEntry extends Book {
 
         private int count;
