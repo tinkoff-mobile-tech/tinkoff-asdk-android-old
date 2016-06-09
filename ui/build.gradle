@@ -7,9 +7,9 @@ dependencies {
     compile 'io.card:android-sdk:5.2.0'
     compile 'com.github.devnied:bit-lib4j:1.4.10'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile(name: 'core-nfc-3.0.1', ext: 'aar')
 
     compile project(':core')
+    compile project(':core-nfc-3.0.1')
 }
 
 android {
