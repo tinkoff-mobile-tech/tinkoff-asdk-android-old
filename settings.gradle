@@ -1,1 +1,1 @@
-include ':core', ':sample', ':ui'
+include ':core', ':sample', ':ui', ':core-nfc-3.0.1'
