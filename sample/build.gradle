@@ -39,14 +39,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
-    Project p = project(':ui')
-    repositories{
-        flatDir {
-            dirs p.projectDir.absolutePath + '/libs'
-        }
-    }
-
-    compile p
+    compile project(':ui')
 
     androidTestCompile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'

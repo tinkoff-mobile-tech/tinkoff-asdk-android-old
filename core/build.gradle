@@ -13,4 +13,4 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
 }
 
-apply from: '../gradle/publish-java-lib.gradle'
+apply from: '../gradle/publish-lib.gradle'
