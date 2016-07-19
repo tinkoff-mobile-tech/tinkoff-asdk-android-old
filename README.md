@@ -2,40 +2,36 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=2592000)][search.maven]
 
-Acquiring SDK позволяет интегрировать функционал Интернет-Эквайринга в мобильные приложения для платформы Android.
+![PayFormActivity][img-pay]
 
-Поддерживаемый функционал:
+Acquiring SDK позволяет интегрировать [Интернет-Эквайринг Tinkoff][acquiring] в мобильные приложения для платформы Android.
+
+Возможности SDK:
 - Прием платежей (в том числе рекуррентных)
 - Сохранение банковских карт клиента
-- Сканирование карт и распознавание карт с помощью камеры
-- Сканирование карт с помощью NFC
+- Сканирование и распознавание карт с помощью камеры или NFC
 - Получение информации о клиенте и сохраненных картах
 - Управление сохраненными картами
 
-![PayFormActivity][img-pay]
-
 ### Требования
-Для работы Tinkoff Acquiring SDK требуется Android версии 4.0 и выше (API level 14)
+Для работы Tinkoff Acquiring SDK необходим Android версии 4.0 и выше (API level 14).
 
 ### Подключение
 Для подключения SDK добавьте в [_build.gradle_][build-config] вашего проекта следующую зависимость:
 ```groovy
-compile 'ru.tinkoff.acquiring:ui:1.0.1'
-```
-
-Если вам нужна только обертка над REST API без UI компонентов, то _вместо_ указанной
-выше зависимости включите в _build.gradle_:
-```groovy
-compile 'ru.tinkoff.acquiring:core:1.0.1'
+compile 'ru.tinkoff.acquiring:ui:$latestVersion'
 ```
 
 ### Подготовка к работе
-Для начала работы с SDK вам понадобятся 2 ключа: _Terminal key_, _Public key_ и пароль. _Где получить_?
+Для начала работы с SDK вам понадобятся:
+* Terminal key
+* Пароль
+* Public key
+
+которые выдаются после подключения к [Интернет-Эквайрингу][acquiring].
 
 ### Пример работы
-Для проведения оплаты необходимо запустить _**PayFormActivity**_. Активити должна быть
-настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо
-вызвать цепочку из методов **PayFormActivity**#_init_, **PayFormActivity**#_prepare_ и **PayFormActivity**#_setCustomerKey_
+Для проведения оплаты необходимо запустить _**PayFormActivity**_. Активити должна быть настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо вызвать цепочку из методов **PayFormActivity**#_init_, **PayFormStarter**#_prepare_ и **PayFormStarter**#_setCustomerKey_:
 
 ```java
 PayFormActivity
@@ -45,9 +41,9 @@ PayFormActivity
                 1000,                       // сумма для оплаты
                 "НАЗВАНИЕ ПЛАТЕЖА",         // название платежа, видимое пользователю
                 "ОПИСАНИЕ ПЛАТЕЖА",         // описание платежа, видимое пользователю
-                "CARD-ID",                  // ID картчки
+                "CARD-ID",                  // ID карточки
                 "batman@gotham.co",         // E-mail клиента для отправки уведомления об оплате
-                false,                      // флаг определяющий регулярность платежа [1]
+                false,                      // флаг определяющий является ли платеж рекуррентным [1]
                 true                        // флаг использования безопасной клавиатуры [2]
         )
         .setCustomerKey("CUSTOMER_KEY")     // уникальный ID пользователя для сохранения данных его карты
@@ -55,42 +51,42 @@ PayFormActivity
 
 ```
 
-[1] _Регулярный платеж_ производится периодически. _false_ в примере указывает на то, что данный
-платеж является _разовым_
+[1] _Рекуррентный платеж_ может производиться для дальнейшего списания средств с сохраненной карты, без ввода ее реквизитов. Эта возможность, например, может использоваться для осуществления платежей по подписке.
 
-[2] _Безопасная клавиатура_ используется вместо системной и гарантирует приватность ввода, т.к.
- сторонние клавиатуры на устройстве клиента могут быть небезопасны для ввода конфиденциальных данных (например, данных карты)
+[2] _Безопасная клавиатура_ используется вместо системной и обеспечивает дополнительную безопасность ввода, т.к. сторонние клавиатуры на устройстве клиента могут перехватывать данные и отправлять их злоумышленнику.
 
 ### Структура
-SDK состоит из трех модулей: _core_, _UI_ и _sample_.
+SDK состоит из следующих модулей:
 
 #### Core
-Модуль _core_ является базовой оберткой над Tinkoff Acquiring REST API, позволяющей не делать прямые
-вызовы к REST API и реализующий функции шифрования и кэширования данных. Модуль не зависит от Android SDK и может
-использоваться в standalone Java проектах.
+Является базовым модулем для работы с Tinkoff Acquiring API. Модуль реализует протокол взаимодействия с сервером и позволяет не осуществлять прямых обращений в API. Не зависит от Android SDK и может использоваться в standalone Java приложениях.
 
-##### AcquirinkSdk
-Данный класс предоставляет интерфейс для работы с Tinkoff Acquiring REST API. Для работы с ним
-требуются ключи и пароль продавца (см. **Подготовка к работе**). Для подробной информайии о каждом методе
-обращайтесь к javadoc.
+Основной класс модуля - [AcquiringSdk][sdk-class-javadoc] - предоставляет фасад для взаимодействия с Tinkoff Acquiring API. Для работы необходимы ключи и пароль продавца (см. **Подготовка к работе**).
 
 #### UI
-Модуль _UI_ содержит компоненты (главным образом, **PayFormActivity**) для удобной работы с модулем _core_ в Android.
+Содержит интерфейс, необходимый для приема платежей через мобильное приложение.
 
-##### PayFormActivity
-Экран оплаты. Позволяет посмотреть данные платежа, ввести данные карты для оплаты, проходить в
-случае необходимости 3DS, управлять ранее сохраненными картами.
+Основной класс - [PayFormActivity][payform-class-javadoc] - экран с формой оплаты, который позволяет:
+* просматривать информацию о платеже
+* вводить или сканировать реквизиты карты для оплаты
+* проходить 3DS подтверждение
+* управлять списком ранее сохраненных карт
 
 #### Sample
-Модуль _sample_ содержит полнценный пример работы с Tinkoff Acquiring SDK.
+Содержит пример интеграции Tinkoff Acquiring SDK в мобильное приложение по продаже книг.
 
 #### Поддержка
-- Для оперативной поддержки по всем вопросам использования Tinkoff Acquiring SDK вы можете писать
-на [card_acquiring@tinkoff.ru][support-email].
-- Для оповещения о найденных багах используйте раздел [issues][issues].
+- Просьба, по возникающим вопросам обращаться на [card_acquiring@tinkoff.ru][support-email]
+- Баги и feature-реквесты можно направлять в раздел [issues][issues]
+- [JavaDoc][javadoc]
 
 [search.maven]: http://search.maven.org/#search|ga|1|ru.tinkoff.acquiring.ui
 [build-config]: https://developer.android.com/studio/build/index.html
 [support-email]: mailto:card_acquiring@tinkoff.ru
 [issues]: https://github.com/TinkoffCreditSystems/tinkoff-asdk-android/issues
-[img-pay]: http://TODO
+[acquiring]: https://t.tinkoff.ru/
+[payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
+[sdk-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/AcquiringSdk.html
+[javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
+
+[img-pay]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/res/pay2.png
