@@ -16,6 +16,9 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -41,6 +44,7 @@ class Utils {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static void closeCloseable(AutoCloseable closeable) {
         if (closeable != null) {
             try {
