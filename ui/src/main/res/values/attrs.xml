@@ -18,6 +18,6 @@
     <attr name="acqVisaIcon" format="reference"/>
     <attr name="acqMasterCardIcon" format="reference"/>
     <attr name="acqMaestroIcon" format="reference"/>
-
+    <attr name="acqMirIcon" format="reference"/>
 
 </resources>

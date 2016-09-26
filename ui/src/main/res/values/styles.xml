@@ -96,6 +96,7 @@
         <item name="acqMaestroIcon">@drawable/acq_maestro</item>
         <item name="acqVisaIcon">@drawable/acq_visalogo</item>
         <item name="acqMasterCardIcon">@drawable/acq_master</item>
+        <item name="acqMirIcon">@drawable/acq_mirlogo</item>
     </style>
 
     <style name="AcquiringNfcDescriptionTextStyle">

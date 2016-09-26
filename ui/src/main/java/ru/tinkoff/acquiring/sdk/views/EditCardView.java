@@ -71,6 +71,8 @@ public class EditCardView extends ViewGroup {
     private static final int ONLY_NUMBER_STATE = 1 << 5;
     private static final int SAVED_CARD_STATE = 1 << 6;
 
+    private static final int MIN_CARD_NUMBER_LENGTH = 4;
+
     private Runnable update;
     private int flags;
 
@@ -254,7 +256,7 @@ public class EditCardView extends ViewGroup {
 
                 }
 
-                boolean noCardLogoCondition = number == null || number.length() == 0;
+                boolean noCardLogoCondition = number == null || number.length() < MIN_CARD_NUMBER_LENGTH;
 
                 if (noCardLogoCondition && check(CARD_SYSTEM_LOGO)) {
                     hideCardSystemLogo();

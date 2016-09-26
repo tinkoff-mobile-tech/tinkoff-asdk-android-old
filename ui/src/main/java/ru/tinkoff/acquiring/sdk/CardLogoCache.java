@@ -24,6 +24,7 @@ import android.util.LongSparseArray;
 import android.util.SparseArray;
 
 import java.lang.ref.WeakReference;
+import java.util.regex.Pattern;
 
 /**
  * @author a.shishkin1
@@ -33,11 +34,14 @@ import java.lang.ref.WeakReference;
 
 class CardLogoCache {
 
+    private static final Pattern MIR_REGEXP = Pattern.compile("^220[0-4]");
+
     private static SparseArray<WeakReference<Bitmap>> sCache = new SparseArray<>();
 
     private int visaId;
     private int masterCardId;
     private int maestroId;
+    private int mirId;
 
     public CardLogoCache(int visaId, int masterCardId, int maestroId) {
         this.visaId = visaId;
@@ -60,13 +64,16 @@ class CardLogoCache {
         this.maestroId = maestroId;
     }
 
+    protected void setMirId(int mirId) {
+        this.mirId = mirId;
+    }
+
     public Bitmap getLogoByNumber(Context context, String cardNumber) {
         if (TextUtils.isEmpty(cardNumber)) {
             return null;
         }
-        char fc = cardNumber.charAt(0);
-        int resId = resByChar(fc);
-       
+        int resId = resByNumber(cardNumber);
+
         if(resId == 0) {
             return null;
         }
@@ -83,7 +90,14 @@ class CardLogoCache {
         return result;
     }
 
-    
+    private int resByNumber(String cardNumber) {
+        if (MIR_REGEXP.matcher(cardNumber).find()) {
+            return mirId;
+        } else {
+            char ch = cardNumber.charAt(0);
+            return resByChar(ch);
+        }
+    }
 
     private int resByChar(char c) {
         switch (c) {
@@ -97,6 +111,5 @@ class CardLogoCache {
         }
         return 0;
     }
-
 }
 
