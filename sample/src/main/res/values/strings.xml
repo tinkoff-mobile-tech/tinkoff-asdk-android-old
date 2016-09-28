@@ -30,4 +30,6 @@
 
     <string name="pay_form_title_single">Покупка книги</string>
     <string name="pay_form_title_multiple">Покупка книг</string>
+
+    <string name="cart_list_item_count_format">"%1$d шт. "</string>
 </resources>
