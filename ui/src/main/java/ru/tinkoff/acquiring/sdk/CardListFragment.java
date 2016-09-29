@@ -18,7 +18,6 @@ package ru.tinkoff.acquiring.sdk;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -38,6 +37,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.id.list;
+
 /**
  * @author a.shishkin1
  */
@@ -50,6 +51,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
     private String customerKey;
 
+    private ActionMode actionMode;
 
     @Nullable
     @Override
@@ -68,18 +70,22 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         customerKey = getArguments().getString(EXTRA_CUSTOMER_KEY);
-        CardManager cardManager = ((PayFormActivity)getActivity()).getCardManager();
+        CardManager cardManager = ((PayFormActivity) getActivity()).getCardManager();
         ((PayFormActivity) getActivity()).requestCards(customerKey, cardManager);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Item item = adapter.getItem(position);
-        PayFormActivity activity = ((PayFormActivity) getActivity());
-        Card card = (Card) item.obj;
-        activity.getFragmentsCommunicator().setPendingResult(PayFormActivity.RESULT_CODE_CLEAR_CARD, Bundle.EMPTY);
-        activity.setSourceCard(card);
-        activity.finishChooseCards();
+        if (actionMode != null) {
+            actionMode.finish();
+        } else {
+            Item item = adapter.getItem(position);
+            PayFormActivity activity = ((PayFormActivity) getActivity());
+            Card card = (Card) item.obj;
+            activity.getFragmentsCommunicator().setPendingResult(PayFormActivity.RESULT_CODE_CLEAR_CARD, Bundle.EMPTY);
+            activity.setSourceCard(card);
+            activity.finishChooseCards();
+        }
     }
 
 
@@ -87,10 +93,14 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Item item = adapter.getItem(position);
         Card card = (Card) item.obj;
-        if (card == null) {
+        if (card == null || actionMode != null) {
             return false;
         }
-        ((AppCompatActivity) getActivity()).startSupportActionMode(new CardLongPressCallback(card));
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        actionMode = activity.startSupportActionMode(new CardLongPressCallback(card));
+        adapter.setSelectedItemPosition(position);
+        view.setSelected(true);
         return true;
     }
 
@@ -103,9 +113,12 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
     private static class CardsAdapter extends BaseAdapter {
 
+        private static final int NOT_SET = -1;
+
         private List<Item> items = new ArrayList<>();
         private Activity context;
         private CardLogoCache cardLogoCache;
+        private int selectedItemPosition = NOT_SET;
 
         public CardsAdapter(Activity context) {
             this.context = context;
@@ -120,6 +133,10 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
         @Override
         public boolean isEnabled(int position) {
             return getItem(position).type != Item.EMPTY;
+        }
+
+        public void setSelectedItemPosition(int position) {
+            selectedItemPosition = position;
         }
 
         public void setCards(Card[] cards) {
@@ -168,6 +185,8 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 ((ImageView) (convertView.findViewById(R.id.iv_icon))).setImageBitmap(cardLogoCache.getLogoByNumber(context, name));
                 ((TextView) (convertView.findViewById(R.id.tv_card_name))).setText(name);
                 convertView.findViewById(R.id.iv_daw).setVisibility(((PayFormActivity) context).getSourceCard() == card ? View.VISIBLE : View.GONE);
+                boolean isItemSelected = (selectedItemPosition != NOT_SET && position == selectedItemPosition);
+                convertView.setSelected(isItemSelected);
                 return convertView;
             } else if (type == Item.NEW_CARD) {
                 if (convertView == null) {
@@ -244,13 +263,14 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-
-            return true;
+            return false;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
+            adapter.setSelectedItemPosition(CardsAdapter.NOT_SET);
+            adapter.notifyDataSetChanged();
+            actionMode = null;
         }
 
         @Override
@@ -261,12 +281,14 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            if (item.getItemId() == R.id.action_delete) {
-                AcquiringSdk sdk = ((PayFormActivity) getActivity()).getSdk();
-                deleteCard(sdk, target, customerKey, getString(R.string.acq_cant_delete_card_message));
-                mode.finish();
+            if (item.getItemId() != R.id.action_delete) {
+                return false;
             }
-            return false;
+
+            AcquiringSdk sdk = ((PayFormActivity) getActivity()).getSdk();
+            deleteCard(sdk, target, customerKey, getString(R.string.acq_cant_delete_card_message));
+            mode.finish();
+            return true;
         }
 
 

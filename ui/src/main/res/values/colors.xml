@@ -6,6 +6,7 @@
     <color name="acq_colorButtonDisable">#cccccc</color>
     <color name="acq_colorTitle">#333333</color>
     <color name="acq_colorDescription">#9299a2</color>
+    <color name="acq_colorListItem">#f8a4acb6</color>
 
     <color name="acq_colorCursor">#004eff</color>
 
