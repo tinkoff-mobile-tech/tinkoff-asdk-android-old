@@ -242,6 +242,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
         startActivityForResult(scanIntent, REQUEST_CARD_IO);
     }
 
