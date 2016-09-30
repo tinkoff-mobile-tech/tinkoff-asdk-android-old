@@ -45,6 +45,8 @@ import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
+import static android.widget.Toast.makeText;
+
 /**
  * @author a.shishkin1
  */
@@ -177,7 +179,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
 
         if (errorMessage != 0) {
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+            makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -274,6 +276,10 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             ru.tinkoff.core.nfc.model.Card card = (ru.tinkoff.core.nfc.model.Card) data.getSerializableExtra(NfcCardScanActivity.EXTRA_CARD);
             ecvCard.setCardNumber(card.getNumber());
             ecvCard.setExpireDate(card.getExpirationDate());
+            return;
+        } else if (requestCode == REQUEST_CARD_NFC && resultCode == NfcCardScanActivity.RESULT_ERROR) {
+            Toast t = Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT);
+            t.show();
             return;
         }
 
