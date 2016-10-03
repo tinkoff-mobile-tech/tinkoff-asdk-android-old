@@ -26,7 +26,7 @@ android {
         applicationId "ru.tinkoff.acquiring.sample"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 14
+        versionCode 15
         versionName "1.1.0"
     }
     buildTypes {
