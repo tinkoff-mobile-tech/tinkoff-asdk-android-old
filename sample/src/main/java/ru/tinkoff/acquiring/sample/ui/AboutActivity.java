@@ -43,7 +43,7 @@ public class AboutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final TextView textViewVersion = (TextView) findViewById(R.id.tv_version);
-        final String version = getString(R.string.version, BuildConfig.VERSION_NAME);
+        final String version = getString(R.string.version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE);
         textViewVersion.setText(version);
     }
 

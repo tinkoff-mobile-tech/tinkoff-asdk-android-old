@@ -21,7 +21,7 @@
     <string name="delete">Удалить</string>
     <string name="payment_result_success">Покупка на сумму %1$s\nпрошла успешно</string>
     <string name="close">Закрыть</string>
-    <string name="version">Tinkoff Acquiring SDK v%1$s</string>
+    <string name="version">Tinkoff Acquiring SDK v%1$s(%2$d)</string>
 
     <string name="payment_failed">Невозможно совершить оплату</string>
     <string name="payment_succeeded">Оплата прошла успешно</string>
