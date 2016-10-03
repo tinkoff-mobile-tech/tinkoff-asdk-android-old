@@ -199,7 +199,6 @@ public class EditCardView extends ViewGroup {
         addView(etCardNumber);
         addView(etCvc);
         addView(etDate);
-        etCardNumber.setCustomSelectionActionModeCallback(new DisableCopyPasteActionModeCallback());
         etCardNumber.addTextChangedListener(new TextWatcher() {
 
             int[] sel = new int[2];
@@ -417,7 +416,12 @@ public class EditCardView extends ViewGroup {
         }
     }
 
-
+    public void disableCopyPaste() {
+        DisableCopyPasteActionModeCallback callback = new DisableCopyPasteActionModeCallback();
+        etCardNumber.setCustomSelectionActionModeCallback(callback);
+        etDate.setCustomSelectionActionModeCallback(callback);
+        etCvc.setCustomSelectionActionModeCallback(callback);
+    }
 
     public void dispatchFocus() {
         if (check(SAVED_CARD_STATE)) {
@@ -434,7 +438,7 @@ public class EditCardView extends ViewGroup {
     }
 
     protected EditText onCreateField(Context context, AttributeSet attributeSet) {
-        return  (attributeSet == null) ? new EditText(context) : new EditText(context, attributeSet);
+        return (attributeSet == null) ? new EditText(context) : new EditText(context, attributeSet);
     }
 
     public void setFullCardNumberModeEnable(boolean enable) {
@@ -448,11 +452,9 @@ public class EditCardView extends ViewGroup {
     }
 
 
-
-
     public void setSavedCardState(boolean savedCardState) {
 
-        if ( check(SAVED_CARD_STATE) == savedCardState ) {
+        if (check(SAVED_CARD_STATE) == savedCardState) {
             normalizeMode();
             return;
         }
@@ -571,7 +573,7 @@ public class EditCardView extends ViewGroup {
         int contentWidthSpec = MeasureSpec.makeMeasureSpec(contentsWidth, MeasureSpec.EXACTLY);
         int contentHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 
-        etCardNumber.measure(isFullCardNumberMode ? MeasureSpec.makeMeasureSpec(accessWidth , MeasureSpec.EXACTLY) : contentWidthSpec, contentHeightSpec);
+        etCardNumber.measure(isFullCardNumberMode ? MeasureSpec.makeMeasureSpec(accessWidth, MeasureSpec.EXACTLY) : contentWidthSpec, contentHeightSpec);
         etDate.measure(contentWidthSpec, contentHeightSpec);
         etCvc.measure(contentWidthSpec, contentHeightSpec);
         int btnsHeight = Math.max(calculateChangeModeHeight(), calculateScanButtonHeight());
@@ -665,7 +667,6 @@ public class EditCardView extends ViewGroup {
         super.dispatchDraw(canvas);
 
     }
-
 
 
     @Override
@@ -1143,12 +1144,12 @@ public class EditCardView extends ViewGroup {
             int l = text.length();
             Paint p = getPaint();
             float dist = p.measureText(text.substring(0, Math.max(0, l - charsCount)));
-            if (mode == FULL_MODE ) {
+            if (mode == FULL_MODE) {
                 canvas.save();
                 canvas.translate(-dist * animationFactor, 0);
                 super.onDraw(canvas);
                 canvas.restore();
-            } else if (mode == SHORT_MODE){
+            } else if (mode == SHORT_MODE) {
                 canvas.drawText(text, Math.max(0, l - charsCount), l, 0, getBaseline(), p);
             }
         }
@@ -1177,7 +1178,7 @@ public class EditCardView extends ViewGroup {
         @Override
         protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
             super.onFocusChanged(focused, direction, previouslyFocusedRect);
-            if(customOnFocusChangedListener != null){
+            if (customOnFocusChangedListener != null) {
                 customOnFocusChangedListener.onFocusChange(this, focused);
             }
         }

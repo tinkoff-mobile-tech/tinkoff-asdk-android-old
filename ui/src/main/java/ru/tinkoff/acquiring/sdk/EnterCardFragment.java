@@ -97,6 +97,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         if (((PayFormActivity) getActivity()).shouldUseCustomKeyboard()) {
             customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
+            ecvCard.disableCopyPaste();
         }
 
         tvChooseCardButton.setOnClickListener(new View.OnClickListener() {
@@ -354,7 +355,11 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     @Override
     public boolean onBackPressed() {
-        return customKeyboard.hide();
+        if (customKeyboard != null) {
+            return customKeyboard.hide();
+        } else {
+            return false;
+        }
     }
 
     private static class CardSystemIconsHolderImpl extends ThemeCardLogoCache implements EditCardView.CardSystemIconsHolder {

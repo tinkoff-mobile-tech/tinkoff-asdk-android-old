@@ -4,6 +4,7 @@
     <string name="activity_title_details">Книга</string>
     <string name="activity_title_cart">Корзина</string>
     <string name="activity_title_about">О программе</string>
+    <string name="activity_title_settings">Настройки</string>
     <string name="activity_title_payment_result">Подтверждение</string>
 
     <string name="author">Автор</string>
@@ -32,4 +33,8 @@
     <string name="pay_form_title_multiple">Покупка книг</string>
 
     <string name="cart_list_item_count_format">"%1$d шт. "</string>
+
+    <string name="settings_use_system_keyboard">Использовать системную клавиатуру</string>
+
+    <string name="acq_sp_key_use_system_keyboard">acq_sample_use_system_keyboard</string>
 </resources>

@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_action_about:
                 AboutActivity.start(this);
                 return true;
+            case R.id.menu_action_settings:
+                SettingsActivity.start(this);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

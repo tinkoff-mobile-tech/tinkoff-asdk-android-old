@@ -17,7 +17,9 @@
 package ru.tinkoff.acquiring.sample.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -101,6 +103,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentAmount = amount;
         this.paymentTitle = title;
         this.paymentDescription = description;
+        boolean isCustomKeyboardEnabled = isCustomKeyboardEnabled();
         PayFormActivity
                 .init(MerchantParams.TERMINAL_KEY, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                 .prepare(orderId,
@@ -110,11 +113,16 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         null,
                         SessionInfo.CUSTOMER_EMAIL,
                         false,
-                        true
+                        isCustomKeyboardEnabled
                 )
                 .setCustomerKey(SessionInfo.CUSTOMER_KEY)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
+    }
 
+    private boolean isCustomKeyboardEnabled() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String key = getString(R.string.acq_sp_key_use_system_keyboard);
+        return !preferences.getBoolean(key, false);
     }
 
 }
