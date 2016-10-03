@@ -22,7 +22,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,17 +41,17 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
-
-import org.w3c.dom.Text;
 
 import ru.tinkoff.acquiring.sdk.R;
 import ru.tinkoff.acquiring.sdk.utils.CardValidator;
@@ -200,6 +199,7 @@ public class EditCardView extends ViewGroup {
         addView(etCardNumber);
         addView(etCvc);
         addView(etDate);
+        etCardNumber.setCustomSelectionActionModeCallback(new DisableCopyPasteActionModeCallback());
         etCardNumber.addTextChangedListener(new TextWatcher() {
 
             int[] sel = new int[2];
@@ -1296,6 +1296,29 @@ public class EditCardView extends ViewGroup {
     @Override
     public boolean onCheckIsTextEditor() {
         return super.onCheckIsTextEditor();
+    }
+
+    private static class DisableCopyPasteActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+        }
     }
 }
 
