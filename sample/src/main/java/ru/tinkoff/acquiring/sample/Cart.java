@@ -34,13 +34,21 @@ public class Cart extends ArrayList<Cart.CartEntry> {
     }
 
     @SuppressLint("ParcelCreator")
-    public static class CartEntry extends Book {
+    public static class CartEntry {
+
+        private int bookId;
+
+        private Money price;
 
         private int count;
 
-        public CartEntry(Book book) {
-            super(book);
+        public CartEntry(int bookId, Money price) {
+            this.bookId = bookId;
             this.count = 1;
+        }
+
+        public int getBookId() {
+            return bookId;
         }
 
         private void increase() {
@@ -60,7 +68,7 @@ public class Cart extends ArrayList<Cart.CartEntry> {
         }
 
         public Money getPrice() {
-            return Money.ofCoins(super.getPrice().getCoins() * count);
+            return Money.ofCoins(price.getCoins() * count);
         }
     }
 

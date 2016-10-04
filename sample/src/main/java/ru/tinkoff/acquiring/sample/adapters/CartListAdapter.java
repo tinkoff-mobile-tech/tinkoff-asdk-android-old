@@ -65,8 +65,9 @@ public class CartListAdapter extends BaseBooksListAdapter {
 
         @Override
         protected CharSequence createPriceString(Book book) {
-            Cart.CartEntry thisBook = ((Cart.CartEntry) book);
-            int count = thisBook.getCount();
+//            todo: banana
+//            Cart.CartEntry thisBook = ((Cart.CartEntry) book);
+            int count = 3;
             if (count > 1) {
                 CharSequence countPart = String.format(countFormat, count);
                 CharSequence pricePart = super.createPriceString(book);

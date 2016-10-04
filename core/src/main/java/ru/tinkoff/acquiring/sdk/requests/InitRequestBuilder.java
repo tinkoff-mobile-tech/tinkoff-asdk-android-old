@@ -57,6 +57,11 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
         return this;
     }
 
+    public InitRequestBuilder setLanguage(final String language) {
+        request.setLanguage(language);
+        return this;
+    }
+
     @Override
     protected void validate() {
         validateNonEmpty(request.getOrderId(), "Order ID");

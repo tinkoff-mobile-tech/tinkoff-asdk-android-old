@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tinkoff ASDK</string>
+
+    <string name="activity_title_details">Книга</string>
+    <string name="activity_title_cart">Корзина</string>
+    <string name="activity_title_about">О программе</string>
+    <string name="activity_title_settings">Настройки</string>
+    <string name="activity_title_payment_result">Подтверждение</string>
+
+    <string name="author">Автор</string>
+    <string name="year">Год выпуска</string>
+    <string name="book_details">ПОДРОБНЕЕ</string>
+    <string name="book_price">%1$s P</string>
+    <string name="book_price_total">Итого: %1$s P</string>
+    <string name="add_to_cart">В корзину</string>
+    <string name="buy_now">Купить</string>
+    <string name="total">Итого</string>
+    <string name="pay">Оплатить</string>
+    <string name="empty_cart">Корзина пуста :(</string>
+    <string name="added_to_cart">Книга добавлена в корзину</string>
+    <string name="clear_cart">Очистить корзину</string>
+    <string name="delete">Удалить</string>
+    <string name="payment_result_success">Покупка на сумму %1$s\nпрошла успешно</string>
+    <string name="close">Закрыть</string>
+    <string name="version">Tinkoff Acquiring SDK v%1$s(%2$d)</string>
+
+    <string name="payment_failed">Невозможно совершить оплату</string>
+    <string name="payment_succeeded">Оплата прошла успешно</string>
+    <string name="payment_cancelled">Оплата была отменена</string>
+    <string name="payment_loading">Ожидание оплаты</string>
+
+    <string name="pay_form_title_single">Покупка книги</string>
+    <string name="pay_form_title_multiple">Покупка книг</string>
+
+    <string name="cart_list_item_count_format">"%1$d шт. "</string>
+
+    <string name="settings_use_system_keyboard">Использовать системную клавиатуру</string>
+
+    <string name="acq_sp_key_use_system_keyboard">acq_sample_use_system_keyboard</string>
+</resources>

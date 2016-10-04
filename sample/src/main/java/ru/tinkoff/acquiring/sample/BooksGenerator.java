@@ -19,7 +19,6 @@ package ru.tinkoff.acquiring.sample;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import ru.tinkoff.acquiring.sdk.Money;
 
@@ -28,47 +27,45 @@ import ru.tinkoff.acquiring.sdk.Money;
  */
 public class BooksGenerator {
 
-    final Random random = new Random(System.currentTimeMillis());
+    private static final int SIZE = 6;
 
-    public ArrayList<Book> generateBooks(Context context, byte number) {
-        if (number <= 0) {
-            return null;
+    private static final int[] YEARS = {2016, 2004, 2015, 2014, 2016, 2015};
+    private static final Money[] PRICES = {
+            Money.ofRubles(2000L), Money.ofRubles(999.99d), Money.ofRubles(1699L),
+            Money.ofRubles(4500L), Money.ofRubles(2999.99d), Money.ofRubles(600.99d)
+    };
+
+    public Book getBook(Context context, int id) {
+        for (Book book : getBooks(context)) {
+            if (book.getId() == id) {
+                return book;
+            }
         }
+        throw new RuntimeException("Unknown book id " + id);
+    }
+
+    public ArrayList<Book> getBooks(Context context) {
 
         final String[] authors = context.getResources().getStringArray(R.array.book_authors);
         final String[] titles = context.getResources().getStringArray(R.array.book_titles);
         final String[] descriptions = context.getResources().getStringArray(R.array.book_descriptions);
 
-        ArrayList<Book> booksList = new ArrayList<>(number);
-        for (int i = 0; i < number; i++) {
-            final Book book = new Book();
+        ArrayList<Book> booksList = new ArrayList<>(SIZE);
+        for (int i = 0; i < SIZE; i++) {
 
-            book.setAuthor(next(authors));
-            book.setTitle(next(titles));
-            book.setAnnotation(next(descriptions));
-            book.setYear(nextYear());
-            book.setPrice(nextPrice());
+            final Book book = new Book(i);
+
+            book.setAuthor(authors[i]);
+            book.setTitle(titles[i]);
+            book.setAnnotation(descriptions[i]);
+            book.setYear(YEARS[i]);
+            book.setPrice(PRICES[i]);
             book.setCoverDrawableId(R.drawable.cover_1);
 
             booksList.add(book);
         }
 
         return booksList;
-    }
-
-    private String next(final String[] items) {
-        final int index = Math.abs(random.nextInt()) % items.length;
-        return items[index];
-    }
-
-    private int nextYear() {
-        return Math.abs(random.nextInt()) % 100 + 1915;
-    }
-
-    private Money nextPrice() {
-        final int rubles = Math.abs(random.nextInt()) % 5000 + 500;
-        final double coins = Math.abs(random.nextDouble());
-        return Money.ofRubles(rubles + coins);
     }
 
 }

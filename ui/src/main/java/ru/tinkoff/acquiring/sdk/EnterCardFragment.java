@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import io.card.payment.CardIOActivity;
@@ -166,7 +167,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 }
 
                 activity.showProgressDialog();
-                initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail, reccurentPayment);
+                Locale locale = getResources().getConfiguration().locale;
+                Language language = Language.fromValue(locale.getLanguage(), Language.ENGLISH);
+                initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail, reccurentPayment, language);
             }
         });
     }
@@ -294,13 +297,16 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                                     final Money amount,
                                     final CardData cardData,
                                     final String email,
-                                    final boolean reccurentPayment) {
+                                    final boolean reccurentPayment,
+                                    final Language language) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final Long paymentId = sdk.init(amount, orderId, customerKey, null, payFormTitle, reccurentPayment);
+
+                    final Long paymentId = sdk.init(amount, orderId, customerKey, null, payFormTitle, reccurentPayment, language);
+
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);

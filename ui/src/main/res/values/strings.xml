@@ -1,35 +1,34 @@
 <resources>
     <string name="app_name">Sdk</string>
-    <string name="acq_new_card_label">Новая карта</string>
-    <string name="acq_saved_card_label">Сохраненная карта</string>
-    <string name="acq_change_card_label">Изменить</string>
 
-    <string name="acq_money_label">На сумму:</string>
-    <string name="acq_card_number_hint">Номер карты</string>
-    <string name="acq_exp_date_hint">ММ/ГГ</string>
+    <string name="acq_new_card_label">New card</string>
+    <string name="acq_saved_card_label">Linked card</string>
+    <string name="acq_change_card_label">Change</string>
+    <string name="acq_money_label">Amount:</string>
+    <string name="acq_card_number_hint">PAN</string>
+    <string name="acq_exp_date_hint">MM/YY</string>
     <string name="acq_cvc_hint">CVC</string>
-    <string name="acq_email_hint">E-mail для квитанции</string>
-    <string name="acq_pay">Оплатить</string>
-    <string name="acq_screen_title">Оплата</string>
-    <string name="acq_enter_new_card_label">Ввести данные новой карты</string>
-    <string name="acq_delete_label">Удалить</string>
-    <string name="acq_btn_close">Закрыть</string>
+    <string name="acq_email_hint">E-mail for receipt</string>
+    <string name="acq_pay">Pay</string>
+    <string name="acq_screen_title">Payment</string>
+    <string name="acq_enter_new_card_label">Add new card</string>
+    <string name="acq_delete_label">Delete</string>
+    <string name="acq_btn_close">Close</string>
     <string name="acq_dialog_dismiss_btn">OK</string>
-    <string name="acq_default_error_title">Ошибка</string>
-    <string name="acq_default_error_message">Что-то пошло не так</string>
-    <string name="acq_network_error_message">Вероятно, соединение с интернетом прервано</string>
-    <string name="acq_cant_delete_card_message">Не удалось удалить карту, попробуйте позже.</string>
-    <string name="acq_nfc_description">Поднесите карту\nк задней крышке телефона</string>
-    <string name="acq_nfc_need_enable">Для сканирования карты необходимо включить NFC</string>
-    <string name="acq_nfc_scan_failed">Не удалось распознать карту</string>
-    <string name="acq_progress_dialog_text">Оплата&#8230;</string>
-    <string name="acq_invalid_email">Введен некорректный e-mail</string>
-    <string name="acq_invalid_card">Введены некорректные данные карты</string>
-
+    <string name="acq_default_error_title">Error</string>
+    <string name="acq_default_error_message">Something went wrong</string>
+    <string name="acq_network_error_message">Probably the Internet connection is interrupted</string>
+    <string name="acq_cant_delete_card_message">Unable to remove the card, try again later</string>
+    <string name="acq_nfc_description">Bring the card to the back of the phone</string>
+    <string name="acq_nfc_need_enable">Turn on NFC to scan a card</string>
+    <string name="acq_nfc_scan_failed">Failed to scan a card</string>
+    <string name="acq_progress_dialog_text">Payment…</string>
+    <string name="acq_invalid_email">Invalid e-mail</string>
+    <string name="acq_invalid_card">Invalid card data</string>
 
     <string-array name="acq_scan_types">
-        <item>Сканировать камерой</item>
-        <item>Сканировать по NFC</item>
+        <item>Scan with camera</item>
+        <item>Scan with NFC</item>
     </string-array>
 
 </resources>

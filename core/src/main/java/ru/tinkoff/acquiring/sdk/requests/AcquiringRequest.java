@@ -32,6 +32,7 @@ public class AcquiringRequest {
     public static final String TOKEN = "Token";
     public static final String EMAIL = "InfoEmail";
     public static final String CARD_DATA = "CardData";
+    public static final String LANGUAGE = "Language";
     public static final String AMOUNT = "Amount";
     public static final String ORDER_ID = "OrderId";
     public static final String DESCRIPTION = "Description";

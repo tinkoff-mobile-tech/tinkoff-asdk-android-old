@@ -29,6 +29,7 @@ final public class InitRequest extends AcquiringRequest {
     private String description;
     private String payForm;
     private String reccurent;
+    private String language;
 
     public InitRequest() {
         super("Init");
@@ -44,6 +45,7 @@ final public class InitRequest extends AcquiringRequest {
         putIfNotNull(DESCRIPTION, description, map);
         putIfNotNull(PAY_FORM, payForm, map);
         putIfNotNull(RECURRENT, reccurent, map);
+        putIfNotNull(LANGUAGE, language, map);
 
         return map;
     }
@@ -94,5 +96,13 @@ final public class InitRequest extends AcquiringRequest {
 
     void setReccurent(boolean reccurent) {
         this.reccurent = reccurent ? "Y" : null;
+    }
+
+    void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

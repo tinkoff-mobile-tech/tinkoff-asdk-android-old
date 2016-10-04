@@ -28,6 +28,7 @@ import android.widget.TextView;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.sample.Book;
+import ru.tinkoff.acquiring.sample.BooksGenerator;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.adapters.BaseBooksListAdapter;
@@ -79,12 +80,12 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
     }
 
     private void refreshContentView() {
-        final Boolean cartEmptyIsemptyNow = Cart.getInstance().size() == 0;
-        if (cartEmptyIsemptyNow.equals(cartEmpty)) {
+        final Boolean cartEmptyIsEmptyNow = Cart.getInstance().size() == 0;
+        if (cartEmptyIsEmptyNow.equals(cartEmpty)) {
             return;
         }
 
-        cartEmpty = cartEmptyIsemptyNow;
+        cartEmpty = cartEmptyIsEmptyNow;
         final int layoutId = cartEmpty ? R.layout.activity_cart_empty : R.layout.activity_cart;
         setContentView(layoutId);
     }
@@ -165,8 +166,10 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
 
     private String getBooksAnnounce() {
         final StringBuilder result = new StringBuilder();
+        BooksGenerator booksGenerator = new BooksGenerator();
         for (final Cart.CartEntry entry : Cart.getInstance()) {
-            result.append(entry.getAnnounce());
+            Book book = booksGenerator.getBook(this, entry.getBookId());
+            result.append(book.getAnnounce());
             result.append(",\n");
         }
 

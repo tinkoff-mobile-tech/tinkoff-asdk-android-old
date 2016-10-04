@@ -26,9 +26,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.sample.Book;
+import ru.tinkoff.acquiring.sample.BooksGenerator;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
 
@@ -41,7 +43,7 @@ public class DetailsActivity extends PayableActivity {
 
     public static void start(final Context context, final Book book) {
         final Intent intent = new Intent(context, DetailsActivity.class);
-        intent.putExtra(EXTRA_BOOK, book);
+        intent.putExtra(EXTRA_BOOK, book.getId());
         context.startActivity(intent);
     }
 
@@ -59,9 +61,12 @@ public class DetailsActivity extends PayableActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        book = getIntent().getParcelableExtra(EXTRA_BOOK);
-        if (book == null) {
+        int bookId = getIntent().getIntExtra(EXTRA_BOOK, -1);
+        if (bookId == -1) {
             throw new IllegalStateException("Book is not passed to the DetailsActivity. Start it with start() method");
+        } else {
+            BooksGenerator booksGenerator = new BooksGenerator();
+            book = booksGenerator.getBook(this, bookId);
         }
 
         setContentView(R.layout.activity_details);
@@ -77,7 +82,7 @@ public class DetailsActivity extends PayableActivity {
         buttonAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cart.getInstance().add(new Cart.CartEntry(book));
+                Cart.getInstance().add(new Cart.CartEntry(book.getId(), book.getPrice()));
                 Toast.makeText(DetailsActivity.this, R.string.added_to_cart, Toast.LENGTH_SHORT).show();
             }
         });
