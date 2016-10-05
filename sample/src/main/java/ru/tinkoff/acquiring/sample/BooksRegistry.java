@@ -17,6 +17,7 @@
 package ru.tinkoff.acquiring.sample;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 
@@ -25,15 +26,7 @@ import ru.tinkoff.acquiring.sdk.Money;
 /**
  * @author Mikhail Artemyev
  */
-public class BooksGenerator {
-
-    private static final int SIZE = 6;
-
-    private static final int[] YEARS = {2016, 2004, 2015, 2014, 2016, 2015};
-    private static final Money[] PRICES = {
-            Money.ofRubles(2000L), Money.ofRubles(999.99d), Money.ofRubles(1699L),
-            Money.ofRubles(4500L), Money.ofRubles(2999.99d), Money.ofRubles(600.99d)
-    };
+public class BooksRegistry {
 
     public Book getBook(Context context, int id) {
         for (Book book : getBooks(context)) {
@@ -41,27 +34,33 @@ public class BooksGenerator {
                 return book;
             }
         }
-        throw new RuntimeException("Unknown book id " + id);
+        return null;
     }
 
     public ArrayList<Book> getBooks(Context context) {
 
-        final String[] authors = context.getResources().getStringArray(R.array.book_authors);
-        final String[] titles = context.getResources().getStringArray(R.array.book_titles);
-        final String[] descriptions = context.getResources().getStringArray(R.array.book_descriptions);
+        Resources resources = context.getResources();
+        String[] authors = resources.getStringArray(R.array.book_authors);
+        String[] titles = resources.getStringArray(R.array.book_titles);
+        String[] descriptions = resources.getStringArray(R.array.book_descriptions);
+        String[] years = resources.getStringArray(R.array.book_years);
+        String[] prices = resources.getStringArray(R.array.book_prices);
 
-        ArrayList<Book> booksList = new ArrayList<>(SIZE);
-        for (int i = 0; i < SIZE; i++) {
+        int size = resources.getInteger(R.integer.books_count);
+
+        ArrayList<Book> booksList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
 
             final Book book = new Book(i);
 
             book.setAuthor(authors[i]);
             book.setTitle(titles[i]);
             book.setAnnotation(descriptions[i]);
-            book.setYear(YEARS[i]);
-            book.setPrice(PRICES[i]);
+            book.setYear(years[i]);
+            String priceString = prices[i];
+            Money price = Money.ofRubles(Double.valueOf(priceString));
+            book.setPrice(price);
             book.setCoverDrawableId(R.drawable.cover_1);
-
             booksList.add(book);
         }
 

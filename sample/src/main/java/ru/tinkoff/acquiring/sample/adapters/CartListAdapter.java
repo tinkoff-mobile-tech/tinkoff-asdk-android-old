@@ -21,69 +21,91 @@ import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import ru.tinkoff.acquiring.sample.Book;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
 
 /**
  * @author Mikhail Artemyev
  */
-public class CartListAdapter extends BaseBooksListAdapter {
+public class CartListAdapter extends ArrayAdapter<Cart.CartEntry> {
 
     public interface DeleteCartItemListener {
-        void onDeleteItemPressed(Book book);
+        void onDeleteItemPressed(Cart.CartEntry cartEntry);
     }
 
-    private final DeleteCartItemListener listener;
+    private DeleteCartItemListener listener;
+    private LayoutInflater inflater;
+    private String countFormat;
+    private BooksRegistry booksRegistry;
 
-    private final String countFormat;
-
-    public CartListAdapter(Context context, DeleteCartItemListener listener, List<Cart.CartEntry> objects) {
+    public CartListAdapter(Context context, DeleteCartItemListener listener, List<Cart.CartEntry> objects, BooksRegistry registry) {
         super(context, R.layout.list_item_cart, objects);
+        this.inflater = LayoutInflater.from(context);
         this.listener = listener;
+        this.booksRegistry = registry;
         countFormat = context.getString(R.string.cart_list_item_count_format);
     }
 
     @Override
-    protected BaseBooksListAdapter.ViewHolder createViewHolder(View rootView) {
-        return new ViewHolder(rootView);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.list_item_cart, parent, false);
+            convertView.setTag(new ViewHolder(convertView));
+        }
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        Cart.CartEntry entry = getItem(position);
+        Book book = booksRegistry.getBook(getContext(), entry.getBookId());
+        holder.fillWith(entry, book);
+        return convertView;
     }
 
-    private class ViewHolder extends BaseBooksListAdapter.ViewHolder
-            implements View.OnClickListener {
+    private class ViewHolder implements View.OnClickListener {
 
-        ViewHolder(View rootView) {
-            super(rootView);
-            final TextView textViewDelete = (TextView) rootView.findViewById(R.id.tv_delete);
+        private TextView textViewPrice;
+        private TextView textViewTitle;
+        private ImageView imageViewCover;
+
+        private Cart.CartEntry cartEntry;
+
+        ViewHolder(View view) {
+            imageViewCover = (ImageView) view.findViewById(R.id.iv_book_cover);
+            textViewTitle = (TextView) view.findViewById(R.id.tv_book_title);
+            textViewPrice = (TextView) view.findViewById(R.id.tv_book_price);
+            TextView textViewDelete = (TextView) view.findViewById(R.id.tv_delete);
             textViewDelete.setOnClickListener(this);
         }
 
         @Override
-        protected CharSequence createPriceString(Book book) {
-//            todo: banana
-//            Cart.CartEntry thisBook = ((Cart.CartEntry) book);
-            int count = 3;
+        public void onClick(View v) {
+            listener.onDeleteItemPressed(cartEntry);
+        }
+
+        private void fillWith(Cart.CartEntry cartEntry, Book book) {
+            this.cartEntry = cartEntry;
+            imageViewCover.setImageResource(book.getCoverDrawableId());
+            textViewTitle.setText(book.getTitle());
+            int count = cartEntry.getCount();
             if (count > 1) {
                 CharSequence countPart = String.format(countFormat, count);
-                CharSequence pricePart = super.createPriceString(book);
-                SpannableStringBuilder result = new SpannableStringBuilder(countPart);
-                result.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.common_gray)), 0, countPart.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                result.append(pricePart);
-                return result;
+                CharSequence pricePart = book.getShoppingTitle();
+                SpannableStringBuilder label = new SpannableStringBuilder(countPart);
+                label.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.common_gray)), 0, countPart.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                label.append(pricePart);
+                textViewPrice.setText(label);
             } else {
-                return super.createPriceString(book);
+                textViewPrice.setText(book.getShoppingTitle());
             }
         }
-
-        @Override
-        public void onClick(View v) {
-            listener.onDeleteItemPressed(getBook());
-        }
-
     }
 }

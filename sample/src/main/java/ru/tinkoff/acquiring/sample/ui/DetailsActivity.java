@@ -26,11 +26,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.sample.Book;
-import ru.tinkoff.acquiring.sample.BooksGenerator;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
 
@@ -65,8 +64,8 @@ public class DetailsActivity extends PayableActivity {
         if (bookId == -1) {
             throw new IllegalStateException("Book is not passed to the DetailsActivity. Start it with start() method");
         } else {
-            BooksGenerator booksGenerator = new BooksGenerator();
-            book = booksGenerator.getBook(this, bookId);
+            BooksRegistry booksRegistry = new BooksRegistry();
+            book = booksRegistry.getBook(this, bookId);
         }
 
         setContentView(R.layout.activity_details);
@@ -124,7 +123,7 @@ public class DetailsActivity extends PayableActivity {
         imageViewCover.setImageResource(book.getCoverDrawableId());
         textViewTitle.setText(book.getTitle());
         textViewAuthor.setText(book.getAuthor());
-        textViewYear.setText(String.valueOf(book.getYear()));
+        textViewYear.setText(book.getYear());
         textViewAnnotation.setText(book.getAnnotation());
 
         final String price = getString(R.string.book_price, book.getPrice());

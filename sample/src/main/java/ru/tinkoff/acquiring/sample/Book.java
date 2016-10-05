@@ -35,7 +35,7 @@ public class Book implements Parcelable {
     private String title;
     private String author;
     private String annotation;
-    private int year;
+    private String year;
     private Money price;
 
     public Book(int id) {
@@ -57,7 +57,7 @@ public class Book implements Parcelable {
         this.title = in.readString();
         this.author = in.readString();
         this.annotation = in.readString();
-        this.year = in.readInt();
+        this.year = in.readString();
         this.price = (Money) in.readSerializable();
         this.id = in.readInt();
     }
@@ -77,7 +77,7 @@ public class Book implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.author);
         dest.writeString(this.annotation);
-        dest.writeInt(this.year);
+        dest.writeString(this.year);
         dest.writeSerializable(this.price);
         dest.writeSerializable(this.id);
     }
@@ -115,11 +115,11 @@ public class Book implements Parcelable {
         this.annotation = annotation;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -131,9 +131,15 @@ public class Book implements Parcelable {
         this.price = price;
     }
 
+    public String getShoppingTitle() {
+        Locale locale = Locale.getDefault();
+        return String.format(locale, "%s, %s", author, year);
+    }
+
+
     public String getAnnounce() {
         Locale locale = Locale.getDefault();
-        return String.format(locale, "\"%s\" (%s, %d)", title, author, year);
+        return String.format(locale, "\"%s\" (%s, %s)", title, author, year);
     }
 
     @Override

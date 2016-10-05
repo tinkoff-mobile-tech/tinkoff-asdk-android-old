@@ -16,7 +16,6 @@
 
 package ru.tinkoff.acquiring.sample.ui;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -26,7 +25,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sample.Book;
-import ru.tinkoff.acquiring.sample.BooksGenerator;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private ArrayList<Book> getBooks() {
-        final BooksGenerator generator = new BooksGenerator();
-        return generator.getBooks(this);
+        final BooksRegistry booksRegistry = new BooksRegistry();
+        return booksRegistry.getBooks(this);
     }
 }

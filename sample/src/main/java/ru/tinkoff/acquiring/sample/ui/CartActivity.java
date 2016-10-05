@@ -22,16 +22,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Random;
 
 import ru.tinkoff.acquiring.sample.Book;
-import ru.tinkoff.acquiring.sample.BooksGenerator;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
-import ru.tinkoff.acquiring.sample.adapters.BaseBooksListAdapter;
 import ru.tinkoff.acquiring.sample.adapters.CartListAdapter;
 import ru.tinkoff.acquiring.sdk.Money;
 
@@ -48,7 +48,7 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
     private TextView textViewTotalPrice;
     private TextView buttonPay;
 
-    private BaseBooksListAdapter adapter;
+    private ArrayAdapter adapter;
 
     private Boolean cartEmpty;
 
@@ -98,7 +98,8 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
             return;
         }
 
-        adapter = new CartListAdapter(this, this, Cart.getInstance());
+        BooksRegistry registry = new BooksRegistry();
+        adapter = new CartListAdapter(this, this, Cart.getInstance(), registry);
         listViewCartItems.setAdapter(adapter);
 
         updateBottomBar();
@@ -116,7 +117,6 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
         textViewTotalPrice.setText(stringTotalPrice);
         buttonPay.setEnabled(totalPrice.getCoins() > 0L);
     }
-
 
 
     @Override
@@ -155,8 +155,8 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
     }
 
     @Override
-    public void onDeleteItemPressed(Book book) {
-        Cart.getInstance().remove(book);
+    public void onDeleteItemPressed(Cart.CartEntry cartEntry) {
+        Cart.getInstance().remove(cartEntry);
         adapter.notifyDataSetChanged();
         updateBottomBar();
         refreshContentView();
@@ -166,9 +166,9 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
 
     private String getBooksAnnounce() {
         final StringBuilder result = new StringBuilder();
-        BooksGenerator booksGenerator = new BooksGenerator();
+        BooksRegistry booksRegistry = new BooksRegistry();
         for (final Cart.CartEntry entry : Cart.getInstance()) {
-            Book book = booksGenerator.getBook(this, entry.getBookId());
+            Book book = booksRegistry.getBook(this, entry.getBookId());
             result.append(book.getAnnounce());
             result.append(",\n");
         }

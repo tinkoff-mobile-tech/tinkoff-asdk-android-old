@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <integer name="books_count">6</integer>
+
     <string-array name="book_titles">
         <item>The Weirdo on Maple Street</item>
         <item>The Flea and the Acrobat</item>
@@ -25,6 +28,24 @@
         <item>One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections. The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. "What\'s happened to me?" he thought. It wasn\'t a dream. His room, a proper human room although a little too small, lay peacefully between its four familiar walls. A collection of textile samples lay spread out on the table - Samsa was a travelling salesman - and above it there hung a picture that he had recently cut out of an illustrated magazine and housed in a nice, gilded frame. It showed a lady fitted out with a fur hat and fur boa who sat upright, raising a heavy fur muff that covered the whole of her lower arm towards the viewer. Gregor then turned to look out the window at the dull weather.</item>
         <item>Creature a together winged hath from subdue us winged sixth to unto moved second saw to all you\'ll years own creeping wherein, creeping air and fruit saying firmament divide. Saying creeping that blessed all, whose. May under there. A thing have stars above have don\'t darkness sea. Above said sea hath them female our in. Yielding set One he. His also life unto Spirit after seas there years seasons likeness were fill isn\'t upon without.</item>
         <item>Life. May blessed one herb may dry his i i behold. Forth sea. Fifth she\'d whales that second so, them bearing upon wherein god the without replenish in kind whose third subdue. Grass dry after fly given there moving kind lights is evening dry itself fruit living Let whales saying days seed gathering good were upon, them whales unto. Had fly that the first living. Shall. Firmament without. Meat sixth own days can\'t she\'d dominion.</item>
+    </string-array>
+
+    <string-array name="book_years">
+        <item>2016</item>
+        <item>2014</item>
+        <item>2016</item>
+        <item>2013</item>
+        <item>2015</item>
+        <item>2016</item>
+    </string-array>
+
+    <string-array name="book_prices">
+        <item>2000</item>
+        <item>999.99</item>
+        <item>1500</item>
+        <item>2100.50</item>
+        <item>400</item>
+        <item>600</item>
     </string-array>
 
 </resources>
