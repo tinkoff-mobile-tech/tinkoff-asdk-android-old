@@ -74,31 +74,38 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (actionMode != null) {
-            actionMode.finish();
-        } else {
-            Item item = adapter.getItem(position);
-            PayFormActivity activity = ((PayFormActivity) getActivity());
-            Card card = (Card) item.obj;
+        Item item = adapter.getItem(position);
+        PayFormActivity activity = ((PayFormActivity) getActivity());
+        Card card = (Card) item.obj;
+
+        if (actionMode != null && card != null) {
+            actionMode.invalidate();
+            adapter.setSelectedItemPosition(position);
+            view.setSelected(true);
+        } else if (actionMode == null) {
             activity.getFragmentsCommunicator().setPendingResult(PayFormActivity.RESULT_CODE_CLEAR_CARD, Bundle.EMPTY);
             activity.setSourceCard(card);
             activity.finishChooseCards();
         }
     }
 
-
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         Item item = adapter.getItem(position);
         Card card = (Card) item.obj;
-        if (card == null || actionMode != null) {
+        if (card == null) {
             return false;
         }
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        actionMode = activity.startSupportActionMode(new CardLongPressCallback(card));
         adapter.setSelectedItemPosition(position);
         view.setSelected(true);
+
+        if (actionMode != null) {
+            actionMode.invalidate();
+        } else {
+            actionMode = activity.startSupportActionMode(new CardLongPressCallback());
+        }
         return true;
     }
 
@@ -204,6 +211,18 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
         public int getViewTypeCount() {
             return Item.TYPE_COUNT;
         }
+
+        Card getSelectedItem() {
+            if (selectedItemPosition < 0 || selectedItemPosition > items.size()) {
+                return null;
+            }
+
+            if (getItemViewType(selectedItemPosition) == Item.CARD) {
+                return (Card) getItem(selectedItemPosition).obj;
+            } else {
+                return null;
+            }
+        }
     }
 
 
@@ -253,12 +272,6 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
     private class CardLongPressCallback implements ActionMode.Callback {
 
-        private Card target;
-
-        public CardLongPressCallback(Card target) {
-            this.target = target;
-        }
-
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             return false;
@@ -283,13 +296,11 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 return false;
             }
 
+            Card target = adapter.getSelectedItem();
             AcquiringSdk sdk = ((PayFormActivity) getActivity()).getSdk();
             deleteCard(sdk, target, customerKey, getString(R.string.acq_cant_delete_card_message));
             mode.finish();
             return true;
         }
-
-
     }
-
 }
