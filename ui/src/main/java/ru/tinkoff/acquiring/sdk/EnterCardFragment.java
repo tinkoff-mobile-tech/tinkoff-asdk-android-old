@@ -272,7 +272,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         if (requestCode == REQUEST_CARD_IO && data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
             CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
             ecvCard.setCardNumber(scanResult.getFormattedCardNumber());
-            ecvCard.setExpireDate(String.format("%02d%02d", scanResult.expiryMonth, (scanResult.expiryYear % 100)));
+            if (scanResult.expiryMonth != 0 && scanResult.expiryYear != 0) {
+                Locale locale = Locale.getDefault();
+                int expiryYear = scanResult.expiryYear % 100;
+                String format = String.format(locale, "%02d%02d", scanResult.expiryMonth, expiryYear);
+                ecvCard.setExpireDate(format);
+            }
             return;
         }
 
