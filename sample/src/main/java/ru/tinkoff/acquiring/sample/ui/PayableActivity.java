@@ -32,6 +32,8 @@ import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
 
+import static ru.tinkoff.acquiring.sdk.PayFormActivity.init;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -42,11 +44,14 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
     private Money paymentAmount;
     private String paymentDescription;
     private String paymentTitle;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -104,8 +109,9 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentTitle = title;
         this.paymentDescription = description;
         boolean isCustomKeyboardEnabled = isCustomKeyboardEnabled();
+        String terminalId = getTerminalId();
         PayFormActivity
-                .init(MerchantParams.TERMINAL_KEY, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                 .prepare(orderId,
                         amount,
                         paymentTitle,
@@ -120,9 +126,14 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
     }
 
     private boolean isCustomKeyboardEnabled() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String key = getString(R.string.acq_sp_key_use_system_keyboard);
-        return !preferences.getBoolean(key, false);
+        String key = getString(R.string.acq_sp_use_system_keyboard);
+        return !sharedPreferences.getBoolean(key, false);
+    }
+
+    private String getTerminalId() {
+        String key = getString(R.string.acq_sp_terminal_id);
+        String fallback = getString(R.string.acq_sp_default_value_terminal_id);
+        return sharedPreferences.getString(key, fallback);
     }
 
 }

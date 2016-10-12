@@ -20,7 +20,6 @@ package ru.tinkoff.acquiring.sample;
  * @author Mikhail Artemyev
  */
 public class MerchantParams {
-    public static final String TERMINAL_KEY = "sdk3DS";
     public static final String PASSWORD = "12345678";
     public static final String PUBLIC_KEY =
             "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqBiorLS9OrFPezixO5lSsF+HiZPFQWDO\n" +

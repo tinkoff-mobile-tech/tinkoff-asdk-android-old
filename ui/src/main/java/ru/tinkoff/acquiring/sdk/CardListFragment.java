@@ -82,7 +82,9 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
             actionMode.invalidate();
             adapter.setSelectedItemPosition(position);
             view.setSelected(true);
-        } else if (actionMode == null) {
+        } else if (actionMode != null) {
+            actionMode.finish();
+        } else {
             activity.getFragmentsCommunicator().setPendingResult(PayFormActivity.RESULT_CODE_CLEAR_CARD, Bundle.EMPTY);
             activity.setSourceCard(card);
             activity.finishChooseCards();
