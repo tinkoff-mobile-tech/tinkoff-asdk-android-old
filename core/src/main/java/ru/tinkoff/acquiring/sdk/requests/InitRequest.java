@@ -30,6 +30,7 @@ final public class InitRequest extends AcquiringRequest {
     private String payForm;
     private String reccurent;
     private String language;
+    private String payType;
 
     public InitRequest() {
         super("Init");
@@ -46,6 +47,7 @@ final public class InitRequest extends AcquiringRequest {
         putIfNotNull(PAY_FORM, payForm, map);
         putIfNotNull(RECURRENT, reccurent, map);
         putIfNotNull(LANGUAGE, language, map);
+        putIfNotNull(PAY_TYPE, payType, map);
 
         return map;
     }
@@ -104,5 +106,13 @@ final public class InitRequest extends AcquiringRequest {
 
     public String getLanguage() {
         return language;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
     }
 }

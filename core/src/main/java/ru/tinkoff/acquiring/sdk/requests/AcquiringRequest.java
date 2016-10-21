@@ -42,6 +42,7 @@ public class AcquiringRequest {
     public static final String REBILL_ID = "RebillId";
     public static final String CARD_ID = "CardId";
     public static final String CVV = "CVV";
+    public static final String PAY_TYPE = "PayType";
 
     public static final String DATA_KEY_EMAIL = "Email";
 

@@ -109,7 +109,8 @@ public class AcquiringSdk extends Journal {
      * @param description  краткое описание
      * @param payFormTitle название шаблона формы оплаты продавца
      * @param recurrent    регистрирует платеж как рекуррентный
-     * @param language    язык для локализации
+     * @param language     язык для локализации
+     * @param payType      тип платежа, одностадийный или двухстадийный
      * @return уникальный идентификатор транзакции в системе Банка
      */
     public Long init(final Money amount,
@@ -118,18 +119,23 @@ public class AcquiringSdk extends Journal {
                      final String description,
                      final String payFormTitle,
                      final boolean recurrent,
-                     final Language language) {
+                     final Language language,
+                     final PayType payType) {
 
-
-        final InitRequest request = new InitRequestBuilder(password, terminalKey)
+        InitRequestBuilder initRequestBuilder = new InitRequestBuilder(password, terminalKey)
                 .setAmount(amount.getCoins())
                 .setOrderId(orderId)
                 .setCustomerKey(customerKey)
                 .setDescription(description)
                 .setPayForm(payFormTitle)
                 .setReccurent(recurrent)
-                .setLanguage(language.toString())
-                .build();
+                .setLanguage(language.toString());
+
+        if (payType != null) {
+            initRequestBuilder.setPayType(payType);
+        }
+
+        InitRequest request = initRequestBuilder.build();
 
         try {
             return api.init(request).getPaymentId();
@@ -143,8 +149,18 @@ public class AcquiringSdk extends Journal {
                      final String customerKey,
                      final String description,
                      final String payFormTitle,
+                     final boolean recurrent,
+                     final Language language) {
+        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, language, null);
+    }
+
+    public Long init(final Money amount,
+                     final String orderId,
+                     final String customerKey,
+                     final String description,
+                     final String payFormTitle,
                      final boolean recurrent) {
-        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, Language.RUSSIAN);
+        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, Language.RUSSIAN, null);
     }
 
     /**
