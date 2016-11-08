@@ -36,17 +36,24 @@ class DialogsManager {
 
     void showErrorDialog(final String title,
                          final String message) {
+        showErrorDialog(title, message, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    void showErrorDialog(final String title,
+                         final String message,
+                         final DialogInterface.OnClickListener onClickListener) {
         dismissDialogs();
 
         messageDialog = new AlertDialog.Builder(context)
                 .setMessage(message)
                 .setTitle(title)
-                .setNeutralButton(R.string.acq_dialog_dismiss_btn, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setCancelable(false)
+                .setNeutralButton(R.string.acq_dialog_dismiss_btn, onClickListener)
                 .create();
 
         messageDialog.show();

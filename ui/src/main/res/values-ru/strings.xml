@@ -18,7 +18,7 @@
     <string name="acq_dialog_dismiss_btn">OK</string>
     <string name="acq_default_error_title">Ошибка</string>
     <string name="acq_default_error_message">Что-то пошло не так</string>
-    <string name="acq_network_error_message">Вероятно, соединение с интернетом прервано</string>
+    <string name="acq_network_error_message">Вероятно, соединение с интернетом прервано, попробуйте позже</string>
     <string name="acq_cant_delete_card_message">Не удалось удалить карту, попробуйте позже</string>
     <string name="acq_nfc_description">Поднесите карту\nк задней крышке телефона</string>
     <string name="acq_nfc_need_enable">Для сканирования карты необходимо включить NFC</string>

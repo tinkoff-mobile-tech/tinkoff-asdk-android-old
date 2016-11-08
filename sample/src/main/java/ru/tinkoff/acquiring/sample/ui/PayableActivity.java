@@ -32,8 +32,6 @@ import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
 
-import static ru.tinkoff.acquiring.sdk.PayFormActivity.init;
-
 /**
  * @author Mikhail Artemyev
  */

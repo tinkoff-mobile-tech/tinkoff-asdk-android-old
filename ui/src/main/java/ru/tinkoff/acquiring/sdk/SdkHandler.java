@@ -37,6 +37,7 @@ class SdkHandler extends Handler {
     public static final int DELETE_CARD = 5;
     public static final int SHOW_ERROR_DIALOG = 6;
     public static final int PAYMENT_INIT_COMPLETED = 7;
+    public static final int NO_NETWORK = 8;
 
     public SdkHandler() {
         super(Looper.getMainLooper());
@@ -97,6 +98,11 @@ class SdkHandler extends Handler {
             case PAYMENT_INIT_COMPLETED:
                 for (PayFormActivity activity : callbacks) {
                     activity.onPaymentInitCompleted((Long) msg.obj);
+                }
+                return;
+            case NO_NETWORK:
+                for (PayFormActivity activity : callbacks) {
+                    activity.onNoNetwork();
                 }
                 return;
         }

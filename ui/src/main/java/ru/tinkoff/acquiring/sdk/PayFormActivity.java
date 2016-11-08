@@ -18,15 +18,14 @@ package ru.tinkoff.acquiring.sdk;
 
 
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,6 +145,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             startFinishAuthorized();
             if (isCardChooseEnable()) {
                 String customerKey = getIntent().getStringExtra(EXTRA_CUSTOMER_KEY);
+                showProgressDialog();
                 requestCards(customerKey, cardManager);
             }
         } else {
@@ -240,6 +240,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     void onCardsReady(Card[] cards) {
+        hideProgressDialog();
         this.cards = cards;
         if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
             String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
@@ -290,16 +291,19 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                     PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, cards).sendToTarget();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
-                    if (cause != null && cause instanceof AcquiringApiException) {
-                        // handle NO SUCH CUSTOMER api error
+                    if (cause == null) {
+                        Journal.log(e);
+                    } else if (cause instanceof AcquiringApiException) {
                         AcquiringResponse apiResponse = ((AcquiringApiException) cause).getResponse();
                         if (apiResponse != null && API_ERROR_NO_CUSTOMER.equals(apiResponse.getErrorCode())) {
                             PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, null).sendToTarget();
                         } else {
                             throw e;
                         }
+                    } else if (cause instanceof NetworkException) {
+                        PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK).sendToTarget();
                     } else {
-                        // ignore non api exception
+                        Journal.log(cause);
                     }
                 }
             }
@@ -323,12 +327,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
 
     void announceException(Exception e) {
         hideProgressDialog();
-
-        if (e != null && e.getCause() instanceof NetworkException) {
-            Toast.makeText(this, R.string.acq_network_error_message, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         Intent data = new Intent();
         data.putExtra(EXTRA_ERROR, e);
         setResult(RESULT_ERROR, data);
@@ -373,5 +371,19 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     @Override
     public FragmentsCommunicator getFragmentsCommunicator() {
         return mFragmentsCommunicator;
+    }
+
+    public void onNoNetwork() {
+        String title = getString(R.string.acq_default_error_title);
+        String message = getString(R.string.acq_network_error_message);
+        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setResult(RESULT_CANCELED);
+                PayFormActivity.this.finish();
+            }
+        };
+        dialogsManager.showErrorDialog(title, message, onClickListener);
+        hideProgressDialog();
     }
 }
