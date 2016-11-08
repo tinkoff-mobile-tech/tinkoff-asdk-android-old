@@ -1243,6 +1243,7 @@ public class EditCardView extends ViewGroup {
         boolean enableFields = !check(SAVED_CARD_STATE);
         etDate.setEnabled(enableFields);
         etCardNumber.setEnabled(enableFields);
+        normalizeMode();
     }
 
     static class SavedState extends BaseSavedState {
