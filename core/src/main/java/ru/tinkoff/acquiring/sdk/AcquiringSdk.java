@@ -128,8 +128,11 @@ public class AcquiringSdk extends Journal {
                 .setCustomerKey(customerKey)
                 .setDescription(description)
                 .setPayForm(payFormTitle)
-                .setReccurent(recurrent)
-                .setLanguage(language.toString());
+                .setReccurent(recurrent);
+
+        if (language != null) {
+            initRequestBuilder.setLanguage(language.toString());
+        }
 
         if (payType != null) {
             initRequestBuilder.setPayType(payType);
@@ -160,7 +163,7 @@ public class AcquiringSdk extends Journal {
                      final String description,
                      final String payFormTitle,
                      final boolean recurrent) {
-        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, Language.RUSSIAN, null);
+        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, null, null);
     }
 
     /**

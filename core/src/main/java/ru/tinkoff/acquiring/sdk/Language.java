@@ -7,13 +7,6 @@ public enum Language {
 
     private String locale;
 
-    public static Language fromValue(final String value, Language fallback) {
-        if (value != null && value.toLowerCase().startsWith("ru")) {
-            return RUSSIAN;
-        }
-        return fallback;
-    }
-
     Language(final String locale) {
         this.locale = locale;
     }
