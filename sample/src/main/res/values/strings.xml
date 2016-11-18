@@ -12,7 +12,7 @@
     <string name="book_details">DETAILS</string>
     <string name="book_price">%1$s P</string>
     <string name="book_price_total">Total: %1$s P</string>
-    <string name="add_to_cart">Add to card</string>
+    <string name="add_to_cart">Add to cart</string>
     <string name="buy_now">Buy</string>
     <string name="total">Total</string>
     <string name="pay">Pay</string>
