@@ -32,6 +32,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -102,8 +103,10 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
         if (isUsingCustomKeyboard) {
-            getActivity().getWindow()
-                    .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+            Window window = getActivity().getWindow();
+            window.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
             ecvCard.disableCopyPaste();
         } else {
             customKeyboard.hide();
