@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="acq_sp_use_system_keyboard">acq_sp_use_system_keyboard</string>
-    <string name="acq_sp_terminal_id">acq_sp_terminal_id</string>
+    <string name="acq_sp_use_system_keyboard" translatable="false">acq_sp_use_system_keyboard</string>
+    <string name="acq_sp_terminal_id" translatable="false">acq_sp_terminal_id</string>
 
-    <string name="acq_sp_default_value_terminal_id">sdk3DS</string>
+    <string name="acq_sp_default_value_terminal_id" translatable="false">sdk3DS</string>
 
-    <string-array name="acq_sp_terminal_keys">
+    <string-array name="acq_sp_terminal_keys" translatable="false">
         <item>@string/acq_sp_default_value_terminal_id</item>
         <item>TestSDK</item>
         <item>sdkNon3DS</item>
