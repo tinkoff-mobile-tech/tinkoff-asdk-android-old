@@ -63,6 +63,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     static final String EXTRA_PAYMENT_ID = "payment_id";
 
+    private static final int PAY_FORM_MAX_LENGTH = 20;
+
     private EditCardView ecvCard;
     private TextView tvTitle;
     private TextView tvDescription;
@@ -333,11 +335,17 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             public void run() {
                 try {
 
+                    String payForm;
+                    if (payFormTitle != null && payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
+                        payForm = payFormTitle.substring(0, PAY_FORM_MAX_LENGTH);
+                    } else {
+                        payForm = payFormTitle;
+                    }
                     Long paymentId;
                     if (language == null) {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payFormTitle, reccurentPayment);
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment);
                     } else {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payFormTitle, reccurentPayment, language);
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment, language);
                     }
 
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();

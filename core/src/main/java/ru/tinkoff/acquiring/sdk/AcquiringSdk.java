@@ -42,6 +42,8 @@ import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
  */
 public class AcquiringSdk extends Journal {
 
+    private static final int PAY_FORM_MAX_LENGTH = 20;
+
     private final AcquiringApi api;
     private final String terminalKey;
     private final String password;
@@ -107,7 +109,7 @@ public class AcquiringSdk extends Journal {
      *                     разрешена автоматическая привязка карт к терминалу, то для данного
      *                     покупателя будет осуществлена привязка карты
      * @param description  краткое описание
-     * @param payFormTitle название шаблона формы оплаты продавца
+     * @param payFormTitle название шаблона формы оплаты продавца, не больше 20 символов
      * @param recurrent    регистрирует платеж как рекуррентный
      * @param language     язык для локализации
      * @param payType      тип платежа, одностадийный или двухстадийный
@@ -121,6 +123,10 @@ public class AcquiringSdk extends Journal {
                      final boolean recurrent,
                      final Language language,
                      final PayType payType) {
+
+        if (payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
+            throw new IllegalArgumentException("Argument payFormTitle length should be 20 symbols or less");
+        }
 
         InitRequestBuilder initRequestBuilder = new InitRequestBuilder(password, terminalKey)
                 .setAmount(amount.getCoins())
