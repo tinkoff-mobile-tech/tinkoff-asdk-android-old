@@ -125,7 +125,14 @@ public class AcquiringApi {
         }
 
         if (!result.isSuccess()) {
-            throw new AcquiringApiException(result);
+                String message = result.getMessage();
+                String details = result.getDetails();
+                if (message != null && details != null) {
+                    throw  new AcquiringApiException(result, String.format("%s: %s", message, details));
+                } else {
+                    throw new AcquiringApiException(result);
+                }
+
         }
 
         return result;

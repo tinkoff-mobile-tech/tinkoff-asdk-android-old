@@ -24,6 +24,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
 
@@ -276,7 +277,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
 
     void showErrorDialog(Exception exception) {
         String message = exception.getMessage();
-        if (message == null) {
+        if (TextUtils.isEmpty(message)) {
             message = getString(R.string.acq_default_error_message);
         }
         dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
