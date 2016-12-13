@@ -44,6 +44,7 @@ import ru.tinkoff.core.nfc.model.Card;
 public class NfcCardScanActivity extends AppCompatActivity {
 
     public static final String EXTRA_CARD = "card_extra";
+    public static final int RESULT_ERROR = 256;
 
     private static final int REQUEST_CODE_SETTINGS = 91;
     private static final int ALPHA_MASK = 0xCCFFFFFF;
@@ -115,8 +116,10 @@ public class NfcCardScanActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             Journal.log(e);
+            setResult(RESULT_ERROR);
+            finish();
         }
     }
 

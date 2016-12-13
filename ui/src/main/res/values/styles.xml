@@ -88,7 +88,7 @@
         <item name="android:paddingRight">16dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">48dp</item>
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/acq_list_item_bg</item>
     </style>
 
 
@@ -96,6 +96,7 @@
         <item name="acqMaestroIcon">@drawable/acq_maestro</item>
         <item name="acqVisaIcon">@drawable/acq_visalogo</item>
         <item name="acqMasterCardIcon">@drawable/acq_master</item>
+        <item name="acqMirIcon">@drawable/acq_mirlogo</item>
     </style>
 
     <style name="AcquiringNfcDescriptionTextStyle">

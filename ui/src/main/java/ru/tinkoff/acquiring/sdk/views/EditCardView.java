@@ -22,7 +22,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,17 +41,17 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
+import android.view.ActionMode;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
-
-import org.w3c.dom.Text;
 
 import ru.tinkoff.acquiring.sdk.R;
 import ru.tinkoff.acquiring.sdk.utils.CardValidator;
@@ -70,6 +69,8 @@ public class EditCardView extends ViewGroup {
     private static final int IN_ANIMATION = 1 << 4;
     private static final int ONLY_NUMBER_STATE = 1 << 5;
     private static final int SAVED_CARD_STATE = 1 << 6;
+
+    private static final int MIN_CARD_NUMBER_LENGTH = 4;
 
     private Runnable update;
     private int flags;
@@ -254,7 +255,7 @@ public class EditCardView extends ViewGroup {
 
                 }
 
-                boolean noCardLogoCondition = number == null || number.length() == 0;
+                boolean noCardLogoCondition = number == null || number.length() < MIN_CARD_NUMBER_LENGTH;
 
                 if (noCardLogoCondition && check(CARD_SYSTEM_LOGO)) {
                     hideCardSystemLogo();
@@ -415,7 +416,12 @@ public class EditCardView extends ViewGroup {
         }
     }
 
-
+    public void disableCopyPaste() {
+        DisableCopyPasteActionModeCallback callback = new DisableCopyPasteActionModeCallback();
+        etCardNumber.setCustomSelectionActionModeCallback(callback);
+        etDate.setCustomSelectionActionModeCallback(callback);
+        etCvc.setCustomSelectionActionModeCallback(callback);
+    }
 
     public void dispatchFocus() {
         if (check(SAVED_CARD_STATE)) {
@@ -432,7 +438,7 @@ public class EditCardView extends ViewGroup {
     }
 
     protected EditText onCreateField(Context context, AttributeSet attributeSet) {
-        return  (attributeSet == null) ? new EditText(context) : new EditText(context, attributeSet);
+        return (attributeSet == null) ? new EditText(context) : new EditText(context, attributeSet);
     }
 
     public void setFullCardNumberModeEnable(boolean enable) {
@@ -446,11 +452,9 @@ public class EditCardView extends ViewGroup {
     }
 
 
-
-
     public void setSavedCardState(boolean savedCardState) {
 
-        if ( check(SAVED_CARD_STATE) == savedCardState ) {
+        if (check(SAVED_CARD_STATE) == savedCardState) {
             normalizeMode();
             return;
         }
@@ -569,7 +573,7 @@ public class EditCardView extends ViewGroup {
         int contentWidthSpec = MeasureSpec.makeMeasureSpec(contentsWidth, MeasureSpec.EXACTLY);
         int contentHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 
-        etCardNumber.measure(isFullCardNumberMode ? MeasureSpec.makeMeasureSpec(accessWidth , MeasureSpec.EXACTLY) : contentWidthSpec, contentHeightSpec);
+        etCardNumber.measure(isFullCardNumberMode ? MeasureSpec.makeMeasureSpec(accessWidth, MeasureSpec.EXACTLY) : contentWidthSpec, contentHeightSpec);
         etDate.measure(contentWidthSpec, contentHeightSpec);
         etCvc.measure(contentWidthSpec, contentHeightSpec);
         int btnsHeight = Math.max(calculateChangeModeHeight(), calculateScanButtonHeight());
@@ -663,7 +667,6 @@ public class EditCardView extends ViewGroup {
         super.dispatchDraw(canvas);
 
     }
-
 
 
     @Override
@@ -1141,12 +1144,12 @@ public class EditCardView extends ViewGroup {
             int l = text.length();
             Paint p = getPaint();
             float dist = p.measureText(text.substring(0, Math.max(0, l - charsCount)));
-            if (mode == FULL_MODE ) {
+            if (mode == FULL_MODE) {
                 canvas.save();
                 canvas.translate(-dist * animationFactor, 0);
                 super.onDraw(canvas);
                 canvas.restore();
-            } else if (mode == SHORT_MODE){
+            } else if (mode == SHORT_MODE) {
                 canvas.drawText(text, Math.max(0, l - charsCount), l, 0, getBaseline(), p);
             }
         }
@@ -1175,7 +1178,7 @@ public class EditCardView extends ViewGroup {
         @Override
         protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
             super.onFocusChanged(focused, direction, previouslyFocusedRect);
-            if(customOnFocusChangedListener != null){
+            if (customOnFocusChangedListener != null) {
                 customOnFocusChangedListener.onFocusChange(this, focused);
             }
         }
@@ -1240,6 +1243,7 @@ public class EditCardView extends ViewGroup {
         boolean enableFields = !check(SAVED_CARD_STATE);
         etDate.setEnabled(enableFields);
         etCardNumber.setEnabled(enableFields);
+        normalizeMode();
     }
 
     static class SavedState extends BaseSavedState {
@@ -1294,6 +1298,29 @@ public class EditCardView extends ViewGroup {
     @Override
     public boolean onCheckIsTextEditor() {
         return super.onCheckIsTextEditor();
+    }
+
+    private static class DisableCopyPasteActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+        }
     }
 }
 

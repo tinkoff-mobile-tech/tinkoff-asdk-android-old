@@ -115,7 +115,7 @@ public class ThreeDsFragment extends Fragment {
             public void run() {
                 try {
                     PaymentStatus status = acquiringSdk.getState(threeDsData.getPaymentId());
-                    if (status == PaymentStatus.CONFIRMED) {
+                    if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
                         PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
                     } else {
                         PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();

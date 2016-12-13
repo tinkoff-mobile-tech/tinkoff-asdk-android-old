@@ -16,35 +16,31 @@
 
 package ru.tinkoff.acquiring.sample.ui;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import ru.tinkoff.acquiring.sample.BuildConfig;
 import ru.tinkoff.acquiring.sample.R;
 
-/**
- * @author Mikhail Artemyev
- */
-public class AboutActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
-    public static void start(final Context context) {
-        context.startActivity(new Intent(context, AboutActivity.class));
+    public static void start(Context context) {
+        Intent intent = new Intent(context, SettingsActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
-
+        getFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        final TextView textViewVersion = (TextView) findViewById(R.id.tv_version);
-        final String version = getString(R.string.version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE);
-        textViewVersion.setText(version);
     }
 
     @Override
@@ -53,7 +49,14 @@ public class AboutActivity extends AppCompatActivity {
             finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class SettingsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.settings);
+        }
     }
 }

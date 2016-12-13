@@ -16,7 +16,6 @@
 
 package ru.tinkoff.acquiring.sample.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -26,14 +25,12 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sample.Book;
-import ru.tinkoff.acquiring.sample.BooksGenerator;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
 
 public class MainActivity extends AppCompatActivity implements
         BooksListAdapter.BookDetailsClickListener {
-
-    private static final byte BOOKS_NUMBER = 10;
 
     private ListView listViewBooks;
     private BooksListAdapter adapter;
@@ -46,9 +43,12 @@ public class MainActivity extends AppCompatActivity implements
 
         listViewBooks = (ListView) findViewById(R.id.lv_books);
 
-        adapter = new BooksListAdapter(this, getBooks(), this);
-        listViewBooks.setAdapter(adapter);
+        initViews(getBooks());
+    }
 
+    private void initViews(ArrayList<Book> books) {
+        adapter = new BooksListAdapter(this, books, this);
+        listViewBooks.setAdapter(adapter);
         setContentView(listViewBooks);
     }
 
@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_action_about:
                 AboutActivity.start(this);
                 return true;
+            case R.id.menu_action_settings:
+                SettingsActivity.start(this);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private ArrayList<Book> getBooks() {
-        final BooksGenerator generator = new BooksGenerator();
-        return generator.generateBooks(this, BOOKS_NUMBER);
+        final BooksRegistry booksRegistry = new BooksRegistry();
+        return booksRegistry.getBooks(this);
     }
 }

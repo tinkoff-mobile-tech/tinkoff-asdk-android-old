@@ -36,8 +36,13 @@ public class AcquiringApiException extends Exception {
         super(message, cause);
     }
 
+    public AcquiringApiException(AcquiringResponse response, String message) {
+        super(message);
+        this.response = response;
+    }
+
     public AcquiringApiException(AcquiringResponse response) {
-        super(String.format("%s: %s", response.getMessage(), response.getDetails()));
+        super("");
         this.response = response;
     }
 

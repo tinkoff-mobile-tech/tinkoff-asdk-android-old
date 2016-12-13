@@ -17,11 +17,14 @@
 package ru.tinkoff.acquiring.sample.adapters;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.R;
@@ -29,50 +32,71 @@ import ru.tinkoff.acquiring.sample.R;
 /**
  * @author Mikhail Artemyev
  */
-public class BooksListAdapter extends BaseBooksListAdapter {
+public class BooksListAdapter extends ArrayAdapter<Book> {
 
     public interface BookDetailsClickListener {
         void onBookDetailsClicked(Book book);
     }
 
     private BookDetailsClickListener listener;
+    private LayoutInflater inflater;
 
     public BooksListAdapter(Context context, ArrayList<Book> objects, BookDetailsClickListener listener) {
         super(context, R.layout.list_item_book, objects);
+        this.inflater = LayoutInflater.from(context);
         this.listener = listener;
     }
 
     @Override
-    protected BaseBooksListAdapter.ViewHolder createViewHolder(View rootView) {
-        return new ViewHolder(rootView);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View view = convertView;
+        if (view == null) {
+            view = inflater.inflate(R.layout.list_item_book, parent, false);
+            ViewHolder holder = new ViewHolder(view);
+            view.setTag(holder);
+        }
+
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        viewHolder.fillWith(getItem(position));
+
+        return view;
     }
 
-    private class ViewHolder extends BaseBooksListAdapter.ViewHolder implements View.OnClickListener {
+    private class ViewHolder implements View.OnClickListener {
+
+        private ImageView imageViewCover;
+        private TextView textViewTitle;
+        private TextView textViewPrice;
         private TextView textViewAuthor;
         private TextView textViewAnnotation;
 
-        ViewHolder(final View rootView) {
-            super(rootView);
+        private Book book;
 
-            textViewAuthor = (TextView) rootView.findViewById(R.id.tv_book_author_year);
-            textViewAnnotation = (TextView) rootView.findViewById(R.id.tv_book_annotation);
-
-            final TextView textViewDetails = (TextView) rootView.findViewById(R.id.tv_book_details);
+        ViewHolder(View view) {
+            textViewAuthor = (TextView) view.findViewById(R.id.tv_book_author_year);
+            textViewAnnotation = (TextView) view.findViewById(R.id.tv_book_annotation);
+            imageViewCover = (ImageView) view.findViewById(R.id.iv_book_cover);
+            textViewTitle = (TextView) view.findViewById(R.id.tv_book_title);
+            textViewPrice = (TextView) view.findViewById(R.id.tv_book_price);
+            TextView textViewDetails = (TextView) view.findViewById(R.id.tv_book_details);
             textViewDetails.setOnClickListener(this);
-        }
-
-        protected void fillWith(final Book book) {
-            super.fillWith(book);
-
-            textViewAuthor.setText(String.format(Locale.getDefault(), "%s, %d", book.getAuthor(), book.getYear()));
-            textViewAnnotation.setText(book.getAnnotation());
         }
 
         @Override
         public void onClick(View v) {
             if (listener != null) {
-                listener.onBookDetailsClicked(getBook());
+                listener.onBookDetailsClicked(book);
             }
+        }
+
+        private void fillWith(final Book book) {
+            this.book = book;
+            imageViewCover.setImageResource(book.getCoverDrawableId());
+            textViewTitle.setText(book.getTitle());
+            CharSequence priceText = getContext().getString(R.string.book_price, book.getPrice());
+            textViewPrice.setText(priceText);
+            textViewAuthor.setText(book.getShoppingTitle());
+            textViewAnnotation.setText(book.getAnnotation());
         }
     }
 }

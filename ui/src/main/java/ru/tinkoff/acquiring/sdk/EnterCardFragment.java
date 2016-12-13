@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -31,12 +32,15 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import io.card.payment.CardIOActivity;
@@ -44,6 +48,8 @@ import io.card.payment.CreditCard;
 import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
+
+import static android.widget.Toast.makeText;
 
 /**
  * @author a.shishkin1
@@ -56,6 +62,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     public static final int REQUEST_CARD_NFC = 2;
 
     static final String EXTRA_PAYMENT_ID = "payment_id";
+
+    private static final int PAY_FORM_MAX_LENGTH = 20;
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -93,8 +101,17 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         ecvCard.setCardSystemIconsHolder(new CardSystemIconsHolderImpl(getActivity()));
         ecvCard.setActions(this);
 
-        if (((PayFormActivity) getActivity()).shouldUseCustomKeyboard()) {
-            customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
+        customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
+
+        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
+        if (isUsingCustomKeyboard) {
+
+            Window window = getActivity().getWindow();
+            window.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            ecvCard.disableCopyPaste();
+        } else {
+            customKeyboard.hide();
         }
 
         tvChooseCardButton.setOnClickListener(new View.OnClickListener() {
@@ -163,9 +180,22 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 }
 
                 activity.showProgressDialog();
-                initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail, reccurentPayment);
+
+                initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail,
+                        reccurentPayment, resolveLanguage());
             }
         });
+    }
+
+    private Language resolveLanguage() {
+        Locale locale = getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+
+        if (language != null && language.toLowerCase().startsWith("ru")) {
+            return null;
+        } else {
+            return Language.ENGLISH;
+        }
     }
 
     private boolean validateInput(String enteredEmail) {
@@ -177,7 +207,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
 
         if (errorMessage != 0) {
-            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+            makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -187,7 +217,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     @Override
     public void onResume() {
         super.onResume();
-        if (customKeyboard != null) {
+        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
+        if (customKeyboard != null && isUsingCustomKeyboard) {
             customKeyboard.attachToView(ecvCard);
         }
     }
@@ -242,6 +273,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
+        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
         startActivityForResult(scanIntent, REQUEST_CARD_IO);
     }
 
@@ -265,7 +297,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         if (requestCode == REQUEST_CARD_IO && data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
             CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
             ecvCard.setCardNumber(scanResult.getFormattedCardNumber());
-            ecvCard.setExpireDate(String.format("%02d%02d", scanResult.expiryMonth, (scanResult.expiryYear % 100)));
+            if (scanResult.expiryMonth != 0 && scanResult.expiryYear != 0) {
+                Locale locale = Locale.getDefault();
+                int expiryYear = scanResult.expiryYear % 100;
+                String format = String.format(locale, "%02d%02d", scanResult.expiryMonth, expiryYear);
+                ecvCard.setExpireDate(format);
+            }
             return;
         }
 
@@ -273,6 +310,10 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             ru.tinkoff.core.nfc.model.Card card = (ru.tinkoff.core.nfc.model.Card) data.getSerializableExtra(NfcCardScanActivity.EXTRA_CARD);
             ecvCard.setCardNumber(card.getNumber());
             ecvCard.setExpireDate(card.getExpirationDate());
+            return;
+        } else if (requestCode == REQUEST_CARD_NFC && resultCode == NfcCardScanActivity.RESULT_ERROR) {
+            Toast t = Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT);
+            t.show();
             return;
         }
 
@@ -286,13 +327,27 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                                     final Money amount,
                                     final CardData cardData,
                                     final String email,
-                                    final boolean reccurentPayment) {
+                                    final boolean reccurentPayment,
+                                    final Language language) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final Long paymentId = sdk.init(amount, orderId, customerKey, null, payFormTitle, reccurentPayment);
+
+                    String payForm;
+                    if (payFormTitle != null && payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
+                        payForm = payFormTitle.substring(0, PAY_FORM_MAX_LENGTH);
+                    } else {
+                        payForm = payFormTitle;
+                    }
+                    Long paymentId;
+                    if (language == null) {
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment);
+                    } else {
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment, language);
+                    }
+
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
@@ -302,7 +357,14 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                         PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
                     }
                 } catch (Exception e) {
-                    PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, e).sendToTarget();
+                    Throwable cause = e.getCause();
+                    Message msg;
+                    if (cause != null && cause instanceof NetworkException) {
+                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK);
+                    } else {
+                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, e);
+                    }
+                    msg.sendToTarget();
                 }
             }
 
@@ -347,7 +409,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     @Override
     public boolean onBackPressed() {
-        return customKeyboard.hide();
+        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
+        if (customKeyboard != null && isUsingCustomKeyboard) {
+            return customKeyboard.hide();
+        } else {
+            return false;
+        }
     }
 
     private static class CardSystemIconsHolderImpl extends ThemeCardLogoCache implements EditCardView.CardSystemIconsHolder {

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.sample.Book;
+import ru.tinkoff.acquiring.sample.BooksRegistry;
 import ru.tinkoff.acquiring.sample.Cart;
 import ru.tinkoff.acquiring.sample.R;
 
@@ -41,7 +42,7 @@ public class DetailsActivity extends PayableActivity {
 
     public static void start(final Context context, final Book book) {
         final Intent intent = new Intent(context, DetailsActivity.class);
-        intent.putExtra(EXTRA_BOOK, book);
+        intent.putExtra(EXTRA_BOOK, book.getId());
         context.startActivity(intent);
     }
 
@@ -59,9 +60,12 @@ public class DetailsActivity extends PayableActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        book = getIntent().getParcelableExtra(EXTRA_BOOK);
-        if (book == null) {
+        int bookId = getIntent().getIntExtra(EXTRA_BOOK, -1);
+        if (bookId == -1) {
             throw new IllegalStateException("Book is not passed to the DetailsActivity. Start it with start() method");
+        } else {
+            BooksRegistry booksRegistry = new BooksRegistry();
+            book = booksRegistry.getBook(this, bookId);
         }
 
         setContentView(R.layout.activity_details);
@@ -77,7 +81,7 @@ public class DetailsActivity extends PayableActivity {
         buttonAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cart.getInstance().add(new Cart.CartEntry(book));
+                Cart.getInstance().add(new Cart.CartEntry(book.getId(), book.getPrice()));
                 Toast.makeText(DetailsActivity.this, R.string.added_to_cart, Toast.LENGTH_SHORT).show();
             }
         });
@@ -119,7 +123,7 @@ public class DetailsActivity extends PayableActivity {
         imageViewCover.setImageResource(book.getCoverDrawableId());
         textViewTitle.setText(book.getTitle());
         textViewAuthor.setText(book.getAuthor());
-        textViewYear.setText(String.valueOf(book.getYear()));
+        textViewYear.setText(book.getYear());
         textViewAnnotation.setText(book.getAnnotation());
 
         final String price = getString(R.string.book_price, book.getPrice());

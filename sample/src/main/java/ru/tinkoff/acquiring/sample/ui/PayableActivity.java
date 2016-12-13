@@ -17,7 +17,9 @@
 package ru.tinkoff.acquiring.sample.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -40,11 +42,14 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
     private Money paymentAmount;
     private String paymentDescription;
     private String paymentTitle;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -101,8 +106,10 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentAmount = amount;
         this.paymentTitle = title;
         this.paymentDescription = description;
+        boolean isCustomKeyboardEnabled = isCustomKeyboardEnabled();
+        String terminalId = getTerminalId();
         PayFormActivity
-                .init(MerchantParams.TERMINAL_KEY, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                 .prepare(orderId,
                         amount,
                         paymentTitle,
@@ -110,11 +117,21 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         null,
                         SessionInfo.CUSTOMER_EMAIL,
                         false,
-                        true
+                        isCustomKeyboardEnabled
                 )
                 .setCustomerKey(SessionInfo.CUSTOMER_KEY)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
+    }
 
+    private boolean isCustomKeyboardEnabled() {
+        String key = getString(R.string.acq_sp_use_system_keyboard);
+        return !sharedPreferences.getBoolean(key, false);
+    }
+
+    private String getTerminalId() {
+        String key = getString(R.string.acq_sp_terminal_id);
+        String fallback = getString(R.string.acq_sp_default_value_terminal_id);
+        return sharedPreferences.getString(key, fallback);
     }
 
 }

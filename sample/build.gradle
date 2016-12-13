@@ -8,7 +8,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
-        encoding 'windows-1251'
     }
 
 
@@ -26,8 +25,8 @@ android {
         applicationId "ru.tinkoff.acquiring.sample"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 12
-        versionName "1.0"
+        versionCode 18
+        versionName "1.1.0"
     }
     buildTypes {
         release {

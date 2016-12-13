@@ -16,6 +16,8 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import ru.tinkoff.acquiring.sdk.PayType;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -54,6 +56,16 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
 
     public InitRequestBuilder setReccurent(final boolean value) {
         request.setReccurent(value);
+        return this;
+    }
+
+    public InitRequestBuilder setLanguage(final String language) {
+        request.setLanguage(language);
+        return this;
+    }
+
+    public InitRequestBuilder setPayType(PayType payType) {
+        request.setPayType(payType.toString());
         return this;
     }
 

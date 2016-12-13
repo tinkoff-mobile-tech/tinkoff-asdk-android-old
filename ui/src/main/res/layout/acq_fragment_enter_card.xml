@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <ScrollView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -15,8 +15,8 @@
             style="?acqContentViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -93,8 +93,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?acqViewDivider"
-                android:inputType="textEmailAddress"
-                android:hint="@string/acq_email_hint" />
+                android:hint="@string/acq_email_hint"
+                android:inputType="textEmailAddress" />
 
             <Button
                 android:id="@+id/btn_pay"
@@ -124,6 +124,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorPrimary"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -16,11 +16,10 @@
 
 package ru.tinkoff.acquiring.sample;
 
-import android.annotation.SuppressLint;
-
 import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sdk.Money;
+
 
 /**
  * @author Mikhail Artemyev
@@ -33,14 +32,22 @@ public class Cart extends ArrayList<Cart.CartEntry> {
         return instance;
     }
 
-    @SuppressLint("ParcelCreator")
-    public static class CartEntry extends Book {
+    public static class CartEntry {
+
+        private int bookId;
+
+        private Money price;
 
         private int count;
 
-        public CartEntry(Book book) {
-            super(book);
+        public CartEntry(int bookId, Money price) {
+            this.bookId = bookId;
             this.count = 1;
+            this.price = price;
+        }
+
+        public int getBookId() {
+            return bookId;
         }
 
         private void increase() {
@@ -60,7 +67,26 @@ public class Cart extends ArrayList<Cart.CartEntry> {
         }
 
         public Money getPrice() {
-            return Money.ofCoins(super.getPrice().getCoins() * count);
+            return Money.ofCoins(price.getCoins() * count);
+        }
+
+        @Override
+        public int hashCode() {
+            return bookId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof CartEntry)) {
+                return false;
+            }
+
+            CartEntry entry = (CartEntry) o;
+
+            return bookId == entry.bookId;
         }
     }
 

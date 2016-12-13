@@ -29,16 +29,17 @@ import ru.tinkoff.acquiring.sdk.Money;
  */
 public class Book implements Parcelable {
 
+    private int id;
     @DrawableRes
     private int coverDrawableId;
-
     private String title;
     private String author;
     private String annotation;
-    private int year;
+    private String year;
     private Money price;
 
-    public Book() {
+    public Book(int id) {
+        this.id = id;
     }
 
     public Book(Book source) {
@@ -48,6 +49,7 @@ public class Book implements Parcelable {
         this.annotation = source.annotation;
         this.year = source.year;
         this.price = source.price;
+        this.id = source.id;
     }
 
     protected Book(Parcel in) {
@@ -55,10 +57,14 @@ public class Book implements Parcelable {
         this.title = in.readString();
         this.author = in.readString();
         this.annotation = in.readString();
-        this.year = in.readInt();
+        this.year = in.readString();
         this.price = (Money) in.readSerializable();
+        this.id = in.readInt();
     }
 
+    public int getId() {
+        return this.id;
+    }
 
     @Override
     public int describeContents() {
@@ -71,8 +77,9 @@ public class Book implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.author);
         dest.writeString(this.annotation);
-        dest.writeInt(this.year);
+        dest.writeString(this.year);
         dest.writeSerializable(this.price);
+        dest.writeSerializable(this.id);
     }
 
     @DrawableRes
@@ -108,11 +115,11 @@ public class Book implements Parcelable {
         this.annotation = annotation;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -124,8 +131,15 @@ public class Book implements Parcelable {
         this.price = price;
     }
 
+    public String getShoppingTitle() {
+        Locale locale = Locale.getDefault();
+        return String.format(locale, "%s, %s", author, year);
+    }
+
+
     public String getAnnounce() {
-        return String.format(Locale.getDefault(), "\"%s\" (%s, %d)", getTitle(), getAuthor(), getYear());
+        Locale locale = Locale.getDefault();
+        return String.format(locale, "\"%s\" (%s, %s)", title, author, year);
     }
 
     @Override
@@ -139,34 +153,12 @@ public class Book implements Parcelable {
 
         Book book = (Book) o;
 
-        if (coverDrawableId != book.coverDrawableId) {
-            return false;
-        }
-        if (year != book.year) {
-            return false;
-        }
-        if (title != null ? !title.equals(book.title) : book.title != null) {
-            return false;
-        }
-        if (author != null ? !author.equals(book.author) : book.author != null) {
-            return false;
-        }
-        if (annotation != null ? !annotation.equals(book.annotation) : book.annotation != null) {
-            return false;
-        }
-        return !(price != null ? !price.equals(book.price) : book.price != null);
-
+        return id == book.id;
     }
 
     @Override
     public int hashCode() {
-        int result = coverDrawableId;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (annotation != null ? annotation.hashCode() : 0);
-        result = 31 * result + year;
-        result = 31 * result + (price != null ? price.hashCode() : 0);
-        return result;
+        return id;
     }
 
     public static final Parcelable.Creator<Book> CREATOR = new Parcelable.Creator<Book>() {

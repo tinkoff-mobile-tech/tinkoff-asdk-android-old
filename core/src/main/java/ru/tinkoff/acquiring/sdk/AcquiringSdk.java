@@ -42,6 +42,8 @@ import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
  */
 public class AcquiringSdk extends Journal {
 
+    private static final int PAY_FORM_MAX_LENGTH = 20;
+
     private final AcquiringApi api;
     private final String terminalKey;
     private final String password;
@@ -107,8 +109,10 @@ public class AcquiringSdk extends Journal {
      *                     разрешена автоматическая привязка карт к терминалу, то для данного
      *                     покупателя будет осуществлена привязка карты
      * @param description  краткое описание
-     * @param payFormTitle название шаблона формы оплаты продавца
+     * @param payFormTitle название шаблона формы оплаты продавца, не больше 20 символов
      * @param recurrent    регистрирует платеж как рекуррентный
+     * @param language     язык для локализации
+     * @param payType      тип платежа, одностадийный или двухстадийный
      * @return уникальный идентификатор транзакции в системе Банка
      */
     public Long init(final Money amount,
@@ -116,22 +120,56 @@ public class AcquiringSdk extends Journal {
                      final String customerKey,
                      final String description,
                      final String payFormTitle,
-                     final boolean recurrent) {
+                     final boolean recurrent,
+                     final Language language,
+                     final PayType payType) {
 
-        final InitRequest request = new InitRequestBuilder(password, terminalKey)
+        if (payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
+            throw new IllegalArgumentException("Argument payFormTitle length should be 20 symbols or less");
+        }
+
+        InitRequestBuilder initRequestBuilder = new InitRequestBuilder(password, terminalKey)
                 .setAmount(amount.getCoins())
                 .setOrderId(orderId)
                 .setCustomerKey(customerKey)
                 .setDescription(description)
                 .setPayForm(payFormTitle)
-                .setReccurent(recurrent)
-                .build();
+                .setReccurent(recurrent);
+
+        if (language != null) {
+            initRequestBuilder.setLanguage(language.toString());
+        }
+
+        if (payType != null) {
+            initRequestBuilder.setPayType(payType);
+        }
+
+        InitRequest request = initRequestBuilder.build();
 
         try {
             return api.init(request).getPaymentId();
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }
+    }
+
+    public Long init(final Money amount,
+                     final String orderId,
+                     final String customerKey,
+                     final String description,
+                     final String payFormTitle,
+                     final boolean recurrent,
+                     final Language language) {
+        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, language, null);
+    }
+
+    public Long init(final Money amount,
+                     final String orderId,
+                     final String customerKey,
+                     final String description,
+                     final String payFormTitle,
+                     final boolean recurrent) {
+        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, null, null);
     }
 
     /**
