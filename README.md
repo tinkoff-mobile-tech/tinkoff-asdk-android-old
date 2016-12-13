@@ -1,6 +1,6 @@
 # Tinkoff Acquiring SDK for Android
 
-[![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=2592000)][search.maven]
+[![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=3600)][search.maven]
 
 ![PayFormActivity][img-pay]
 
