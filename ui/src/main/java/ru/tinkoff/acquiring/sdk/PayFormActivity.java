@@ -247,8 +247,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
             if (cardId != null) {
                 sourceCard = cardManager.getCardById(cardId);
-            } else {
-                sourceCard = cards[0];
             }
         }
         isCardsReady = true;
