@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -60,8 +61,6 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     public static final int REQUEST_CARD_IO = 1;
     public static final int REQUEST_CARD_NFC = 2;
-
-    static final String EXTRA_PAYMENT_ID = "payment_id";
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
@@ -98,17 +97,19 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         etEmail = (EditText) view.findViewById(R.id.et_email);
 
-        ecvCard.setCardSystemIconsHolder(new CardSystemIconsHolderImpl(getActivity()));
+        final FragmentActivity activity = getActivity();
+        ecvCard.setCardSystemIconsHolder(new CardSystemIconsHolderImpl(activity));
         ecvCard.setActions(this);
 
         customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
 
-        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
+        boolean isUsingCustomKeyboard = ((PayFormActivity) activity).shouldUseCustomKeyboard();
         if (isUsingCustomKeyboard) {
 
+            // disable soft keyboard while custom keyboard is not attached to edit card view
             Window window = getActivity().getWindow();
-            window.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
-                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
             ecvCard.disableCopyPaste();
         } else {
             customKeyboard.hide();
@@ -117,7 +118,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         tvChooseCardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Card[] cards = ((PayFormActivity) getActivity()).getCards();
+                Card[] cards = ((PayFormActivity) activity).getCards();
                 if (cards != null) {
                     startChooseCard();
                 }
@@ -169,7 +170,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 final PayFormActivity activity = (PayFormActivity) getActivity();
 
                 Card srcCard = activity.getSourceCard();
-                CardData cardData = null;
+                CardData cardData;
 
                 if (srcCard == null) {
                     cardData = new CardData(ecvCard.getCardNumber(), ecvCard.getExpireDate(), ecvCard.getCvc());
@@ -220,6 +221,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
         if (customKeyboard != null && isUsingCustomKeyboard) {
             customKeyboard.attachToView(ecvCard);
+
+            Window window = getActivity().getWindow();
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
         }
     }
 
