@@ -61,14 +61,12 @@ import ru.tinkoff.acquiring.sdk.utils.CardValidator;
  */
 public class EditCardView extends ViewGroup {
 
-
-    private static final int CARD_SYSTEM_LOGO = 1;
-    private static final int FULL_CARD_NUMBER = 1 << 1;
-    private static final int SCAN_CARD_BUTTON = 1 << 2;
-    private static final int CHANGE_MODE_BUTTON = 1 << 3;
-    private static final int IN_ANIMATION = 1 << 4;
-    private static final int ONLY_NUMBER_STATE = 1 << 5;
-    private static final int SAVED_CARD_STATE = 1 << 6;
+    private static final int FLAG_CARD_SYSTEM_LOGO = 1;
+    private static final int FLAG_FULL_CARD_NUMBER = 1 << 1;
+    private static final int FLAG_SCAN_CARD_BUTTON = 1 << 2;
+    private static final int FLAG_CHANGE_MODE_BUTTON = 1 << 3;
+    private static final int FLAG_ONLY_NUMBER_STATE = 1 << 4;
+    private static final int FLAG_SAVED_CARD_STATE = 1 << 5;
 
     private static final int MIN_CARD_NUMBER_LENGTH = 4;
 
@@ -98,6 +96,8 @@ public class EditCardView extends ViewGroup {
     private float cardSystemLogoAnimationFactor = 1f;
 
     private CardFormatter cardFormatter;
+
+    private Animator pendingAnimation;
 
     private boolean buttonsAvailable = true;
 
@@ -135,14 +135,14 @@ public class EditCardView extends ViewGroup {
     }
 
     public boolean isFilledAndCorrect() {
-        if (check(SAVED_CARD_STATE)) {
+        if (check(FLAG_SAVED_CARD_STATE)) {
             return cardValidator.validateSecurityCode(etCvc.getText().toString());
         }
 
         boolean cardNumberReady = cardValidator.validateNumber(getCardNumber());
         if (!cardNumberReady)
             return false;
-        return check(ONLY_NUMBER_STATE) ||
+        return check(FLAG_ONLY_NUMBER_STATE) ||
                 (cardValidator.validateExpirationDate(etDate.getText().toString()) && cardValidator.validateSecurityCode(etCvc.getText().toString()));
     }
 
@@ -178,15 +178,15 @@ public class EditCardView extends ViewGroup {
             @Override
             public void run() {
                 String number = etCardNumber.getText().toString();
-                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(SAVED_CARD_STATE);
-                if (!isCorrect && check(CHANGE_MODE_BUTTON)) {
+                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE);
+                if (!isCorrect && check(FLAG_CHANGE_MODE_BUTTON)) {
                     hideChangeModeButton();
                 }
-                if (isCorrect && !cardFormatter.isLimited() && !check(SAVED_CARD_STATE)) {
+                if (isCorrect && !cardFormatter.isLimited() && !check(FLAG_SAVED_CARD_STATE)) {
                     showChangeModeButton();
                 }
                 etCardNumber.setTextColor(cardFormatter.isNeedToCheck(etCardNumber.length()) && !isCorrect ? Color.RED : textColor);
-                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(SAVED_CARD_STATE) ? Color.RED : textColor);
+                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) ? Color.RED : textColor);
                 etCvc.setTextColor(etCvc.length() == 3 && !cardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
                 actions.onUpdate(EditCardView.this);
             }
@@ -233,21 +233,21 @@ public class EditCardView extends ViewGroup {
                     populateCardNumber(formatted, before > count);
                     etCardNumber.addTextChangedListener(this);
                     String normalizedNumber = cardFormatter.getNormalizedNumber(number, " ");
-                    if (!check(IN_ANIMATION)) {
-                        boolean isFullCardMode = check(FULL_CARD_NUMBER);
+                    if (pendingAnimation == null) {
+                        boolean isFullCardMode = check(FLAG_FULL_CARD_NUMBER);
                         boolean isLimited = cardFormatter.isLimited();
 
                         if (isFullCardMode) {
-                            boolean isInReadyDataMode = check(SAVED_CARD_STATE);
-                            if (((isLimited && cardValidator.validateNumber(normalizedNumber)) || isInReadyDataMode) && !check(ONLY_NUMBER_STATE)) {
+                            boolean isInReadyDataMode = check(FLAG_SAVED_CARD_STATE);
+                            if (((isLimited && cardValidator.validateNumber(normalizedNumber)) || isInReadyDataMode) && !check(FLAG_ONLY_NUMBER_STATE)) {
                                 showCvcAndDate();
                             }
 
-                            if (check(SCAN_CARD_BUTTON) && normalizedNumber.length() > 15) {
+                            if (check(FLAG_SCAN_CARD_BUTTON) && normalizedNumber.length() > 15) {
                                 hideScanButton();
                             }
 
-                            if (!check(SCAN_CARD_BUTTON) && normalizedNumber.length() <= 15) {
+                            if (!check(FLAG_SCAN_CARD_BUTTON) && normalizedNumber.length() <= 15) {
                                 showScanButton();
                             }
                         }
@@ -257,12 +257,12 @@ public class EditCardView extends ViewGroup {
 
                 boolean noCardLogoCondition = number == null || number.length() < MIN_CARD_NUMBER_LENGTH;
 
-                if (noCardLogoCondition && check(CARD_SYSTEM_LOGO)) {
+                if (noCardLogoCondition && check(FLAG_CARD_SYSTEM_LOGO)) {
                     hideCardSystemLogo();
                     return;
                 }
 
-                if (!noCardLogoCondition && !check(CARD_SYSTEM_LOGO)) {
+                if (!noCardLogoCondition && !check(FLAG_CARD_SYSTEM_LOGO)) {
                     showCardSystemLogo();
                     return;
                 }
@@ -306,9 +306,9 @@ public class EditCardView extends ViewGroup {
         etCardNumber.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN && !check(FULL_CARD_NUMBER))
+                if (event.getAction() == MotionEvent.ACTION_DOWN && !check(FLAG_FULL_CARD_NUMBER))
                     return true;
-                if (event.getAction() == MotionEvent.ACTION_UP && !check(IN_ANIMATION) && !check(FULL_CARD_NUMBER) && !check(SAVED_CARD_STATE)) {
+                if (event.getAction() == MotionEvent.ACTION_UP && pendingAnimation == null && !check(FLAG_FULL_CARD_NUMBER) && !check(FLAG_SAVED_CARD_STATE)) {
                     hideCvcAndDate();
                 }
                 return false;
@@ -317,7 +317,7 @@ public class EditCardView extends ViewGroup {
         etCardNumber.setCustomOnFocusChangedListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && !check(IN_ANIMATION) && !check(FULL_CARD_NUMBER) && !check(SAVED_CARD_STATE)) {
+                if (hasFocus && pendingAnimation == null && !check(FLAG_FULL_CARD_NUMBER) && !check(FLAG_SAVED_CARD_STATE)) {
                     hideCvcAndDate();
                 }
             }
@@ -334,7 +334,7 @@ public class EditCardView extends ViewGroup {
                     return;
                 }
 
-                if (check(SAVED_CARD_STATE)) {
+                if (check(FLAG_SAVED_CARD_STATE)) {
                     return;
                 }
                 etDate.removeTextChangedListener(this);
@@ -424,10 +424,10 @@ public class EditCardView extends ViewGroup {
     }
 
     public void dispatchFocus() {
-        if (check(SAVED_CARD_STATE)) {
+        if (check(FLAG_SAVED_CARD_STATE)) {
             activate(etCvc);
         } else {
-            if (check(FULL_CARD_NUMBER)) {
+            if (check(FLAG_FULL_CARD_NUMBER)) {
                 activate(etCardNumber);
             } else if (etDate.length() == 5) {
                 activate(etCvc);
@@ -443,9 +443,9 @@ public class EditCardView extends ViewGroup {
 
     public void setFullCardNumberModeEnable(boolean enable) {
         if (enable) {
-            flags &= ~ONLY_NUMBER_STATE;
+            flags &= ~FLAG_ONLY_NUMBER_STATE;
         } else {
-            flags |= ONLY_NUMBER_STATE;
+            flags |= FLAG_ONLY_NUMBER_STATE;
         }
         requestLayout();
         invalidate();
@@ -454,7 +454,7 @@ public class EditCardView extends ViewGroup {
 
     public void setSavedCardState(boolean savedCardState) {
 
-        if (check(SAVED_CARD_STATE) == savedCardState) {
+        if (check(FLAG_SAVED_CARD_STATE) == savedCardState) {
             normalizeMode();
             return;
         }
@@ -463,7 +463,7 @@ public class EditCardView extends ViewGroup {
             setMode(false);
             hideChangeModeButton();
             hideScanButton();
-            flags |= SAVED_CARD_STATE;
+            flags |= FLAG_SAVED_CARD_STATE;
             etDate.setText(DATE_MASK);
             etCvc.setText("");
             etDate.setEnabled(false);
@@ -471,7 +471,7 @@ public class EditCardView extends ViewGroup {
         } else {
             setMode(true);
             showScanButton();
-            flags &= ~SAVED_CARD_STATE;
+            flags &= ~FLAG_SAVED_CARD_STATE;
             etDate.setEnabled(true);
             etCardNumber.setEnabled(true);
             etCardNumber.setMode(CardNumberEditText.FULL_MODE);
@@ -509,9 +509,9 @@ public class EditCardView extends ViewGroup {
 
     public void setCardNumber(String number) {
         if (number == null || number.length() == 0) {
-            flags &= ~CARD_SYSTEM_LOGO;
+            flags &= ~FLAG_CARD_SYSTEM_LOGO;
         } else {
-            flags |= CARD_SYSTEM_LOGO;
+            flags |= FLAG_CARD_SYSTEM_LOGO;
             cardSystemLogo = cardSystemIconsHolder == null ? null : cardSystemIconsHolder.getCardSystemBitmap(number);
         }
         String old = getCardNumber();
@@ -520,7 +520,7 @@ public class EditCardView extends ViewGroup {
         }
 
         etCardNumber.setText(number);
-        if (check(SAVED_CARD_STATE)) {
+        if (check(FLAG_SAVED_CARD_STATE)) {
             etCardNumber.setMode(CardNumberEditText.SHORT_MODE);
         }
         requestLayout();
@@ -533,6 +533,12 @@ public class EditCardView extends ViewGroup {
     }
 
     public void clear() {
+        if (pendingAnimation != null) {
+            clearPendingAnimations();
+        }
+        if (!check(FLAG_SCAN_CARD_BUTTON)) {
+            flags |= FLAG_SCAN_CARD_BUTTON;
+        }
         setMode(true);
         etCardNumber.setMode(CardNumberEditText.FULL_MODE);
         etCardNumber.setText("");
@@ -541,11 +547,17 @@ public class EditCardView extends ViewGroup {
         dispatchFocus();
     }
 
+    private void clearPendingAnimations() {
+        pendingAnimation.removeAllListeners();
+        pendingAnimation.end();
+        pendingAnimation.cancel();
+        pendingAnimation = null;
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        if (cardSystemIconsHolder != null && cardSystemLogo == null && check(CARD_SYSTEM_LOGO)) {
+        if (cardSystemIconsHolder != null && cardSystemLogo == null && check(FLAG_CARD_SYSTEM_LOGO)) {
             cardSystemLogo = cardSystemIconsHolder.getCardSystemBitmap(etCardNumber.getText().toString());
         }
 
@@ -553,20 +565,20 @@ public class EditCardView extends ViewGroup {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        boolean isFullCardNumberMode = check(FULL_CARD_NUMBER);
+        boolean isFullCardNumberMode = check(FLAG_FULL_CARD_NUMBER);
 
-        int logoWidth = check(CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
+        int logoWidth = check(FLAG_CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
 
         int additionalRightSpace = 0;
 
-        if (check(SCAN_CARD_BUTTON)) {
+        if (check(FLAG_SCAN_CARD_BUTTON)) {
             additionalRightSpace += calculateScanButtonWidth();
         }
-        if (check(CHANGE_MODE_BUTTON)) {
+        if (check(FLAG_CHANGE_MODE_BUTTON)) {
             additionalRightSpace += calculateChangeModeWidth();
         }
 
-        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(CARD_SYSTEM_LOGO) ? additionalPadding : 0) - (getPaddingRight() + getPaddingLeft());
+        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0) - (getPaddingRight() + getPaddingLeft());
 
         int contentsWidth = accessWidth / 3;
 
@@ -617,19 +629,19 @@ public class EditCardView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int logoWidth = check(CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
+        int logoWidth = check(FLAG_CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
         int t;
         int l = getPaddingLeft();
-        int startLabels = logoWidth + l + (check(CARD_SYSTEM_LOGO) ? additionalPadding : 0);
+        int startLabels = logoWidth + l + (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0);
         int w = getWidth() - getPaddingRight() - getPaddingLeft();
         int hh = (getHeight() - getPaddingTop() - getPaddingBottom()) >> 1;
 
         int additionalRightSpace = 0;
-        if (check(SCAN_CARD_BUTTON)) {
+        if (check(FLAG_SCAN_CARD_BUTTON)) {
             additionalRightSpace += calculateScanButtonWidth();
             btnScanCard.layoutIn(w - additionalRightSpace + (btnScanCard.getWidth() >> 1) + getPaddingLeft(), hh + getPaddingTop());
         }
-        if (check(CHANGE_MODE_BUTTON)) {
+        if (check(FLAG_CHANGE_MODE_BUTTON)) {
             additionalRightSpace += calculateChangeModeWidth();
             btnChangeMode.layoutIn(w - additionalRightSpace + (btnChangeMode.getWidth() >> 1) + getPaddingLeft(), hh + getPaddingTop());
         }
@@ -652,15 +664,15 @@ public class EditCardView extends ViewGroup {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (check(CARD_SYSTEM_LOGO) && cardSystemLogo != null) {
+        if (check(FLAG_CARD_SYSTEM_LOGO) && cardSystemLogo != null) {
             int yOffset = (getHeight() - cardSystemLogo.getHeight()) >> 1;
             int xOffset = additionalPadding >> 1;
             canvas.drawBitmap(cardSystemLogo, xOffset, yOffset, cardSystemLogoPaint);
         }
-        if (check(CHANGE_MODE_BUTTON)) {
+        if (check(FLAG_CHANGE_MODE_BUTTON)) {
             btnChangeMode.drawWithPaint(canvas, paint);
         }
-        if (check(SCAN_CARD_BUTTON)) {
+        if (check(FLAG_SCAN_CARD_BUTTON)) {
             btnScanCard.drawWithPaint(canvas, paint);
         }
 
@@ -672,11 +684,11 @@ public class EditCardView extends ViewGroup {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (check(CHANGE_MODE_BUTTON) && btnChangeMode.handleAction(event) && buttonsAvailable) {
+            if (check(FLAG_CHANGE_MODE_BUTTON) && btnChangeMode.handleAction(event) && buttonsAvailable) {
                 showCvcAndDate();
                 return true;
             }
-            if (check(SCAN_CARD_BUTTON) && btnScanCard.handleAction(event) && buttonsAvailable) {
+            if (check(FLAG_SCAN_CARD_BUTTON) && btnScanCard.handleAction(event) && buttonsAvailable) {
                 actions.onPressScanCard(this);
                 return true;
             }
@@ -687,15 +699,15 @@ public class EditCardView extends ViewGroup {
 
     public void setMode(boolean isFullNumber) {
         if (isFullNumber) {
-            flags |= FULL_CARD_NUMBER;
+            flags |= FLAG_FULL_CARD_NUMBER;
         } else {
-            flags &= ~FULL_CARD_NUMBER;
+            flags &= ~FLAG_FULL_CARD_NUMBER;
         }
         normalizeMode();
     }
 
     private void normalizeMode() {
-        if (check(FULL_CARD_NUMBER)) {
+        if (check(FLAG_FULL_CARD_NUMBER)) {
             etCvc.setVisibility(GONE);
             etDate.setVisibility(GONE);
         } else {
@@ -708,7 +720,7 @@ public class EditCardView extends ViewGroup {
 
     private void showCardSystemLogo() {
         cardSystemLogo = cardSystemIconsHolder.getCardSystemBitmap(etCardNumber.getText().toString());
-        flags |= CARD_SYSTEM_LOGO;
+        flags |= FLAG_CARD_SYSTEM_LOGO;
         cardSystemLogoPaint.setAlpha(0);
 
         ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, "alpha", 0, 255);
@@ -751,7 +763,7 @@ public class EditCardView extends ViewGroup {
         set.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                flags &= ~CARD_SYSTEM_LOGO;
+                flags &= ~FLAG_CARD_SYSTEM_LOGO;
                 requestLayout();
                 invalidate();
             }
@@ -803,11 +815,11 @@ public class EditCardView extends ViewGroup {
             @Override
             public void onAnimationEnd(Animator animation) {
                 setMode(false);
-                flags &= ~IN_ANIMATION;
+                pendingAnimation = null;
                 dispatchFocus();
             }
         });
-        flags |= IN_ANIMATION;
+        pendingAnimation = set;
         set.start();
 
     }
@@ -852,35 +864,34 @@ public class EditCardView extends ViewGroup {
         set.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                flags &= ~IN_ANIMATION;
+                pendingAnimation = null;
                 activate(etCardNumber);
                 showChangeModeButton();
             }
         });
-        flags |= IN_ANIMATION;
-
+        pendingAnimation = set;
         set.start();
     }
 
     private void showChangeModeButton() {
-        flags |= CHANGE_MODE_BUTTON;
+        flags |= FLAG_CHANGE_MODE_BUTTON;
         requestLayout();
     }
 
 
     private void hideChangeModeButton() {
-        flags &= ~CHANGE_MODE_BUTTON;
+        flags &= ~FLAG_CHANGE_MODE_BUTTON;
         requestLayout();
     }
 
     private void showScanButton() {
-        flags |= SCAN_CARD_BUTTON;
+        flags |= FLAG_SCAN_CARD_BUTTON;
         requestLayout();
     }
 
 
     private void hideScanButton() {
-        flags &= ~SCAN_CARD_BUTTON;
+        flags &= ~FLAG_SCAN_CARD_BUTTON;
         requestLayout();
     }
 
@@ -1240,7 +1251,7 @@ public class EditCardView extends ViewGroup {
         setBtnScanIcon(ss.scanResId);
         etCardNumber.animationFactor = ss.animationFactor;
         etCardNumber.setMode(ss.cardNumberMode);
-        boolean enableFields = !check(SAVED_CARD_STATE);
+        boolean enableFields = !check(FLAG_SAVED_CARD_STATE);
         etDate.setEnabled(enableFields);
         etCardNumber.setEnabled(enableFields);
         normalizeMode();

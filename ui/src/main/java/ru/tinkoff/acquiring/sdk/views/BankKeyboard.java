@@ -44,9 +44,9 @@ public class BankKeyboard extends FrameLayout implements
 
     public static final int ASCII_CODE_OF_ZERO = 48;
     public static final int KEYBOARD_SHOW_DELAY_MILLIS = 500;
-    public static final int KEYBOARD_ANIMATION_MILLIS = 300;
+    public static final int KEYBOARD_ANIMATION_MILLIS = 50;
     public static final int SYSTEM_KEYBOARD_HIDE_DELAY_MILLIS = 100;
-    public static final int CUSTOM_KEYBOARD_HIDE_DELAY_MILLIS = 100;
+    public static final int CUSTOM_KEYBOARD_HIDE_DELAY_MILLIS = 50;
 
     private boolean shouldHide;
 

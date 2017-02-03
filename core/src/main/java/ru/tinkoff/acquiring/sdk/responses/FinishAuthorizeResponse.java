@@ -52,7 +52,7 @@ final public class FinishAuthorizeResponse extends AcquiringResponse {
 
     public ThreeDsData getThreeDsData() {
         if (threeDsData == null) {
-            if (status == PaymentStatus.CONFIRMED) {
+            if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
                 threeDsData = ThreeDsData.EMPTY_THREE_DS_DATA;
             } else if (status == PaymentStatus.THREE_DS_CHECKING) {
                 threeDsData = new ThreeDsData(paymentId, orderId, amount, acsUrl, md, paReq);
