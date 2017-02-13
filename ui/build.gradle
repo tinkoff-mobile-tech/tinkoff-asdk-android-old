@@ -2,7 +2,6 @@ apply plugin: 'com.android.library'
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'io.card:android-sdk:5.2.0'
     compile 'com.github.devnied:bit-lib4j:1.4.10'
