@@ -19,8 +19,6 @@ package ru.tinkoff.acquiring.sdk;
 import android.app.Activity;
 import android.content.Intent;
 
-import java.security.PublicKey;
-
 /**
  * Вспомогательный класс для запуска экрана оплаты PayFormActivity
  *
@@ -58,7 +56,7 @@ public class PayFormStarter {
     public PayFormStarter prepare(String orderId, Long amount, boolean reccurentPayment) {
         intent = new Intent();
         intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
-        intent.putExtra(PayFormActivity.EXTRA_AMOUNT, amount);
+        intent.putExtra(PayFormActivity.EXTRA_AMOUNT, Money.ofRubles(amount));
         intent.putExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, reccurentPayment);
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
