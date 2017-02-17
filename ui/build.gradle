@@ -1,12 +1,15 @@
 apply plugin: 'com.android.library'
 
+def coreVersion = '3.0.13'
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'io.card:android-sdk:5.2.0'
     compile 'com.github.devnied:bit-lib4j:1.4.10'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'ru.tinkoff.core:core-nfc:3.0.1'
+    compile "ru.tinkoff.core:core-nfc:${coreVersion}"
+    compile "ru.tinkoff.core:core-log:${coreVersion}"
+    compile "ru.tinkoff.core:core-log-android:${coreVersion}"
 
     compile project(':core')
 }
@@ -23,7 +26,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
-        encoding 'windows-1251'
     }
 
     defaultConfig {
