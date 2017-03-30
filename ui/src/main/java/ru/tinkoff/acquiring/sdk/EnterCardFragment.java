@@ -382,6 +382,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             @Override
             public void run() {
                 PayFormActivity activity = (PayFormActivity) getActivity();
+                if (activity == null) {
+                    return;
+                }
                 Card[] cards = activity.getCards();
                 Card sourceCard = activity.getSourceCard();
                 boolean hasCard = sourceCard != null;
@@ -391,7 +394,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 if (hasCard) {
                     ecvCard.setCardNumber(sourceCard.getPan());
                 } else {
-                    Bundle bundle = ((FragmentsCommunicator.IFragmentManagerExtender) getActivity()).getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+                    Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
                     if (bundle != null) {
                         ecvCard.clear();
                     } else {
