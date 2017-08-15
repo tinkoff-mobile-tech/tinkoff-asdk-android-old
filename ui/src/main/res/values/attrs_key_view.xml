@@ -2,11 +2,13 @@
 <resources>
 
     <declare-styleable name="KeyView">
-        <attr name="keyText" format="string"/>
-        <attr name="keyImage" format="reference"/>
-        <attr name="keyCode" format="integer"/>
-        <attr name="keyTextSize" format="dimension"/>
-        <attr name="keyTextFontFamily" format="string"/>
+        <attr name="keyText" format="string" />
+        <attr name="keyImage" format="reference" />
+        <attr name="keyCode" format="integer" />
+        <attr name="keyTextSize" format="dimension" />
+        <attr name="keyTextFontFamily" format="string" />
+        <attr name="keyTextColor" format="color|reference" />
+        <attr name="keyCircleColor" format="color|reference" />
     </declare-styleable>
 
 </resources>

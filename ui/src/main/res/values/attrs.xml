@@ -10,6 +10,7 @@
     <attr name="acqItemsStyle" format="integer"/>
     <attr name="acqItemsDividerStyle" format="integer"/>
     <attr name="acqPriceLayoutStyle" format="integer"/>
+    <attr name="acqKeyboardStyle" format="integer"/>
     <attr name="acqViewDivider" format="dimension"/>
     <attr name="acqContentBlockDivider" format="dimension"/>
     <attr name="acqPayFormTitle" format="string"/>
