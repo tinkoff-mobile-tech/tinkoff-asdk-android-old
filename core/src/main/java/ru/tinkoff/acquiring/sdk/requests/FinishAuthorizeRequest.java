@@ -36,8 +36,8 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
     }
 
     @Override
-    public Map<String, String> asMap() {
-        final Map<String, String> map = super.asMap();
+    public Map<String, Object> asMap() {
+        final Map<String, Object> map = super.asMap();
 
         putIfNotNull(PAYMENT_ID, paymentId.toString(), map);
         putIfNotNull(SEND_EMAIL, sendEmail, map);

@@ -62,7 +62,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     static final String EXTRA_E_MAIL = "email";
     static final String EXTRA_CUSTOM_KEYBOARD = "keyboard";
     static final String EXTRA_CUSTOMER_KEY = "customer_key";
-    static final String EXTRA_RECURENT_PAYMENT = "reccurent_payment";
+    static final String EXTRA_RECURRENT_PAYMENT = "recurrent_payment";
     static final String EXTRA_PAYMENT_ID = "payment_id";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;

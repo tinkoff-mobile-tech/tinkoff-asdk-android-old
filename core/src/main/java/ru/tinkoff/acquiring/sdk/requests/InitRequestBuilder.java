@@ -16,7 +16,10 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import java.util.Map;
+
 import ru.tinkoff.acquiring.sdk.PayType;
+import ru.tinkoff.acquiring.sdk.Receipt;
 
 /**
  * @author Mikhail Artemyev
@@ -54,8 +57,8 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
         return this;
     }
 
-    public InitRequestBuilder setReccurent(final boolean value) {
-        request.setReccurent(value);
+    public InitRequestBuilder setRecurrent(final boolean value) {
+        request.setRecurrent(value);
         return this;
     }
 
@@ -66,6 +69,26 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
 
     public InitRequestBuilder setPayType(PayType payType) {
         request.setPayType(payType.toString());
+        return this;
+    }
+
+    public InitRequestBuilder setReceipt(Receipt receipt){
+        request.setReceipt(receipt);
+        return this;
+    }
+
+    public InitRequestBuilder setReceipt(String receipt){
+        request.setReceipt(receipt);
+        return this;
+    }
+
+    public InitRequestBuilder setData(Map<String, String> data){
+        request.setData(data);
+        return this;
+    }
+
+    public InitRequestBuilder setData(String data){
+        request.setData(data);
         return this;
     }
 

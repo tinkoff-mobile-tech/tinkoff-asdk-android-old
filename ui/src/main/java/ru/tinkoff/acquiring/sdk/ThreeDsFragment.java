@@ -62,7 +62,7 @@ public class ThreeDsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         sdk = ((PayFormActivity) getActivity()).getSdk();
         String url = data.getAcsUrl();
-        termUrl = sdk.getUrl() + SUBMIT_3DS_AUTHORIZATION;
+        termUrl = sdk.getUrl(SUBMIT_3DS_AUTHORIZATION) + SUBMIT_3DS_AUTHORIZATION;
         try {
             String params = new StringBuilder()
                     .append("PaReq=").append(URLEncoder.encode(data.getPaReq(), "UTF-8"))

@@ -153,7 +153,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         final String orderId = intent.getStringExtra(PayFormActivity.EXTRA_ORDER_ID);
         final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
-        final boolean reccurentPayment = intent.getBooleanExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, false);
+        final boolean recurrentPayment = intent.getBooleanExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, false);
 
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,7 +183,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 activity.showProgressDialog();
 
                 initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail,
-                        reccurentPayment, resolveLanguage());
+                        recurrentPayment, resolveLanguage());
             }
         });
     }
@@ -331,7 +331,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                                     final Money amount,
                                     final CardData cardData,
                                     final String email,
-                                    final boolean reccurentPayment,
+                                    final boolean recurrentPayment,
                                     final Language language) {
 
         new Thread(new Runnable() {
@@ -347,9 +347,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                     }
                     Long paymentId;
                     if (language == null) {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment);
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, recurrentPayment);
                     } else {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, reccurentPayment, language);
+                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, recurrentPayment, language);
                     }
 
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();

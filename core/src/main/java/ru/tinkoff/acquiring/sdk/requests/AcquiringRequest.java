@@ -43,6 +43,8 @@ public class AcquiringRequest {
     public static final String CARD_ID = "CardId";
     public static final String CVV = "CVV";
     public static final String PAY_TYPE = "PayType";
+    public static final String RECEIPT = "Receipt";
+    public static final String DATA = "DATA";
 
     public static final String DATA_KEY_EMAIL = "Email";
 
@@ -54,8 +56,8 @@ public class AcquiringRequest {
         this.apiMethod = apiMethod;
     }
 
-    public Map<String, String> asMap() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
 
         putIfNotNull(TERMINAL_KEY, terminalKey, map);
         putIfNotNull(TOKEN, token, map);
@@ -87,7 +89,7 @@ public class AcquiringRequest {
         return apiMethod;
     }
 
-    protected void putIfNotNull(final String key, final String value, final Map<String, String> map) {
+    protected void putIfNotNull(final String key, final String value, final Map<String, Object> map) {
         if (key == null || value == null || map == null) {
             return;
         }

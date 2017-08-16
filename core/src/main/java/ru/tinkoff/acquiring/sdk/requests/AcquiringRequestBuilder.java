@@ -77,7 +77,7 @@ abstract class AcquiringRequestBuilder<R extends AcquiringRequest> {
 
     private String makeToken() {
         AcquiringRequest request = getRequest();
-        Map<String, String> parameters = request.asMap();
+        Map<String, Object> parameters = request.asMap();
 
         parameters.remove(AcquiringRequest.TOKEN);
         parameters.put(PASSWORD_KEY, password);

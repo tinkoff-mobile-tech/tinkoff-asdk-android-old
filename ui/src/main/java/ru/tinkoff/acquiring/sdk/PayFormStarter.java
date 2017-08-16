@@ -37,7 +37,7 @@ public class PayFormStarter {
         this.publicKey = publicKey;
     }
 
-    public PayFormStarter prepare(String orderId, Money amount, String title, String description, String cardId, String email, boolean reccurentPayment, boolean customKeyboard) {
+    public PayFormStarter prepare(String orderId, Money amount, String title, String description, String cardId, String email, boolean recurrentPayment, boolean customKeyboard) {
         intent = new Intent();
         intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
         intent.putExtra(PayFormActivity.EXTRA_AMOUNT, amount);
@@ -46,18 +46,18 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_CARD_ID, cardId);
         intent.putExtra(PayFormActivity.EXTRA_E_MAIL, email);
         intent.putExtra(PayFormActivity.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
-        intent.putExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, reccurentPayment);
+        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
         return this;
     }
 
-    public PayFormStarter prepare(String orderId, Long amount, boolean reccurentPayment) {
+    public PayFormStarter prepare(String orderId, Long amount, boolean recurrentPayment) {
         intent = new Intent();
         intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
         intent.putExtra(PayFormActivity.EXTRA_AMOUNT, Money.ofRubles(amount));
-        intent.putExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, reccurentPayment);
+        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);

@@ -18,6 +18,8 @@ package ru.tinkoff.acquiring.sdk.requests;
 
 import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.Receipt;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -28,26 +30,34 @@ final public class InitRequest extends AcquiringRequest {
     private String customerKey;
     private String description;
     private String payForm;
-    private String reccurent;
+    private String recurrent;
     private String language;
     private String payType;
+
+    private Receipt receiptValue;
+    private String receiptString;
+
+    private Map<String, String> dataValue;
+    private String dataString;
 
     public InitRequest() {
         super("Init");
     }
 
     @Override
-    public Map<String, String> asMap() {
-        final Map<String, String> map = super.asMap();
+    public Map<String, Object> asMap() {
+        final Map<String, Object> map = super.asMap();
 
         putIfNotNull(AMOUNT, amount.toString(), map);
         putIfNotNull(ORDER_ID, orderId, map);
         putIfNotNull(CUSTOMER_KEY, customerKey, map);
         putIfNotNull(DESCRIPTION, description, map);
         putIfNotNull(PAY_FORM, payForm, map);
-        putIfNotNull(RECURRENT, reccurent, map);
+        putIfNotNull(RECURRENT, recurrent, map);
         putIfNotNull(LANGUAGE, language, map);
         putIfNotNull(PAY_TYPE, payType, map);
+        putReceiptIfNotNull(map);
+        putDataIfNotNull(map);
 
         return map;
     }
@@ -92,27 +102,75 @@ final public class InitRequest extends AcquiringRequest {
         this.payForm = payForm;
     }
 
-    public boolean isReccurent() {
-        return "Y".equals(reccurent);
+    public boolean getRecurrent() {
+        return "Y".equals(recurrent);
     }
 
-    void setReccurent(boolean reccurent) {
-        this.reccurent = reccurent ? "Y" : null;
-    }
-
-    void setLanguage(String language) {
-        this.language = language;
+    void setRecurrent(boolean recurrent) {
+        this.recurrent = recurrent ? "Y" : null;
     }
 
     public String getLanguage() {
         return language;
     }
 
+    void setLanguage(String language) {
+        this.language = language;
+    }
+
     public String getPayType() {
         return payType;
     }
 
-    public void setPayType(String payType) {
+    void setPayType(String payType) {
         this.payType = payType;
+    }
+
+    public Receipt getReceiptValue() {
+        return receiptValue;
+    }
+
+    void setReceipt(Receipt receiptValue) {
+        this.receiptValue = receiptValue;
+    }
+
+    public String getReceiptString() {
+        return receiptString;
+    }
+
+    void setReceipt(String receiptString) {
+        this.receiptString = receiptString;
+    }
+
+    public Map<String, String> getDataValue() {
+        return dataValue;
+    }
+
+    void setData(Map<String, String> dataValue) {
+        this.dataValue = dataValue;
+    }
+
+    public String getDataString() {
+        return dataString;
+    }
+
+    void setData(String dataString) {
+        this.dataString = dataString;
+    }
+
+    private void putReceiptIfNotNull(Map<String, Object> map) {
+        if (receiptValue != null) {
+            map.put(RECEIPT, receiptValue);
+        } else if (receiptString != null) {
+            map.put(RECEIPT, receiptString);
+        }
+    }
+
+    private void putDataIfNotNull(Map<String, Object> map) {
+        if (dataValue != null) {
+            map.put(DATA, dataValue);
+        } else if (dataString != null) {
+            map.put(DATA, dataString);
+        }
     }
 }

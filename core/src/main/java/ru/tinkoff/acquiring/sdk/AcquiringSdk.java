@@ -134,7 +134,7 @@ public class AcquiringSdk extends Journal {
                 .setCustomerKey(customerKey)
                 .setDescription(description)
                 .setPayForm(payFormTitle)
-                .setReccurent(recurrent);
+                .setRecurrent(recurrent);
 
         if (language != null) {
             initRequestBuilder.setLanguage(language.toString());
@@ -289,8 +289,8 @@ public class AcquiringSdk extends Journal {
     /**
      * @return Возвращает URL адрес API
      */
-    public String getUrl() {
-        return AcquiringApi.getUrl();
+    public String getUrl(String apiMethod) {
+        return AcquiringApi.getUrl(apiMethod);
     }
 
 }
