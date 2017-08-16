@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Sdk</string>
 
     <string name="acq_new_card_label">New card</string>
     <string name="acq_saved_card_label">Linked card</string>

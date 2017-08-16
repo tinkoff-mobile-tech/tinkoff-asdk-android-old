@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sdk</string>
 
     <string name="acq_new_card_label">Новая карта</string>
     <string name="acq_saved_card_label">Сохраненная карта</string>
