@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Mikhail Artemyev
  */
 final public class GetCardListRequest extends AcquiringRequest {
+
     private String customerKey;
 
     public GetCardListRequest() {

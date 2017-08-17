@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Mikhail Artemyev
  */
 final public class ChargeRequest extends AcquiringRequest {
+
     private Long paymentId;
     private Long rebillId;
 

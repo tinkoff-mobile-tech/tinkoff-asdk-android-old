@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Mikhail Artemyev
  */
 final public class RemoveCardRequest extends AcquiringRequest {
+
     private String cardId;
     private String customerKey;
 

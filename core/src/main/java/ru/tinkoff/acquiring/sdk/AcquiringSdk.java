@@ -25,7 +25,7 @@ import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
-import ru.tinkoff.acquiring.sdk.requests.GetstateRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.GetStateRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
@@ -194,7 +194,7 @@ public class AcquiringSdk extends Journal {
      * @return статус платежа
      */
     public PaymentStatus getState(final long paymentId) {
-        final GetStateRequest request = new GetstateRequestBuilder(password, terminalKey)
+        final GetStateRequest request = new GetStateRequestBuilder(password, terminalKey)
                 .setPaymentId(paymentId)
                 .build();
 
@@ -226,7 +226,7 @@ public class AcquiringSdk extends Journal {
     }
 
     /**
-     * @return Возвращает URL адрес API
+     * @return Возвращает URL адрес API, в зависимости от названия метода
      */
     public String getUrl(String apiMethod) {
         return AcquiringApi.getUrl(apiMethod);

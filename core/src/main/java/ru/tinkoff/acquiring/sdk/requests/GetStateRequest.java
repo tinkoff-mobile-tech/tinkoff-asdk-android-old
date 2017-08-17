@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Mikhail Artemyev
  */
 final public class GetStateRequest extends AcquiringRequest {
+
     private Long paymentId;
 
     public GetStateRequest() {

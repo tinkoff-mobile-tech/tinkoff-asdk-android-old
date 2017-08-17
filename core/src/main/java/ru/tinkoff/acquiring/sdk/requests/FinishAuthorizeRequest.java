@@ -24,6 +24,7 @@ import java.util.Set;
  * @author Mikhail Artemyev
  */
 final public class FinishAuthorizeRequest extends AcquiringRequest {
+
     private Long paymentId;
     private String sendEmail;
     private String cardData;

@@ -23,15 +23,27 @@ final public class ChargeRequestBuilder extends AcquiringRequestBuilder<ChargeRe
 
     private ChargeRequest request = new ChargeRequest();
 
+    /**
+     * Билдер для запроса Charge
+     *
+     * @param password    Пароль. Выдается банком на каждый магазин.
+     * @param terminalKey Уникальный идентификатор терминала. Выдается банком на каждый магазин.
+     */
     public ChargeRequestBuilder(final String password, final String terminalKey) {
         super(password, terminalKey);
     }
 
+    /**
+     * @param value Уникальный идентификатор транзакции в системе Банка, полученный в ответе на вызов метода Init
+     */
     public ChargeRequestBuilder setPaymentId(final Long value) {
         request.setPaymentId(value);
         return this;
     }
 
+    /**
+     * @param value Идентификатор рекуррентного платежа (см. параметр Recurrent в методе Init) {@link InitRequestBuilder#setRecurrent(boolean)}
+     */
     public ChargeRequestBuilder setRebillId(final Long value) {
         request.setRebillId(value);
         return this;
