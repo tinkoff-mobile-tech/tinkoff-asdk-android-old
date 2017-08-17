@@ -42,11 +42,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
 import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
+import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
@@ -135,7 +137,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         super.onActivityCreated(savedInstanceState);
         sdk = ((PayFormActivity) getActivity()).getSdk();
 
-        Intent intent = getActivity().getIntent();
+        final Intent intent = getActivity().getIntent();
 
         final String email = intent.getStringExtra(PayFormActivity.EXTRA_E_MAIL);
         if (email != null) {
@@ -151,10 +153,6 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
         tvAmount.setText(amount != null ? amount.toHumanReadableString() : null);
 
-        final String orderId = intent.getStringExtra(PayFormActivity.EXTRA_ORDER_ID);
-        final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
-        final boolean recurrentPayment = intent.getBooleanExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, false);
-
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,24 +164,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 if (!validateInput(enteredEmail)) {
                     return;
                 }
-
                 final PayFormActivity activity = (PayFormActivity) getActivity();
-
-                Card srcCard = activity.getSourceCard();
-                CardData cardData;
-
-                if (srcCard == null) {
-                    cardData = new CardData(ecvCard.getCardNumber(), ecvCard.getExpireDate(), ecvCard.getCvc());
-                } else {
-                    String cardId = srcCard.getCardId();
-                    String cvc = ecvCard.getCvc();
-                    cardData = new CardData(cardId, cvc);
-                }
-
+                final CardData cardData = getCardData(activity);
                 activity.showProgressDialog();
 
-                initPayment(sdk, orderId, customerKey, title, amount, cardData, enteredEmail,
-                        recurrentPayment, resolveLanguage());
+                InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
+                initPayment(sdk, requestBuilder, cardData, enteredEmail);
             }
         });
     }
@@ -213,6 +199,67 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
 
         return true;
+    }
+
+    private InitRequestBuilder createInitRequestBuilder(Intent intent) {
+        final String password = intent.getStringExtra(PayFormActivity.EXTRA_PASSWORD);
+        final String terminalKey = intent.getStringExtra(PayFormActivity.EXTRA_TERMINAL_KEY);
+
+        final InitRequestBuilder builder = new InitRequestBuilder(password, terminalKey);
+
+        final String orderId = intent.getStringExtra(PayFormActivity.EXTRA_ORDER_ID);
+        final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
+        String title = intent.getStringExtra(PayFormActivity.EXTRA_TITLE);
+        if (title != null && title.length() > PAY_FORM_MAX_LENGTH) {
+            title = title.substring(0, PAY_FORM_MAX_LENGTH);
+        }
+        final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
+        final boolean recurrentPayment = intent.getBooleanExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, false);
+
+        builder.setOrderId(orderId)
+                .setCustomerKey(customerKey)
+                .setPayForm(title)
+                .setAmount(amount.getCoins())
+                .setRecurrent(recurrentPayment);
+
+        final Language language = resolveLanguage();
+        if (language != null) {
+            builder.setLanguage(language.toString());
+        }
+
+        final Receipt receiptValue = (Receipt) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPT_VALUE);
+        if (receiptValue != null) {
+            builder.setReceipt(receiptValue);
+        } else {
+            final String receiptString = intent.getStringExtra(PayFormActivity.EXTRA_RECEIPT_STRING);
+            if (receiptString != null) {
+                builder.setReceipt(receiptString);
+            }
+        }
+
+        final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(PayFormActivity.EXTRA_DATA_VALUE);
+        if (dataValue != null) {
+            builder.setData(dataValue);
+        } else {
+            final String dataString = intent.getStringExtra(PayFormActivity.EXTRA_DATA_STRING);
+            if (dataString != null) {
+                builder.setReceipt(dataString);
+            }
+        }
+
+        return builder;
+    }
+
+    private CardData getCardData(PayFormActivity activity) {
+        final Card card = activity.getSourceCard();
+
+        if (card == null) {
+            return new CardData(ecvCard.getCardNumber(), ecvCard.getExpireDate(), ecvCard.getCvc());
+        } else {
+            String cardId = card.getCardId();
+            String cvc = ecvCard.getCvc();
+            return new CardData(cardId, cvc);
+        }
     }
 
     @Override
@@ -325,33 +372,15 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     }
 
     private static void initPayment(final AcquiringSdk sdk,
-                                    final String orderId,
-                                    final String customerKey,
-                                    final String payFormTitle,
-                                    final Money amount,
+                                    final InitRequestBuilder requestBuilder,
                                     final CardData cardData,
-                                    final String email,
-                                    final boolean recurrentPayment,
-                                    final Language language) {
+                                    final String email) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-
-                    String payForm;
-                    if (payFormTitle != null && payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
-                        payForm = payFormTitle.substring(0, PAY_FORM_MAX_LENGTH);
-                    } else {
-                        payForm = payFormTitle;
-                    }
-                    Long paymentId;
-                    if (language == null) {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, recurrentPayment);
-                    } else {
-                        paymentId = sdk.init(amount, orderId, customerKey, null, payForm, recurrentPayment, language);
-                    }
-
+                    final Long paymentId = sdk.init(requestBuilder);
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);

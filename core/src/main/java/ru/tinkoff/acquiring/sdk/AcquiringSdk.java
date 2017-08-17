@@ -103,73 +103,12 @@ public class AcquiringSdk extends Journal {
     /**
      * Инициирует платежную сессию
      *
-     * @param amount       сумма в копейках
-     * @param orderId      номер заказа в системе Продавца
-     * @param customerKey  идентификатор покупателя в системе Продавца. Если передается и Банком
-     *                     разрешена автоматическая привязка карт к терминалу, то для данного
-     *                     покупателя будет осуществлена привязка карты
-     * @param description  краткое описание
-     * @param payFormTitle название шаблона формы оплаты продавца, не больше 20 символов
-     * @param recurrent    регистрирует платеж как рекуррентный
-     * @param language     язык для локализации
-     * @param payType      тип платежа, одностадийный или двухстадийный
+     * @param builder       Билдер связанный с запросом Init
      * @return уникальный идентификатор транзакции в системе Банка
      */
-    public Long init(final Money amount,
-                     final String orderId,
-                     final String customerKey,
-                     final String description,
-                     final String payFormTitle,
-                     final boolean recurrent,
-                     final Language language,
-                     final PayType payType) {
-
-        if (payFormTitle.length() > PAY_FORM_MAX_LENGTH) {
-            throw new IllegalArgumentException("Argument payFormTitle length should be 20 symbols or less");
-        }
-
-        InitRequestBuilder initRequestBuilder = new InitRequestBuilder(password, terminalKey)
-                .setAmount(amount.getCoins())
-                .setOrderId(orderId)
-                .setCustomerKey(customerKey)
-                .setDescription(description)
-                .setPayForm(payFormTitle)
-                .setRecurrent(recurrent);
-
-        if (language != null) {
-            initRequestBuilder.setLanguage(language.toString());
-        }
-
-        if (payType != null) {
-            initRequestBuilder.setPayType(payType);
-        }
-
-        InitRequest request = initRequestBuilder.build();
-
-        try {
-            return api.init(request).getPaymentId();
-        } catch (AcquiringApiException | NetworkException e) {
-            throw new AcquiringSdkException(e);
-        }
-    }
-
-    public Long init(final Money amount,
-                     final String orderId,
-                     final String customerKey,
-                     final String description,
-                     final String payFormTitle,
-                     final boolean recurrent,
-                     final Language language) {
-        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, language, null);
-    }
-
-    public Long init(final Money amount,
-                     final String orderId,
-                     final String customerKey,
-                     final String description,
-                     final String payFormTitle,
-                     final boolean recurrent) {
-        return init(amount, orderId, customerKey, description, payFormTitle, recurrent, null, null);
+    public Long init(InitRequestBuilder builder) {
+        InitRequest request = builder.build();
+        return executeInitRequest(request);
     }
 
     /**
@@ -291,6 +230,14 @@ public class AcquiringSdk extends Journal {
      */
     public String getUrl(String apiMethod) {
         return AcquiringApi.getUrl(apiMethod);
+    }
+
+    private Long executeInitRequest(InitRequest request) {
+        try {
+            return api.init(request).getPaymentId();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
     }
 
 }

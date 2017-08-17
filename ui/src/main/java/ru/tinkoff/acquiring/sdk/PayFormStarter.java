@@ -19,6 +19,8 @@ package ru.tinkoff.acquiring.sdk;
 import android.app.Activity;
 import android.content.Intent;
 
+import java.util.HashMap;
+
 /**
  * Вспомогательный класс для запуска экрана оплаты PayFormActivity
  *
@@ -69,6 +71,26 @@ public class PayFormStarter {
             throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) before setCustomerKey");
         }
         intent.putExtra(PayFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
+        return this;
+    }
+
+    public PayFormStarter setReceipt(Receipt receipt) {
+        intent.putExtra(PayFormActivity.EXTRA_RECEIPT_VALUE, receipt);
+        return this;
+    }
+
+    public PayFormStarter setReceipt(String receipt) {
+        intent.putExtra(PayFormActivity.EXTRA_RECEIPT_STRING, receipt);
+        return this;
+    }
+
+    public PayFormStarter setData(HashMap<String, String> data) {
+        intent.putExtra(PayFormActivity.EXTRA_DATA_VALUE, data);
+        return this;
+    }
+
+    public PayFormStarter setData(String data) {
+        intent.putExtra(PayFormActivity.EXTRA_DATA_STRING, data);
         return this;
     }
 
