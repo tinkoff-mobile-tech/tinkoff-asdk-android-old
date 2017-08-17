@@ -52,6 +52,21 @@ PayFormActivity
 
 ```
 
+Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_:
+
+```java
+PayFormActivity
+        .init("TERMINAL_KEY", "PASSWORD", "PUBLIC_KEY") // данные продавца
+        .prepare(//TODO params)
+        .setCustomerKey("CUSTOMER_KEY")     // уникальный ID пользователя для сохранения данных его карты
+        .setReceipt(receipt)
+        .setData(dataMap)
+        .startActivityForResult(this, REQUEST_CODE_PAYMENT);
+
+```
+
+Данные объекты при их наличии будут переданы на сервер с помощью метода [**API Init**][init-documentation], где можно посмотреть детальное описание объекта Receipt
+
 [1] _Рекуррентный платеж_ может производиться для дальнейшего списания средств с сохраненной карты, без ввода ее реквизитов. Эта возможность, например, может использоваться для осуществления платежей по подписке.
 
 [2] _Безопасная клавиатура_ используется вместо системной и обеспечивает дополнительную безопасность ввода, т.к. сторонние клавиатуры на устройстве клиента могут перехватывать данные и отправлять их злоумышленнику.
@@ -95,5 +110,6 @@ SDK состоит из следующих модулей:
 [payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
 [sdk-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/AcquiringSdk.html
 [javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
-
 [img-pay]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/res/pay2.png
+[receipt-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
+[init-documentation]: https://oplata.tinkoff.ru/landing/develop/documentation/cmp/Init
