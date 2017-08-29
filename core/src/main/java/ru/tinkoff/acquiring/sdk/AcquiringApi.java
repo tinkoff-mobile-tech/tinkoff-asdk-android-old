@@ -62,7 +62,7 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "GetCardList", "GetState", "Init"};
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
     static String getUrl(String apiMethod) {
