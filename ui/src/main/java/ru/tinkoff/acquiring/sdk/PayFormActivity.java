@@ -228,10 +228,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     void startChooseCard() {
-        Fragment fragment = new CardListFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(CardListFragment.EXTRA_CUSTOMER_KEY, getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
-        fragment.setArguments(bundle);
+        Fragment fragment = CardListFragment.newInstance(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY), chargeMode);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .addToBackStack("choose_card")
