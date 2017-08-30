@@ -144,7 +144,6 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             ecvCard.setEnabled(false);
             ecvCard.setFocusable(false);
             ecvCard.setFullCardNumberModeEnable(false);
-            ecvCard.setRecurrentPaymentMode(true);
             ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
         }
 
@@ -438,6 +437,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 tvSrcCardLabel.setText(hasCard ? R.string.acq_saved_card_label : R.string.acq_new_card_label);
                 if (chargeMode) {
                     if (hasCard) {
+                        ecvCard.setRecurrentPaymentMode(true);
                         ecvCard.setCardNumber(sourceCard.getPan());
                     }
                     hideSoftKeyboard();
