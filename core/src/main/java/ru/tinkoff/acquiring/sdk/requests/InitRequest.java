@@ -16,6 +16,7 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.Receipt;
@@ -33,12 +34,9 @@ final public class InitRequest extends AcquiringRequest {
     private String recurrent;
     private String language;
     private String payType;
-
-    private Receipt receiptValue;
-    private String receiptString;
-
-    private Map<String, String> dataValue;
-    private String dataString;
+    private Receipt receipt;
+    private Map<String, String> data;
+    private boolean chargeFlag;
 
     public InitRequest() {
         super("Init");
@@ -56,8 +54,8 @@ final public class InitRequest extends AcquiringRequest {
         putIfNotNull(RECURRENT, recurrent, map);
         putIfNotNull(LANGUAGE, language, map);
         putIfNotNull(PAY_TYPE, payType, map);
-        putReceiptIfNotNull(map);
-        putDataIfNotNull(map);
+        putIfNotNull(RECEIPT, receipt, map);
+        putDataIfNonNull(map);
 
         return map;
     }
@@ -126,51 +124,37 @@ final public class InitRequest extends AcquiringRequest {
         this.payType = payType;
     }
 
-    public Receipt getReceiptValue() {
-        return receiptValue;
+    public Receipt getReceipt() {
+        return receipt;
     }
 
     void setReceipt(Receipt receiptValue) {
-        this.receiptValue = receiptValue;
+        this.receipt = receiptValue;
     }
 
-    public String getReceiptString() {
-        return receiptString;
-    }
-
-    void setReceipt(String receiptString) {
-        this.receiptString = receiptString;
-    }
-
-    public Map<String, String> getDataValue() {
-        return dataValue;
+    public Map<String, String> getData() {
+        return data;
     }
 
     void setData(Map<String, String> dataValue) {
-        this.dataValue = dataValue;
+        this.data = dataValue;
     }
 
-    public String getDataString() {
-        return dataString;
+    public boolean isChargeFlag() {
+        return chargeFlag;
     }
 
-    void setData(String dataString) {
-        this.dataString = dataString;
+    void setChargeFlag(boolean chargeFlag) {
+        this.chargeFlag = chargeFlag;
     }
 
-    private void putReceiptIfNotNull(Map<String, Object> map) {
-        if (receiptValue != null) {
-            map.put(RECEIPT, receiptValue);
-        } else if (receiptString != null) {
-            map.put(RECEIPT, receiptString);
-        }
-    }
-
-    private void putDataIfNotNull(Map<String, Object> map) {
-        if (dataValue != null) {
-            map.put(DATA, dataValue);
-        } else if (dataString != null) {
-            map.put(DATA, dataString);
-        }
+    private void putDataIfNonNull(Map<String, Object> map) {
+        //TODO раскоментить после проверки API
+        //HashMap<String, String> dataMap = new HashMap<>();
+        //if (data != null) {
+        //    dataMap.putAll(data);
+        //}
+        //dataMap.put(CHARGE_FLAG, Boolean.toString(chargeFlag));
+        //map.put(DATA, dataMap);
     }
 }

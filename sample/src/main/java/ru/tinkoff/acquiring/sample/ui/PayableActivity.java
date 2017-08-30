@@ -120,6 +120,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         isCustomKeyboardEnabled
                 )
                 .setCustomerKey(SessionInfo.CUSTOMER_KEY)
+                .setChargeMode(sharedPreferences.getBoolean(getString(R.string.acq_sp_recurrent_payment), false))
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 

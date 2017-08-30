@@ -82,6 +82,16 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     private BankKeyboard customKeyboard;
 
+    private boolean chargeMode;
+
+    public static EnterCardFragment newInstance(boolean chargeMode) {
+        Bundle args = new Bundle();
+        args.putBoolean(PayFormActivity.EXTRA_CHARGE_MODE, chargeMode);
+        EnterCardFragment fragment = new EnterCardFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,6 +138,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         });
 
         srcCardChooser.setVisibility(View.GONE);
+
+        chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
 
         return view;
     }
@@ -230,21 +242,11 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         final Receipt receiptValue = (Receipt) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPT_VALUE);
         if (receiptValue != null) {
             builder.setReceipt(receiptValue);
-        } else {
-            final String receiptString = intent.getStringExtra(PayFormActivity.EXTRA_RECEIPT_STRING);
-            if (receiptString != null) {
-                builder.setReceipt(receiptString);
-            }
         }
 
         final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(PayFormActivity.EXTRA_DATA_VALUE);
         if (dataValue != null) {
             builder.setData(dataValue);
-        } else {
-            final String dataString = intent.getStringExtra(PayFormActivity.EXTRA_DATA_STRING);
-            if (dataString != null) {
-                builder.setReceipt(dataString);
-            }
         }
 
         return builder;
@@ -253,7 +255,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private CardData getCardData(PayFormActivity activity) {
         final Card card = activity.getSourceCard();
 
-        if (card == null) {
+        if (chargeMode) {
+            return new CardData(card.getRebillId());
+        } else if (card == null) {
             return new CardData(ecvCard.getCardNumber(), ecvCard.getExpireDate(), ecvCard.getCvc());
         } else {
             String cardId = card.getCardId();
@@ -371,22 +375,28 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private static void initPayment(final AcquiringSdk sdk,
-                                    final InitRequestBuilder requestBuilder,
-                                    final CardData cardData,
-                                    final String email) {
+    private void initPayment(final AcquiringSdk sdk,
+                             final InitRequestBuilder requestBuilder,
+                             final CardData cardData,
+                             final String email) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    requestBuilder.setChargeFlag(chargeMode);
                     final Long paymentId = sdk.init(requestBuilder);
                     PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
-                    final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
-                    if (threeDsData.isThreeDsNeed()) {
-                        PayFormActivity.handler.obtainMessage(SdkHandler.START_3DS, threeDsData).sendToTarget();
+                    if (!chargeMode) {
+                        final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
+                        if (threeDsData.isThreeDsNeed()) {
+                            PayFormActivity.handler.obtainMessage(SdkHandler.START_3DS, threeDsData).sendToTarget();
+                        } else {
+                            PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                        }
                     } else {
+                        PaymentInfo paymentInfo = sdk.charge(paymentId, cardData.getRebillId());
                         PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
                     }
                 } catch (Exception e) {

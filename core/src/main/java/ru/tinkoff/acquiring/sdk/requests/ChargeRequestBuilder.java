@@ -44,7 +44,7 @@ final public class ChargeRequestBuilder extends AcquiringRequestBuilder<ChargeRe
     /**
      * @param value Идентификатор рекуррентного платежа (см. параметр Recurrent в методе Init) {@link InitRequestBuilder#setRecurrent(boolean)}
      */
-    public ChargeRequestBuilder setRebillId(final Long value) {
+    public ChargeRequestBuilder setRebillId(final String value) {
         request.setRebillId(value);
         return this;
     }
@@ -52,7 +52,7 @@ final public class ChargeRequestBuilder extends AcquiringRequestBuilder<ChargeRe
     @Override
     protected void validate() {
         validateZeroOrPositive(request.getPaymentId(), "Payment ID");
-        validateZeroOrPositive(request.getRebillId(), "Rebill ID");
+        validateNonEmpty(request.getRebillId(), "Rebill ID");
     }
 
     @Override

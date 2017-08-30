@@ -117,14 +117,6 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
     }
 
     /**
-     * @param receipt JSON объект с данными чека
-     */
-    public InitRequestBuilder setReceipt(String receipt) {
-        request.setReceipt(receipt);
-        return this;
-    }
-
-    /**
      * @param data Объект содержащий дополнительные параметры в виде “ключ”:”значение”. Данные параметры будут переданы на страницу оплаты (в случае ее кастомизации). Максимальная длина для каждого передаваемого параметра:
      *             Ключ – 20 знаков,
      *             Значение – 100 знаков.
@@ -136,13 +128,10 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
     }
 
     /**
-     * @param data JSON строка содержащая дополнительные параметры в виде “ключ”:”значение”. Данные параметры будут переданы на страницу оплаты (в случае ее кастомизации). Максимальная длина для каждого передаваемого параметра:
-     *             Ключ – 20 знаков,
-     *             Значение – 100 знаков.
-     *             Максимальное количество пар «ключ-значение» не может превышать 20.
+     * @param chargeFlag Флаг, о том, что происходит оплата в рекуретном режиме, и вместо вызова FinishAuthorize необходимо вызвать Charge
      */
-    public InitRequestBuilder setData(String data) {
-        request.setData(data);
+    public InitRequestBuilder setChargeFlag(boolean chargeFlag) {
+        request.setChargeFlag(chargeFlag);
         return this;
     }
 

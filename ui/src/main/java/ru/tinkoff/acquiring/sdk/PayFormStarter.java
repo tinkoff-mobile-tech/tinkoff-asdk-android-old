@@ -94,6 +94,11 @@ public class PayFormStarter {
         return this;
     }
 
+    public PayFormStarter setChargeMode(boolean mode){
+        intent.putExtra(PayFormActivity.EXTRA_CHARGE_MODE, mode);
+        return this;
+    }
+
     public void startActivityForResult(Activity context, int requestCode) {
         if (intent == null) {
             throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) after initialization");

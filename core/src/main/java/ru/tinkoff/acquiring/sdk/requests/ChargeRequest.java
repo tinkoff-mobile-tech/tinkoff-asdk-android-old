@@ -24,7 +24,7 @@ import java.util.Map;
 final public class ChargeRequest extends AcquiringRequest {
 
     private Long paymentId;
-    private Long rebillId;
+    private String rebillId;
 
     public ChargeRequest() {
         super("Charge");
@@ -35,7 +35,7 @@ final public class ChargeRequest extends AcquiringRequest {
         final Map<String, Object> map = super.asMap();
 
         putIfNotNull(PAYMENT_ID, paymentId.toString(), map);
-        putIfNotNull(REBILL_ID, rebillId.toString(), map);
+        putIfNotNull(REBILL_ID, rebillId, map);
 
         return map;
     }
@@ -48,11 +48,11 @@ final public class ChargeRequest extends AcquiringRequest {
         this.paymentId = paymentId;
     }
 
-    public Long getRebillId() {
+    public String getRebillId() {
         return rebillId;
     }
 
-    void setRebillId(Long rebillId) {
+    void setRebillId(String rebillId) {
         this.rebillId = rebillId;
     }
 }

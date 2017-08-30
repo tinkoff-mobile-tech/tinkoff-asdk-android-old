@@ -45,6 +45,7 @@ public class AcquiringRequest {
     public static final String PAY_TYPE = "PayType";
     public static final String RECEIPT = "Receipt";
     public static final String DATA = "DATA";
+    public static final String CHARGE_FLAG = "chargeFlag";
 
     public static final String DATA_KEY_EMAIL = "Email";
 
@@ -89,7 +90,7 @@ public class AcquiringRequest {
         return apiMethod;
     }
 
-    protected void putIfNotNull(final String key, final String value, final Map<String, Object> map) {
+    protected void putIfNotNull(final String key, final Object value, final Map<String, Object> map) {
         if (key == null || value == null || map == null) {
             return;
         }

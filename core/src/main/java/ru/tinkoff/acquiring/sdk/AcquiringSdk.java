@@ -174,7 +174,7 @@ public class AcquiringSdk extends Journal {
      * @param rebillId
      * @return
      */
-    public PaymentInfo charge(final long paymentId, final long rebillId) {
+    public PaymentInfo charge(final long paymentId, final String rebillId) {
         final ChargeRequest request = new ChargeRequestBuilder(password, terminalKey)
                 .setPaymentId(paymentId)
                 .setRebillId(rebillId)

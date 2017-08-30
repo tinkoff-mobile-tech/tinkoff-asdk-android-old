@@ -35,5 +35,6 @@
     <string name="cart_list_item_count_format">"%1$d Qty "</string>
 
     <string name="settings_title_use_system_keyboard">Use system keyboard</string>
+    <string name="settings_title_recurrent_payment">Recurrent payment</string>
     <string name="settings_title_terminal_id">Terminal</string>
 </resources>

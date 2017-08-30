@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <SwitchPreference
         android:key="@string/acq_sp_use_system_keyboard"
         android:title="@string/settings_title_use_system_keyboard" />
 
+    <SwitchPreference
+        android:key="@string/acq_sp_recurrent_payment"
+        android:title="@string/settings_title_recurrent_payment" />
+
     <ListPreference
-        android:title="@string/settings_title_terminal_id"
-        android:key="@string/acq_sp_terminal_id"
         android:defaultValue="@string/acq_sp_default_value_terminal_id"
         android:entries="@array/acq_sp_terminal_keys"
-        android:entryValues="@array/acq_sp_terminal_keys" />
+        android:entryValues="@array/acq_sp_terminal_keys"
+        android:key="@string/acq_sp_terminal_id"
+        android:title="@string/settings_title_terminal_id" />
 
 </PreferenceScreen>
