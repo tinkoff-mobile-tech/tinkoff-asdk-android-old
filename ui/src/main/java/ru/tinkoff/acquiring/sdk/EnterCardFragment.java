@@ -143,6 +143,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         if (chargeMode) {
             ecvCard.setEnabled(false);
             ecvCard.setFocusable(false);
+            ecvCard.clearFocus();
             ecvCard.setFullCardNumberModeEnable(false);
             ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
         }
@@ -441,6 +442,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                         ecvCard.setCardNumber(sourceCard.getPan());
                     }
                     hideSoftKeyboard();
+                    if (customKeyboard != null) {
+                        customKeyboard.hide();
+                    }
                 } else {
                     ecvCard.setSavedCardState(hasCard);
                     if (hasCard) {
