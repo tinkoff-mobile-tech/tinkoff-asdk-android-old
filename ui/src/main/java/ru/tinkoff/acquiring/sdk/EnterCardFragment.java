@@ -140,6 +140,13 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         srcCardChooser.setVisibility(View.GONE);
 
         chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
+        if (chargeMode) {
+            ecvCard.setEnabled(false);
+            ecvCard.setFocusable(false);
+            ecvCard.setFullCardNumberModeEnable(false);
+            ecvCard.setRecurrentPaymentMode(true);
+            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+        }
 
         return view;
     }
@@ -429,15 +436,22 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 boolean hasCard = sourceCard != null;
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
                 tvSrcCardLabel.setText(hasCard ? R.string.acq_saved_card_label : R.string.acq_new_card_label);
-                ecvCard.setSavedCardState(hasCard);
-                if (hasCard) {
-                    ecvCard.setCardNumber(sourceCard.getPan());
+                if (chargeMode) {
+                    if (hasCard) {
+                        ecvCard.setCardNumber(sourceCard.getPan());
+                    }
+                    hideSoftKeyboard();
                 } else {
-                    Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
-                    if (bundle != null) {
-                        ecvCard.clear();
+                    ecvCard.setSavedCardState(hasCard);
+                    if (hasCard) {
+                        ecvCard.setCardNumber(sourceCard.getPan());
                     } else {
-                        ecvCard.dispatchFocus();
+                        Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+                        if (bundle != null) {
+                            ecvCard.clear();
+                        } else {
+                            ecvCard.dispatchFocus();
+                        }
                     }
                 }
             }

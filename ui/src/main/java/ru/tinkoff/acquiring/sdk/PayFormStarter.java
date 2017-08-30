@@ -79,18 +79,8 @@ public class PayFormStarter {
         return this;
     }
 
-    public PayFormStarter setReceipt(String receipt) {
-        intent.putExtra(PayFormActivity.EXTRA_RECEIPT_STRING, receipt);
-        return this;
-    }
-
     public PayFormStarter setData(HashMap<String, String> data) {
         intent.putExtra(PayFormActivity.EXTRA_DATA_VALUE, data);
-        return this;
-    }
-
-    public PayFormStarter setData(String data) {
-        intent.putExtra(PayFormActivity.EXTRA_DATA_STRING, data);
         return this;
     }
 

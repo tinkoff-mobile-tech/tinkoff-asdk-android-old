@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.util.LongSparseArray;
 import android.util.SparseArray;
 
 import java.lang.ref.WeakReference;
@@ -43,10 +42,11 @@ class CardLogoCache {
     private int maestroId;
     private int mirId;
 
-    public CardLogoCache(int visaId, int masterCardId, int maestroId) {
+    public CardLogoCache(int visaId, int masterCardId, int maestroId, int mirId) {
         this.visaId = visaId;
         this.masterCardId = masterCardId;
         this.maestroId = maestroId;
+        this.mirId = mirId;
     }
 
     public CardLogoCache() {

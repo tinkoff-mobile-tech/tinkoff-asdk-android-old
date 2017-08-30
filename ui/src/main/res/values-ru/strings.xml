@@ -6,6 +6,7 @@
     <string name="acq_change_card_label">Изменить</string>
     <string name="acq_money_label">На сумму:</string>
     <string name="acq_card_number_hint">Номер карты</string>
+    <string name="acq_recurrent_mode_card_hint">Выберите карту из привязанных</string>
     <string name="acq_exp_date_hint">ММ/ГГ</string>
     <string name="acq_cvc_hint">CVC</string>
     <string name="acq_email_hint">E-mail для квитанции</string>
