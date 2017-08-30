@@ -136,6 +136,9 @@ public class EditCardView extends ViewGroup {
     }
 
     public boolean isFilledAndCorrect() {
+        if (check(FLAG_RECURRENT_MODE)) {
+            return true;
+        }
         if (check(FLAG_SAVED_CARD_STATE)) {
             return cardValidator.validateSecurityCode(etCvc.getText().toString());
         }
