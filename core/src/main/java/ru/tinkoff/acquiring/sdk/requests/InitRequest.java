@@ -149,12 +149,11 @@ final public class InitRequest extends AcquiringRequest {
     }
 
     private void putDataIfNonNull(Map<String, Object> map) {
-        //TODO раскоментить после проверки API
-//        HashMap<String, String> dataMap = new HashMap<>();
-//        if (data != null) {
-//            dataMap.putAll(data);
-//        }
-//        dataMap.put(CHARGE_FLAG, Boolean.toString(chargeFlag));
-//        map.put(DATA, dataMap);
+        HashMap<String, String> dataMap = new HashMap<>();
+        if (data != null) {
+            dataMap.putAll(data);
+        }
+        dataMap.put(CHARGE_FLAG, Boolean.toString(chargeFlag));
+        map.put(DATA, dataMap);
     }
 }

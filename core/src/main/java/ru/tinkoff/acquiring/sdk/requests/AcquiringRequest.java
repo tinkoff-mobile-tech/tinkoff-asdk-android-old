@@ -16,8 +16,9 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,8 +47,9 @@ public class AcquiringRequest {
     public static final String RECEIPT = "Receipt";
     public static final String DATA = "DATA";
     public static final String CHARGE_FLAG = "chargeFlag";
-
     public static final String DATA_KEY_EMAIL = "Email";
+    public static final String[] IGNORED_FIELDS_VALUES = new String[]{DATA, RECEIPT};
+    public static final Set<String> IGNORED_FIELDS = new HashSet<>(Arrays.asList(IGNORED_FIELDS_VALUES));
 
     private String terminalKey;
     private String token;
@@ -67,7 +69,7 @@ public class AcquiringRequest {
     }
 
     public Set<String> getTokenIgnoreFields() {
-        return Collections.EMPTY_SET;
+        return IGNORED_FIELDS;
     }
 
     public String getTerminalKey() {

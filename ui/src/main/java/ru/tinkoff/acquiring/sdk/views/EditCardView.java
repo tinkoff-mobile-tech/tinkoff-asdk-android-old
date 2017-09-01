@@ -422,6 +422,7 @@ public class EditCardView extends ViewGroup {
 
     @Override
     public void setEnabled(boolean enabled) {
+        setAddStatesFromChildren(enabled);
         super.setEnabled(enabled);
         etCardNumber.setEnabled(enabled);
         etDate.setEnabled(enabled);
@@ -433,6 +434,22 @@ public class EditCardView extends ViewGroup {
             hideScanButton();
             hideChangeModeButton();
         }
+    }
+
+    @Override
+    public void setFocusable(boolean focusable) {
+        super.setFocusable(focusable);
+        etCardNumber.setFocusable(focusable);
+        etDate.setFocusable(focusable);
+        etCvc.setFocusable(focusable);
+    }
+
+    @Override
+    public void clearFocus() {
+        super.clearFocus();
+        etCardNumber.clearFocus();
+        etDate.clearFocus();
+        etCvc.clearFocus();
     }
 
     public void disableCopyPaste() {
