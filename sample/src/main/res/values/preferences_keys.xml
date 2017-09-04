@@ -6,11 +6,13 @@
     <string name="acq_sp_terminal_id" translatable="false">acq_sp_terminal_id</string>
 
     <string name="acq_sp_default_value_terminal_id" translatable="false">sdk3DS</string>
+    <string name="acq_sp_test_sdk_terminal_id" translatable="false">TestSDK</string>
+    <string name="acq_sp_sdk_non_3ds_terminal_id" translatable="false">sdkNon3DS</string>
 
     <string-array name="acq_sp_terminal_keys" translatable="false">
         <item>@string/acq_sp_default_value_terminal_id</item>
-        <item>TestSDK</item>
-        <item>sdkNon3DS</item>
+        <item>@string/acq_sp_test_sdk_terminal_id</item>
+        <item>@string/acq_sp_sdk_non_3ds_terminal_id</item>
     </string-array>
 
 </resources>

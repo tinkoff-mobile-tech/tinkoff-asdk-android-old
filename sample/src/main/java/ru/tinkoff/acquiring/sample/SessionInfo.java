@@ -20,6 +20,9 @@ package ru.tinkoff.acquiring.sample;
  * @author Mikhail Artemyev
  */
 public class SessionInfo {
-    public static String CUSTOMER_KEY = "user-key";
-    public static String CUSTOMER_EMAIL = "user@example.com";
+    public static String DEFAULT_CUSTOMER_KEY = "user-key";
+    public static String DEFAULT_CUSTOMER_EMAIL = "user@example.com";
+
+    public static String TEST_SDK_CUSTOMER_KEY = "testCustomerKey1@gmail.com";
+    public static String TEST_SDK_CUSTOMER_EMAIL = "testCustomerKey1@gmail.com";
 }
