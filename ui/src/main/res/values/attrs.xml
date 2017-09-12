@@ -1,24 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <attr name="acqTitleTextViewStyle" format="integer"/>
-    <attr name="acqTextViewStyle" format="integer"/>
-    <attr name="acqEditTextStyle" format="integer"/>
-    <attr name="acqContentViewStyle" format="integer"/>
-    <attr name="acqButtonStyle" format="integer"/>
-    <attr name="acqAccentTextStyle" format="integer"/>
-    <attr name="acqItemsStyle" format="integer"/>
-    <attr name="acqItemsDividerStyle" format="integer"/>
-    <attr name="acqPriceLayoutStyle" format="integer"/>
-    <attr name="acqKeyboardStyle" format="integer"/>
-    <attr name="acqViewDivider" format="dimension"/>
-    <attr name="acqContentBlockDivider" format="dimension"/>
-    <attr name="acqPayFormTitle" format="string"/>
 
-    <attr name="acqCardIcons" format="integer"/>
-    <attr name="acqVisaIcon" format="reference"/>
-    <attr name="acqMasterCardIcon" format="reference"/>
-    <attr name="acqMaestroIcon" format="reference"/>
-    <attr name="acqMirIcon" format="reference"/>
+    <attr name="acqTitleTextViewStyle" format="integer" />
+    <attr name="acqTextViewStyle" format="integer" />
+    <attr name="acqEditTextStyle" format="integer" />
+    <attr name="acqContentViewStyle" format="integer" />
+    <attr name="acqButtonStyle" format="integer" />
+    <attr name="acqAccentTextStyle" format="integer" />
+    <attr name="acqItemsStyle" format="integer" />
+    <attr name="acqItemsDividerStyle" format="integer" />
+    <attr name="acqPriceLayoutStyle" format="integer" />
+    <attr name="acqKeyboardStyle" format="integer" />
+    <attr name="acqViewDivider" format="dimension" />
+    <attr name="acqContentBlockDivider" format="dimension" />
+    <attr name="acqPayFormTitle" format="string" />
+
+    <attr name="acqCardIcons" format="integer" />
+    <attr name="acqVisaIcon" format="reference" />
+    <attr name="acqMasterCardIcon" format="reference" />
+    <attr name="acqMaestroIcon" format="reference" />
+    <attr name="acqMirIcon" format="reference" />
+
+    <attr name="acqPayTitleStyle" format="reference" />
+    <attr name="acqPayDescriptionStyle" format="reference" />
+    <attr name="acqPayEmailStyle" format="reference" />
+    <attr name="acqPaySecureIconStyle" format="reference" />
+
+    <!--<attr name="titleVisibility" format="boolean|reference" />-->
+    <!--<attr name="descriptionVisibility" format="boolean|reference" />-->
+    <!--<attr name="emailVisibility" format="boolean|reference" />-->
+    <!--<attr name="secureIconVisibility" format="boolean|reference" />-->
+    <!--<attr name="secureIconDrawable" format="integer|reference" />-->
+
+    <attr name="payButtonPosition" format="enum|reference">
+        <enum name="underFields" value="0" />
+        <enum name="onBottom" value="1" />
+    </attr>
+
+    <attr name="amountPosition" format="enum|reference">
+        <enum name="overFields" value="0" />
+        <enum name="onPayButton" value="1" />
+    </attr>
 
 </resources>

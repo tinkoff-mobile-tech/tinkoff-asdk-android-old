@@ -25,6 +25,11 @@
         <item name="acqPayFormTitle">@string/acq_screen_title</item>
         <item name="acqCardIcons">@style/AcquiringCardSystemsIcons</item>
         <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle</item>
+        <!---->
+        <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle</item>
+        <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle</item>
+        <item name="acqPaySecureIconStyle">@style/AcquiringPaySecureIconStyle</item>
     </style>
 
     <style name="AcquiringNfcTheme" parent="AcquiringTheme">
@@ -108,6 +113,24 @@
         <item name="android:background">@color/acq_colorKeyboardBackground</item>
         <item name="keyTextColor">@color/acq_colorKeyText</item>
         <item name="keyCircleColor">@color/acq_colorKeyCircle</item>
+    </style>
+
+    <!---->
+
+    <style name="AcquiringPayTitleStyle" parent="AcquiringTitleStyle">
+
+    </style>
+
+    <style name="AcquiringPayDescriptionStyle" parent="AcquiringDescriptionStyle">
+
+    </style>
+
+    <style name="AcquiringPayEmailStyle" parent="AcquiringFieldStyle">
+
+    </style>
+
+    <style name="AcquiringPaySecureIconStyle">
+        <item name="android:src">@drawable/acq_logos_bottom</item>
     </style>
 
 </resources>

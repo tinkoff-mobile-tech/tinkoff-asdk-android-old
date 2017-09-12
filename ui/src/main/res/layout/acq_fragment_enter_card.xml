@@ -20,13 +20,13 @@
 
             <TextView
                 android:id="@+id/tv_title"
-                style="?acqTitleTextViewStyle"
+                style="?acqPayTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/tv_description"
-                style="?acqTextViewStyle"
+                style="?acqPayDescriptionStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -89,7 +89,7 @@
 
             <ru.tinkoff.acquiring.sdk.views.FixCompatEditText
                 android:id="@+id/et_email"
-                style="?acqEditTextStyle"
+                style="?acqPayEmailStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?acqViewDivider"
@@ -110,13 +110,15 @@
                 android:layout_weight="1" />
 
             <ImageView
+                android:id="@+id/iv_secure_icon"
+                style="?acqPaySecureIconStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?acqViewDivider"
-                android:scaleType="centerInside"
-                android:src="@drawable/acq_logos_buttom" />
+                android:scaleType="centerInside" />
 
         </LinearLayout>
+
     </ScrollView>
 
     <ru.tinkoff.acquiring.sdk.views.BankKeyboard
