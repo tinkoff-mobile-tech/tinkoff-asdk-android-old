@@ -30,6 +30,9 @@
         <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle</item>
         <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle</item>
         <item name="acqPaySecureIconStyle">@style/AcquiringPaySecureIconStyle</item>
+        <item name="acqPayAmountPosition">overFields</item>
+        <item name="acqPayButtonPosition">underFields</item>
+
     </style>
 
     <style name="AcquiringNfcTheme" parent="AcquiringTheme">

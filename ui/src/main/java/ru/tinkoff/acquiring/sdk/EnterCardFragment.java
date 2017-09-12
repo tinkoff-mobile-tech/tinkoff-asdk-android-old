@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
@@ -38,6 +39,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     public static final int REQUEST_CARD_NFC = 2;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
+    private static final int BUTTON_POSITION_UNDER_FIELDS = 0;
+    private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -83,6 +87,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private BankKeyboard customKeyboard;
 
     private boolean chargeMode;
+    private int amountPositionMode;
+    private int buttonPositionMode;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
@@ -90,6 +96,15 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         EnterCardFragment fragment = new EnterCardFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        TypedArray typedArray = activity.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonPosition});
+        amountPositionMode = typedArray.getInt(0, 0);
+        buttonPositionMode = typedArray.getInt(1, 0);
+        typedArray.recycle();
     }
 
     @Nullable
@@ -148,6 +163,16 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
         }
 
+        if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {
+            view.findViewById(R.id.ll_price_layout).setVisibility(View.GONE);
+        }
+
+        if (buttonPositionMode != BUTTON_POSITION_UNDER_FIELDS) {
+            LinearLayout containerLayout = (LinearLayout) view.findViewById(R.id.ll_container_layout);
+            containerLayout.removeView(btnPay);
+            containerLayout.addView(btnPay);
+        }
+
         return view;
     }
 
@@ -170,7 +195,13 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         tvDescription.setText(description);
 
         final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
-        tvAmount.setText(amount != null ? amount.toHumanReadableString() : null);
+        String amountText = amount != null ? amount.toHumanReadableString() : "";
+        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS) {
+            tvAmount.setText(amountText);
+        } else {
+            String text = btnPay.getText().toString();
+            btnPay.setText(text + " " + amountText);
+        }
 
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override

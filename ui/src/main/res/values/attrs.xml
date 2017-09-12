@@ -26,20 +26,14 @@
     <attr name="acqPayEmailStyle" format="reference" />
     <attr name="acqPaySecureIconStyle" format="reference" />
 
-    <!--<attr name="titleVisibility" format="boolean|reference" />-->
-    <!--<attr name="descriptionVisibility" format="boolean|reference" />-->
-    <!--<attr name="emailVisibility" format="boolean|reference" />-->
-    <!--<attr name="secureIconVisibility" format="boolean|reference" />-->
-    <!--<attr name="secureIconDrawable" format="integer|reference" />-->
-
-    <attr name="payButtonPosition" format="enum|reference">
-        <enum name="underFields" value="0" />
-        <enum name="onBottom" value="1" />
-    </attr>
-
-    <attr name="amountPosition" format="enum|reference">
+    <attr name="acqPayAmountPosition" format="enum|reference">
         <enum name="overFields" value="0" />
         <enum name="onPayButton" value="1" />
+    </attr>
+
+    <attr name="acqPayButtonPosition" format="enum|reference">
+        <enum name="underFields" value="0" />
+        <enum name="onBottom" value="1" />
     </attr>
 
 </resources>
