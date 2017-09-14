@@ -67,8 +67,11 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     public static final int REQUEST_CARD_NFC = 2;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
-    private static final int BUTTON_POSITION_UNDER_FIELDS = 0;
     private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
+    private static final int BUTTON_POSITION_UNDER_FIELDS = 0;
+    private static final int AMOUNT_POSITION_INDEX = 0;
+    private static final int BUTTON_POSITION_INDEX = 1;
+    private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -89,6 +92,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private boolean chargeMode;
     private int amountPositionMode;
     private int buttonPositionMode;
+    private String payAmountFormat;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
@@ -99,11 +103,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        TypedArray typedArray = activity.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonPosition});
-        amountPositionMode = typedArray.getInt(0, 0);
-        buttonPositionMode = typedArray.getInt(1, 0);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonPosition, R.attr.acqPayWithAmountFormat});
+        amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
+        buttonPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_POSITION_UNDER_FIELDS);
+        payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
         typedArray.recycle();
     }
 
@@ -198,9 +203,11 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         String amountText = amount != null ? amount.toHumanReadableString() : "";
         if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS) {
             tvAmount.setText(amountText);
-        } else {
+        } else if (TextUtils.isEmpty(payAmountFormat)) {
             String text = btnPay.getText().toString();
             btnPay.setText(text + " " + amountText);
+        } else {
+            btnPay.setText(String.format(payAmountFormat, amountText));
         }
 
         btnPay.setOnClickListener(new View.OnClickListener() {
