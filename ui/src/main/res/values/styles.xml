@@ -31,7 +31,7 @@
         <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle</item>
         <item name="acqPaySecureIconStyle">@style/AcquiringPaySecureIconStyle</item>
         <item name="acqPayAmountPosition">onPayButton</item>
-        <item name="acqPayButtonPosition">underFields</item>
+        <item name="acqPayButtonAndIconPosition">buttonUnderFieldsIconsOnBottom</item>
         <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount</item>
 
     </style>

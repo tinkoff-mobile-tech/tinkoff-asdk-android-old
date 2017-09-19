@@ -67,11 +67,19 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     public static final int REQUEST_CARD_NFC = 2;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
-    private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
-    private static final int BUTTON_POSITION_UNDER_FIELDS = 0;
+
     private static final int AMOUNT_POSITION_INDEX = 0;
     private static final int BUTTON_POSITION_INDEX = 1;
     private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
+
+    private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
+
+    private static final int BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM = 0;
+    private static final int ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS = 1;
+    private static final int ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM = 2;
+    private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
+    private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
+
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -91,7 +99,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     private boolean chargeMode;
     private int amountPositionMode;
-    private int buttonPositionMode;
+    private int buttonAndIconsPositionMode;
     private String payAmountFormat;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
@@ -105,9 +113,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonPosition, R.attr.acqPayWithAmountFormat});
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat});
         amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
-        buttonPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_POSITION_UNDER_FIELDS);
+        buttonAndIconsPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM);
         payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
         typedArray.recycle();
     }
@@ -172,11 +180,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             view.findViewById(R.id.ll_price_layout).setVisibility(View.GONE);
         }
 
-        if (buttonPositionMode != BUTTON_POSITION_UNDER_FIELDS) {
-            LinearLayout containerLayout = (LinearLayout) view.findViewById(R.id.ll_container_layout);
-            containerLayout.removeView(btnPay);
-            containerLayout.addView(btnPay);
-        }
+        resolveButtonAndIconsPosition(view);
 
         return view;
     }
@@ -229,6 +233,38 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 initPayment(sdk, requestBuilder, cardData, enteredEmail);
             }
         });
+    }
+
+    private void resolveButtonAndIconsPosition(View root) {
+        LinearLayout containerLayout = (LinearLayout) root.findViewById(R.id.ll_container_layout);
+        View space = root.findViewById(R.id.space);
+        View secureIcons = root.findViewById(R.id.iv_secure_icons);
+        switch (buttonAndIconsPositionMode) {
+            case BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM:
+                break;
+            case ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS:
+                containerLayout.removeView(btnPay);
+                containerLayout.addView(btnPay);
+                break;
+            case ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM:
+                containerLayout.removeView(secureIcons);
+                containerLayout.removeView(space);
+                containerLayout.removeView(btnPay);
+                containerLayout.addView(secureIcons);
+                containerLayout.addView(space);
+                containerLayout.addView(btnPay);
+                break;
+            case ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS:
+                containerLayout.removeView(secureIcons);
+                containerLayout.removeView(space);
+                containerLayout.removeView(btnPay);
+                containerLayout.addView(secureIcons);
+                containerLayout.addView(btnPay);
+                break;
+            case BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM:
+                containerLayout.removeView(space);
+                break;
+        }
     }
 
     private Language resolveLanguage() {

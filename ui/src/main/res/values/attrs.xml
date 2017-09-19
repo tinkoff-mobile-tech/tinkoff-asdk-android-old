@@ -31,11 +31,14 @@
         <enum name="onPayButton" value="1" />
     </attr>
 
-    <attr name="acqPayButtonPosition" format="enum|reference">
-        <enum name="underFields" value="0" />
-        <enum name="onBottom" value="1" />
+    <attr name="acqPayButtonAndIconPosition" format="enum|reference">
+        <enum name="buttonUnderFieldsIconsOnBottom" value="0" />
+        <enum name="iconsOnBottomButtonUnderIcons" value="1" />
+        <enum name="iconsUnderFieldsButtonOnBottom" value="2" />
+        <enum name="iconsUnderFieldsButtonUnderIcons" value="3" />
+        <enum name="buttonUnderFieldsIconsUnderBottom" value="4" />
     </attr>
 
-    <attr name="acqPayWithAmountFormat" format="string|reference"/>
+    <attr name="acqPayWithAmountFormat" format="string|reference" />
 
 </resources>
