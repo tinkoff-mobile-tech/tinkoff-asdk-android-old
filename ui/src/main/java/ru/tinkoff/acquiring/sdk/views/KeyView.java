@@ -133,6 +133,12 @@ public class KeyView extends View {
             if (imageDrawableId != -1) {
                 contentImage = BitmapFactory.decodeResource(getResources(), imageDrawableId);
             }
+
+            final int textColor = a.getColor(R.styleable.KeyView_keyTextColor, contentPaint.getColor());
+            contentPaint.setColor(textColor);
+
+            final int circleColor = a.getColor(R.styleable.KeyView_keyCircleColor, circlePaint.getColor());
+            circlePaint.setColor(circleColor);
         } finally {
             a.recycle();
         }

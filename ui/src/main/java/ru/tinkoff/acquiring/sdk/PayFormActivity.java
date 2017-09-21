@@ -62,8 +62,11 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     static final String EXTRA_E_MAIL = "email";
     static final String EXTRA_CUSTOM_KEYBOARD = "keyboard";
     static final String EXTRA_CUSTOMER_KEY = "customer_key";
-    static final String EXTRA_RECURENT_PAYMENT = "reccurent_payment";
+    static final String EXTRA_RECURRENT_PAYMENT = "recurrent_payment";
     static final String EXTRA_PAYMENT_ID = "payment_id";
+    static final String EXTRA_RECEIPT_VALUE = "receipt_value";
+    static final String EXTRA_DATA_VALUE = "data_value";
+    static final String EXTRA_CHARGE_MODE = "charge_mode";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -84,7 +87,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     private Card sourceCard;
     private boolean useCustomKeyboard;
     private boolean isCardsReady;
-
+    private boolean chargeMode;
 
     AcquiringSdk getSdk() {
         return sdk;
@@ -136,6 +139,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         String terminalKey = intent.getStringExtra(EXTRA_TERMINAL_KEY);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
         String publicKey = intent.getStringExtra(EXTRA_PUBLIC_KEY);
+        chargeMode = intent.getBooleanExtra(EXTRA_CHARGE_MODE, false);
 
         sdk = new AcquiringSdk(terminalKey, password, publicKey);
         cardManager = new CardManager(sdk);
@@ -145,7 +149,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             isCardsReady = false;
             startFinishAuthorized();
             if (isCardChooseEnable()) {
-                String customerKey = getIntent().getStringExtra(EXTRA_CUSTOMER_KEY);
+                String customerKey = intent.getStringExtra(EXTRA_CUSTOMER_KEY);
                 showProgressDialog();
                 requestCards(customerKey, cardManager);
             }
@@ -156,8 +160,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                 sourceCard = cards[idx];
             }
         }
-
-
     }
 
     @Override
@@ -207,7 +209,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     void startFinishAuthorized() {
-        Fragment fragment = new EnterCardFragment();
+        Fragment fragment = EnterCardFragment.newInstance(chargeMode);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)
@@ -226,10 +228,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     void startChooseCard() {
-        Fragment fragment = new CardListFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(CardListFragment.EXTRA_CUSTOMER_KEY, getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
-        fragment.setArguments(bundle);
+        Fragment fragment = CardListFragment.newInstance(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY), chargeMode);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .addToBackStack("choose_card")
@@ -242,7 +241,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
 
     void onCardsReady(Card[] cards) {
         hideProgressDialog();
-        this.cards = cards;
+        this.cards = filterCards(cards);
         if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
             String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
             if (cardId != null) {
@@ -384,5 +383,19 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+    }
+
+    private Card[] filterCards(Card[] cards) {
+        if (!chargeMode) {
+            return cards;
+        }
+
+        ArrayList<Card> list = new ArrayList<>();
+        for (Card card : cards) {
+            if (!TextUtils.isEmpty(card.getRebillId())) {
+                list.add(card);
+            }
+        }
+        return list.toArray(new Card[list.size()]);
     }
 }

@@ -16,6 +16,10 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import java.security.PublicKey;
+
+import ru.tinkoff.acquiring.sdk.AcquiringSdk;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -23,26 +27,44 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
 
     private FinishAuthorizeRequest request = new FinishAuthorizeRequest();
 
+    /**
+     * Билдер для запроса FinishAuthorize
+     *
+     * @param password    Пароль. Выдается банком на каждый магазин.
+     * @param terminalKey Уникальный идентификатор терминала. Выдается банком на каждый магазин.
+     */
     public FinishAuthorizeRequestBuilder(final String password, final String terminalKey) {
         super(password, terminalKey);
     }
 
-
+    /**
+     * @param value Уникальный идентификатор транзакции в системе Банка, полученный в ответе на вызов метода Init
+     */
     public FinishAuthorizeRequestBuilder setPaymentId(final Long value) {
         request.setPaymentId(value);
         return this;
     }
 
+    /**
+     * @param value Отправлять Email-нотификацию об успешном платеже
+     */
     public FinishAuthorizeRequestBuilder setSendEmail(final boolean value) {
         request.setSendEmail(value);
         return this;
     }
 
+    /**
+     * @param value Данные карты, преобразованные методом {@link ru.tinkoff.acquiring.sdk.CardData#encode(PublicKey)},
+     *              где ключ получается {@link AcquiringSdk#getPublicKey()}
+     */
     public FinishAuthorizeRequestBuilder setCardData(final String value) {
         request.setCardData(value);
         return this;
     }
 
+    /**
+     * @param email Email для отправки
+     */
     public FinishAuthorizeRequestBuilder setEmail(final String email) {
         request.setEmail(email);
         return this;

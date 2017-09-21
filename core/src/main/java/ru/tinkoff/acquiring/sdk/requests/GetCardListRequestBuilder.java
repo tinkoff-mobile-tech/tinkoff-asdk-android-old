@@ -23,10 +23,19 @@ final public class GetCardListRequestBuilder extends AcquiringRequestBuilder<Get
 
     private GetCardListRequest request = new GetCardListRequest();
 
+    /**
+     * Билдер для запроса GetCardList
+     *
+     * @param password    Пароль. Выдается банком на каждый магазин.
+     * @param terminalKey Уникальный идентификатор терминала. Выдается банком на каждый магазин.
+     */
     public GetCardListRequestBuilder(final String password, final String terminalKey) {
         super(password, terminalKey);
     }
 
+    /**
+     * @param value Идентификатор покупателя в системе Продавца, к которому привязаны карты.
+     */
     public GetCardListRequestBuilder setCustomerKey(final String value) {
         request.setCustomerKey(value);
         return this;

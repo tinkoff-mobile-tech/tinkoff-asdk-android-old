@@ -16,8 +16,9 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,8 +44,12 @@ public class AcquiringRequest {
     public static final String CARD_ID = "CardId";
     public static final String CVV = "CVV";
     public static final String PAY_TYPE = "PayType";
-
+    public static final String RECEIPT = "Receipt";
+    public static final String DATA = "DATA";
+    public static final String CHARGE_FLAG = "chargeFlag";
     public static final String DATA_KEY_EMAIL = "Email";
+    public static final String[] IGNORED_FIELDS_VALUES = new String[]{DATA, RECEIPT};
+    public static final Set<String> IGNORED_FIELDS = new HashSet<>(Arrays.asList(IGNORED_FIELDS_VALUES));
 
     private String terminalKey;
     private String token;
@@ -54,8 +59,8 @@ public class AcquiringRequest {
         this.apiMethod = apiMethod;
     }
 
-    public Map<String, String> asMap() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> asMap() {
+        Map<String, Object> map = new HashMap<>();
 
         putIfNotNull(TERMINAL_KEY, terminalKey, map);
         putIfNotNull(TOKEN, token, map);
@@ -64,7 +69,7 @@ public class AcquiringRequest {
     }
 
     public Set<String> getTokenIgnoreFields() {
-        return Collections.EMPTY_SET;
+        return IGNORED_FIELDS;
     }
 
     public String getTerminalKey() {
@@ -87,7 +92,7 @@ public class AcquiringRequest {
         return apiMethod;
     }
 
-    protected void putIfNotNull(final String key, final String value, final Map<String, String> map) {
+    protected void putIfNotNull(final String key, final Object value, final Map<String, Object> map) {
         if (key == null || value == null || map == null) {
             return;
         }

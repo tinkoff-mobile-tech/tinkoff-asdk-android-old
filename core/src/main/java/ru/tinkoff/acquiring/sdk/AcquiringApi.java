@@ -28,6 +28,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.requests.AcquiringRequest;
@@ -52,11 +54,27 @@ public class AcquiringApi {
 
     private static final String API_URL_RELEASE = "https://securepay.tinkoff.ru/rest";
     private static final String API_URL_DEBUG = "https://rest-api-test.tcsbank.ru/rest";
+    private static final String API_URL_RELEASE_V2 = "https://securepay.tinkoff.ru/v2";
+    private static final String API_URL_DEBUG_V2 = "https://rest-api-test.tcsbank.ru/v2";
     private static final int STREAM_BUFFER_SIZE = 4096;
-    public static final String API_REQUEST_METHOD = "POST";
+    private static final String API_REQUEST_METHOD = "POST";
 
-    static String getUrl() {
-        return Journal.isDebug() ? API_URL_DEBUG : API_URL_RELEASE;
+    private static final String JSON = "application/json";
+    private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard"};
+    private static final List<String> newMethodsList = Arrays.asList(newMethods);
+
+    static String getUrl(String apiMethod) {
+        if (useV2Api(apiMethod)) {
+            return Journal.isDebug() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
+        } else {
+            return Journal.isDebug() ? API_URL_DEBUG : API_URL_RELEASE;
+        }
+    }
+
+    static boolean useV2Api(String apiMethod) {
+        return newMethodsList.contains(apiMethod);
     }
 
     private final Gson gson;
@@ -97,18 +115,19 @@ public class AcquiringApi {
         OutputStream requestContentStream = null;
         try {
             final URL targetUrl = prepareURI(request.getApiMethod());
-            final String requestBody = encodeRequestBody(request.asMap());
+            final String requestBody = formatRequestBody(request.asMap(), request.getApiMethod());
             final HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
             connection.setRequestMethod(API_REQUEST_METHOD);
             Journal.log(String.format("=== Sending %s request to %s", API_REQUEST_METHOD, targetUrl.toString()));
 
             if (!requestBody.isEmpty()) {
                 Journal.log(String.format("===== Parameters: %s", requestBody));
+                byte[] requestBodyBytes = requestBody.getBytes();
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
-                connection.setRequestProperty("Content-length", String.valueOf(requestBody.length()));
+                connection.setRequestProperty("Content-type", useV2Api(request.getApiMethod()) ? JSON : FORM_URL_ENCODED);
+                connection.setRequestProperty("Content-length", String.valueOf(requestBodyBytes.length));
                 requestContentStream = connection.getOutputStream();
-                requestContentStream.write(requestBody.getBytes());
+                requestContentStream.write(requestBodyBytes);
             }
 
             responseReader = new InputStreamReader(connection.getInputStream());
@@ -125,13 +144,13 @@ public class AcquiringApi {
         }
 
         if (!result.isSuccess()) {
-                String message = result.getMessage();
-                String details = result.getDetails();
-                if (message != null && details != null) {
-                    throw  new AcquiringApiException(result, String.format("%s: %s", message, details));
-                } else {
-                    throw new AcquiringApiException(result);
-                }
+            String message = result.getMessage();
+            String details = result.getDetails();
+            if (message != null && details != null) {
+                throw new AcquiringApiException(result, String.format("%s: %s", message, details));
+            } else {
+                throw new AcquiringApiException(result);
+            }
 
         }
 
@@ -146,26 +165,38 @@ public class AcquiringApi {
             );
         }
 
-        final StringBuilder builder = new StringBuilder(getUrl());
+        final StringBuilder builder = new StringBuilder(getUrl(apiMethod));
         builder.append("/");
         builder.append(apiMethod);
 
         return new URL(builder.toString());
     }
 
-    private String encodeRequestBody(final Map<String, String> params) {
+    private String formatRequestBody(final Map<String, Object> params, String apiMethod) {
         if (params == null || params.isEmpty()) {
             return "";
         }
+        if (useV2Api(apiMethod)) {
+            return jsonRequestBody(params);
+        } else {
+            return encodeRequestBody(params);
+        }
+    }
 
+    private String jsonRequestBody(final Map<String, Object> params) {
+        String json = gson.toJson(params);
+        return json;
+    }
+
+    private String encodeRequestBody(final Map<String, Object> params) {
         final StringBuilder builder = new StringBuilder();
-        for (final Map.Entry<String, String> entry : params.entrySet()) {
+        for (final Map.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null) {
                 continue;
             }
 
             try {
-                final String value = URLEncoder.encode(entry.getValue(), "UTF-8");
+                final String value = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
                 builder.append(entry.getKey());
                 builder.append('=');
                 builder.append(value);
@@ -185,6 +216,8 @@ public class AcquiringApi {
                 .registerTypeAdapter(CardStatus.class, new CardStatusSerializer())
                 .registerTypeAdapter(PaymentStatus.class, new PaymentStatusSerializer())
                 .registerTypeAdapter(GetCardListResponse.class, new CardsListDeserializer())
+                .registerTypeAdapter(Tax.class, new TaxSerializer())
+                .registerTypeAdapter(Taxation.class, new TaxationSerializer())
                 .create();
     }
 

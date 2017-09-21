@@ -25,12 +25,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SessionInfo;
+import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
+import ru.tinkoff.acquiring.sdk.Receipt;
+import ru.tinkoff.acquiring.sdk.Tax;
+import ru.tinkoff.acquiring.sdk.Taxation;
 
 /**
  * @author Mikhail Artemyev
@@ -115,11 +121,14 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         paymentTitle,
                         paymentDescription,
                         null,
-                        SessionInfo.CUSTOMER_EMAIL,
+                        resolveCustomerEmail(terminalId),
                         false,
                         isCustomKeyboardEnabled
                 )
-                .setCustomerKey(SessionInfo.CUSTOMER_KEY)
+                .setCustomerKey(resolveCustomerKey(terminalId))
+                .setChargeMode(sharedPreferences.getBoolean(getString(R.string.acq_sp_recurrent_payment), false))
+                //.setReceipt(createReceipt())
+                //.setData(createData())
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
@@ -132,6 +141,35 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         String key = getString(R.string.acq_sp_terminal_id);
         String fallback = getString(R.string.acq_sp_default_value_terminal_id);
         return sharedPreferences.getString(key, fallback);
+    }
+
+    private String resolveCustomerKey(String terminalId) {
+        String testSdkTerminalId = getString(R.string.acq_sp_test_sdk_terminal_id);
+        if (testSdkTerminalId.equals(terminalId)) {
+            return SessionInfo.TEST_SDK_CUSTOMER_KEY;
+        }
+        return SessionInfo.DEFAULT_CUSTOMER_KEY;
+    }
+
+    private String resolveCustomerEmail(String terminalId) {
+        String testSdkTerminalId = getString(R.string.acq_sp_test_sdk_terminal_id);
+        if (testSdkTerminalId.equals(terminalId)) {
+            return SessionInfo.TEST_SDK_CUSTOMER_EMAIL;
+        }
+        return SessionInfo.DEFAULT_CUSTOMER_EMAIL;
+    }
+
+    private Receipt createReceipt() {
+        Item[] items = new Item[]{new Item("name_1", 10L, 20, 30L, Tax.VAT_10), new Item("name_2", 20L, 30, 40L, Tax.VAT_18)};
+        return new Receipt(items, "email@email.email", Taxation.USN_INCOME);
+    }
+
+    private HashMap<String, String> createData() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("key_1", "value_1");
+        map.put("key_2", "value_2");
+        map.put("key_3", "value_3");
+        return map;
     }
 
 }

@@ -34,6 +34,7 @@ public class CardData {
     private String expiryDate;
     private String securityCode;
     private String cardId;
+    private String rebillId;
 
     public CardData(String pan, String expiryDate, String securityCode) {
         this.pan = pan;
@@ -44,6 +45,10 @@ public class CardData {
     public CardData(String cardId, String securityCode) {
         this.securityCode = securityCode;
         this.cardId = cardId;
+    }
+
+    public CardData(String rebillId) {
+        this.rebillId = rebillId;
     }
 
     public String encode(final PublicKey publicKey) {
@@ -88,6 +93,10 @@ public class CardData {
 
     public void setSecurityCode(String securityCode) {
         this.securityCode = securityCode;
+    }
+
+    public String getRebillId() {
+        return rebillId;
     }
 
     private void validate() {

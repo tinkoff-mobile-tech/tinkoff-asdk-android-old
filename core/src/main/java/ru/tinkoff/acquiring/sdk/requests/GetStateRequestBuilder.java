@@ -19,15 +19,24 @@ package ru.tinkoff.acquiring.sdk.requests;
 /**
  * @author Mikhail Artemyev
  */
-final public class GetstateRequestBuilder extends AcquiringRequestBuilder<GetStateRequest> {
+final public class GetStateRequestBuilder extends AcquiringRequestBuilder<GetStateRequest> {
 
     private GetStateRequest request = new GetStateRequest();
 
-    public GetstateRequestBuilder(final String password, final String terminalKey) {
+    /**
+     * Билдер для запроса GetState
+     *
+     * @param password    Пароль. Выдается банком на каждый магазин.
+     * @param terminalKey Уникальный идентификатор терминала. Выдается банком на каждый магазин.
+     */
+    public GetStateRequestBuilder(final String password, final String terminalKey) {
         super(password, terminalKey);
     }
 
-    public GetstateRequestBuilder setPaymentId(final Long value) {
+    /**
+     * @param value Уникальный идентификатор транзакции в системе Банка, полученный в ответе на вызов метода Init
+     */
+    public GetStateRequestBuilder setPaymentId(final Long value) {
         request.setPaymentId(value);
         return this;
     }

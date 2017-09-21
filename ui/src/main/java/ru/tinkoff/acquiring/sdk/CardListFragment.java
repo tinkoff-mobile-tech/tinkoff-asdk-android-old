@@ -48,15 +48,23 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     private CardsAdapter adapter;
 
     private String customerKey;
-
     private ActionMode actionMode;
+
+    public static CardListFragment newInstance(String customerKey, boolean chargeMode) {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_CUSTOMER_KEY, customerKey);
+        args.putBoolean(PayFormActivity.EXTRA_CHARGE_MODE, chargeMode);
+        CardListFragment fragment = new CardListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.acq_fragment_card_list, container, false);
         lvCards = (ListView) view.findViewById(R.id.lv_cards);
-        adapter = new CardsAdapter(getActivity());
+        adapter = new CardsAdapter(getActivity(), getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE, false));
         lvCards.setAdapter(adapter);
         lvCards.setOnItemClickListener(this);
         lvCards.setOnItemLongClickListener(this);
@@ -125,11 +133,13 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
         private List<Item> items = new ArrayList<>();
         private Activity context;
         private CardLogoCache cardLogoCache;
+        private final boolean chargeMode;
         private int selectedItemPosition = NOT_SET;
 
-        public CardsAdapter(Activity context) {
+        public CardsAdapter(Activity context, boolean chargeMode) {
             this.context = context;
-            cardLogoCache = new ThemeCardLogoCache(context);
+            this.chargeMode = chargeMode;
+            this.cardLogoCache = new ThemeCardLogoCache(context);
         }
 
         @Override
@@ -154,7 +164,9 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 }
                 items.add(new Item());
             }
-            items.add(new Item(Item.NEW_CARD));
+            if (!chargeMode) {
+                items.add(new Item(Item.NEW_CARD));
+            }
             this.items = items;
             notifyDataSetChanged();
         }

@@ -24,6 +24,16 @@
         <item name="acqContentBlockDivider">20dp</item>
         <item name="acqPayFormTitle">@string/acq_screen_title</item>
         <item name="acqCardIcons">@style/AcquiringCardSystemsIcons</item>
+        <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle</item>
+        <!---->
+        <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle</item>
+        <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle</item>
+        <item name="acqPaySecureIconStyle">@style/AcquiringPaySecureIconStyle</item>
+        <item name="acqPayAmountPosition">onPayButton</item>
+        <item name="acqPayButtonAndIconPosition">buttonUnderFieldsIconsOnBottom</item>
+        <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount</item>
+
     </style>
 
     <style name="AcquiringNfcTheme" parent="AcquiringTheme">
@@ -91,7 +101,6 @@
         <item name="android:background">@drawable/acq_list_item_bg</item>
     </style>
 
-
     <style name="AcquiringCardSystemsIcons">
         <item name="acqMaestroIcon">@drawable/acq_maestro</item>
         <item name="acqVisaIcon">@drawable/acq_visalogo</item>
@@ -102,6 +111,30 @@
     <style name="AcquiringNfcDescriptionTextStyle">
         <item name="android:textColor">@drawable/acq_nfc_tint_color_pressable</item>
         <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="AcquiringKeyboardStyle">
+        <item name="android:background">@color/acq_colorKeyboardBackground</item>
+        <item name="keyTextColor">@color/acq_colorKeyText</item>
+        <item name="keyCircleColor">@color/acq_colorKeyCircle</item>
+    </style>
+
+    <!---->
+
+    <style name="AcquiringPayTitleStyle" parent="AcquiringTitleStyle">
+
+    </style>
+
+    <style name="AcquiringPayDescriptionStyle" parent="AcquiringDescriptionStyle">
+
+    </style>
+
+    <style name="AcquiringPayEmailStyle" parent="AcquiringFieldStyle">
+
+    </style>
+
+    <style name="AcquiringPaySecureIconStyle">
+        <item name="android:src">@drawable/acq_logos_bottom</item>
     </style>
 
 </resources>

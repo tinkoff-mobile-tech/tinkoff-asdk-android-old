@@ -23,15 +23,27 @@ final public class RemoveCardRequestBuilder extends AcquiringRequestBuilder<Remo
 
     private RemoveCardRequest request = new RemoveCardRequest();
 
+    /**
+     * Билдер для запроса RemoveCard
+     *
+     * @param password    Пароль. Выдается банком на каждый магазин.
+     * @param terminalKey Уникальный идентификатор терминала. Выдается банком на каждый магазин.
+     */
     public RemoveCardRequestBuilder(final String password, final String terminalKey) {
         super(password, terminalKey);
     }
 
+    /**
+     * @param value Идентификатор карты
+     */
     public RemoveCardRequestBuilder setCardId(final String value) {
         request.setCardId(value);
         return this;
     }
 
+    /**
+     * @param value Идентификатор покупателя в системе Продавца, к которому привязаны карты.
+     */
     public RemoveCardRequestBuilder setCustomerKey(final String value) {
         request.setCustomerKey(value);
         return this;

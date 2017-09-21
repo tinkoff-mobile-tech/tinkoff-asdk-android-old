@@ -67,6 +67,7 @@ public class EditCardView extends ViewGroup {
     private static final int FLAG_CHANGE_MODE_BUTTON = 1 << 3;
     private static final int FLAG_ONLY_NUMBER_STATE = 1 << 4;
     private static final int FLAG_SAVED_CARD_STATE = 1 << 5;
+    private static final int FLAG_RECURRENT_MODE = 1 << 6;
 
     private static final int MIN_CARD_NUMBER_LENGTH = 4;
 
@@ -135,6 +136,9 @@ public class EditCardView extends ViewGroup {
     }
 
     public boolean isFilledAndCorrect() {
+        if (check(FLAG_RECURRENT_MODE)) {
+            return true;
+        }
         if (check(FLAG_SAVED_CARD_STATE)) {
             return cardValidator.validateSecurityCode(etCvc.getText().toString());
         }
@@ -178,15 +182,15 @@ public class EditCardView extends ViewGroup {
             @Override
             public void run() {
                 String number = etCardNumber.getText().toString();
-                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE);
+                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE);
                 if (!isCorrect && check(FLAG_CHANGE_MODE_BUTTON)) {
                     hideChangeModeButton();
                 }
-                if (isCorrect && !cardFormatter.isLimited() && !check(FLAG_SAVED_CARD_STATE)) {
+                if (isCorrect && !cardFormatter.isLimited() && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE)) {
                     showChangeModeButton();
                 }
                 etCardNumber.setTextColor(cardFormatter.isNeedToCheck(etCardNumber.length()) && !isCorrect ? Color.RED : textColor);
-                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) ? Color.RED : textColor);
+                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE) ? Color.RED : textColor);
                 etCvc.setTextColor(etCvc.length() == 3 && !cardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
                 actions.onUpdate(EditCardView.this);
             }
@@ -416,6 +420,38 @@ public class EditCardView extends ViewGroup {
         }
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        setAddStatesFromChildren(enabled);
+        super.setEnabled(enabled);
+        etCardNumber.setEnabled(enabled);
+        etDate.setEnabled(enabled);
+        etCvc.setEnabled(enabled);
+
+        if (enabled) {
+            showScanButton();
+        } else {
+            hideScanButton();
+            hideChangeModeButton();
+        }
+    }
+
+    @Override
+    public void setFocusable(boolean focusable) {
+        super.setFocusable(focusable);
+        etCardNumber.setFocusable(focusable);
+        etDate.setFocusable(focusable);
+        etCvc.setFocusable(focusable);
+    }
+
+    @Override
+    public void clearFocus() {
+        super.clearFocus();
+        etCardNumber.clearFocus();
+        etDate.clearFocus();
+        etCvc.clearFocus();
+    }
+
     public void disableCopyPaste() {
         DisableCopyPasteActionModeCallback callback = new DisableCopyPasteActionModeCallback();
         etCardNumber.setCustomSelectionActionModeCallback(callback);
@@ -424,6 +460,9 @@ public class EditCardView extends ViewGroup {
     }
 
     public void dispatchFocus() {
+        if (check(FLAG_RECURRENT_MODE)) {
+            return;
+        }
         if (check(FLAG_SAVED_CARD_STATE)) {
             activate(etCvc);
         } else {
@@ -483,6 +522,24 @@ public class EditCardView extends ViewGroup {
         requestLayout();
     }
 
+    public void setRecurrentPaymentMode(boolean recurrentMode) {
+        if (recurrentMode) {
+            setMode(false);
+            hideChangeModeButton();
+            hideScanButton();
+            flags |= FLAG_RECURRENT_MODE;
+            etCardNumber.setEnabled(false);
+            etDate.setText(DATE_MASK);
+            etDate.setEnabled(false);
+            etCvc.setText("");
+            etCvc.setEnabled(false);
+            etCvc.setHint("");
+            requestLayout();
+        } else {
+            flags &= ~FLAG_RECURRENT_MODE;
+            setSavedCardState(true);
+        }
+    }
 
     protected void applyBehaviour(EditText... fields) {
         int id = 1;
@@ -520,7 +577,7 @@ public class EditCardView extends ViewGroup {
         }
 
         etCardNumber.setText(number);
-        if (check(FLAG_SAVED_CARD_STATE)) {
+        if (check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE)) {
             etCardNumber.setMode(CardNumberEditText.SHORT_MODE);
         }
         requestLayout();
@@ -835,7 +892,7 @@ public class EditCardView extends ViewGroup {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 if (etCardNumber.getMode() == CardNumberEditText.FULL_MODE) {
-                    etCardNumber.getText().setSpan(span, 0, etCardNumber.length() - 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    etCardNumber.getText().setSpan(span, 0, Math.max(etCardNumber.length() - 4, 0), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
             }
@@ -851,7 +908,7 @@ public class EditCardView extends ViewGroup {
             public void onAnimationEnd(Animator animation) {
                 etCardNumber.setMode(CardNumberEditText.FULL_MODE);
                 etCardNumber.setSelection(etCardNumber.length());
-                etCardNumber.getText().setSpan(span, 0, etCardNumber.length() - 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                etCardNumber.getText().setSpan(span, 0, Math.max(etCardNumber.length() - 4, 0), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 setMode(true);
             }
         });
@@ -1251,7 +1308,7 @@ public class EditCardView extends ViewGroup {
         setBtnScanIcon(ss.scanResId);
         etCardNumber.animationFactor = ss.animationFactor;
         etCardNumber.setMode(ss.cardNumberMode);
-        boolean enableFields = !check(FLAG_SAVED_CARD_STATE);
+        boolean enableFields = !(check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE));
         etDate.setEnabled(enableFields);
         etCardNumber.setEnabled(enableFields);
         normalizeMode();

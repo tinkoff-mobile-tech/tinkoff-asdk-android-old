@@ -19,6 +19,8 @@ package ru.tinkoff.acquiring.sdk;
 import android.app.Activity;
 import android.content.Intent;
 
+import java.util.HashMap;
+
 /**
  * Вспомогательный класс для запуска экрана оплаты PayFormActivity
  *
@@ -37,7 +39,7 @@ public class PayFormStarter {
         this.publicKey = publicKey;
     }
 
-    public PayFormStarter prepare(String orderId, Money amount, String title, String description, String cardId, String email, boolean reccurentPayment, boolean customKeyboard) {
+    public PayFormStarter prepare(String orderId, Money amount, String title, String description, String cardId, String email, boolean recurrentPayment, boolean customKeyboard) {
         intent = new Intent();
         intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
         intent.putExtra(PayFormActivity.EXTRA_AMOUNT, amount);
@@ -46,18 +48,18 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_CARD_ID, cardId);
         intent.putExtra(PayFormActivity.EXTRA_E_MAIL, email);
         intent.putExtra(PayFormActivity.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
-        intent.putExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, reccurentPayment);
+        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
         return this;
     }
 
-    public PayFormStarter prepare(String orderId, Long amount, boolean reccurentPayment) {
+    public PayFormStarter prepare(String orderId, Long amount, boolean recurrentPayment) {
         intent = new Intent();
         intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
         intent.putExtra(PayFormActivity.EXTRA_AMOUNT, Money.ofRubles(amount));
-        intent.putExtra(PayFormActivity.EXTRA_RECURENT_PAYMENT, reccurentPayment);
+        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
@@ -69,6 +71,21 @@ public class PayFormStarter {
             throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) before setCustomerKey");
         }
         intent.putExtra(PayFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
+        return this;
+    }
+
+    public PayFormStarter setReceipt(Receipt receipt) {
+        intent.putExtra(PayFormActivity.EXTRA_RECEIPT_VALUE, receipt);
+        return this;
+    }
+
+    public PayFormStarter setData(HashMap<String, String> data) {
+        intent.putExtra(PayFormActivity.EXTRA_DATA_VALUE, data);
+        return this;
+    }
+
+    public PayFormStarter setChargeMode(boolean mode){
+        intent.putExtra(PayFormActivity.EXTRA_CHARGE_MODE, mode);
         return this;
     }
 

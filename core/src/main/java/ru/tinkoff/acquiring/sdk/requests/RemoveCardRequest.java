@@ -22,6 +22,7 @@ import java.util.Map;
  * @author Mikhail Artemyev
  */
 final public class RemoveCardRequest extends AcquiringRequest {
+
     private String cardId;
     private String customerKey;
 
@@ -30,8 +31,8 @@ final public class RemoveCardRequest extends AcquiringRequest {
     }
 
     @Override
-    public Map<String, String> asMap() {
-        final Map<String, String> map = super.asMap();
+    public Map<String, Object> asMap() {
+        final Map<String, Object> map = super.asMap();
 
         putIfNotNull(CARD_ID, cardId, map);
         putIfNotNull(CUSTOMER_KEY, customerKey, map);
