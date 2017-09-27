@@ -87,7 +87,7 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
     }
 
     void setSendEmail(boolean sendEmail) {
-        this.sendEmail = sendEmail ? "true" : null;
+        this.sendEmail = sendEmail ? "true" : "false";
     }
 
     public String getCardData() {
