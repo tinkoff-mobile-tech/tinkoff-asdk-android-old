@@ -285,7 +285,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             @Override
             public void run() {
                 try {
-                    Card[] cards = cardManager.getCards(customerKey);
+                    Card[] cards = cardManager.getActiveCards(customerKey);
                     PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, cards).sendToTarget();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
