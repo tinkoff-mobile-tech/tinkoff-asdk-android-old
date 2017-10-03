@@ -122,7 +122,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         paymentDescription,
                         null,
                         resolveCustomerEmail(terminalId),
-                        false,
+                        true,
                         isCustomKeyboardEnabled
                 )
                 .setCustomerKey(resolveCustomerKey(terminalId))

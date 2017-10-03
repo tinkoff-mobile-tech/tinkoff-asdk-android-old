@@ -38,7 +38,7 @@ class CardsArrayBundlePacker implements IBundlePacker<Card[]> {
     @Override
     public Card[] unpack(Bundle bundle) {
         if (bundle == null) {
-            return null;
+            return new Card[0];
         }
         int count = bundle.getInt(COUNT, 0);
         if (count == 0) {

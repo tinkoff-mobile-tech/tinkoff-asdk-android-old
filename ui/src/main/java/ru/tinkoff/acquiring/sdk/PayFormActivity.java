@@ -261,7 +261,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             sourceCard = null;
         }
         if (cards.length == 1 && cards[0] == card) {
-            cards = null;
+            cards = new Card[0];
         } else {
             List<Card> list = new ArrayList<>(Arrays.asList(cards));
             list.remove(card);
