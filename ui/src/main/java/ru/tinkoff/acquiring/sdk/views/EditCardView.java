@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -439,9 +440,13 @@ public class EditCardView extends ViewGroup {
     @Override
     public void setFocusable(boolean focusable) {
         super.setFocusable(focusable);
+        setFocusableInTouchMode(focusable);
         etCardNumber.setFocusable(focusable);
+        etCardNumber.setFocusableInTouchMode(focusable);
         etDate.setFocusable(focusable);
+        etDate.setFocusableInTouchMode(focusable);
         etCvc.setFocusable(focusable);
+        etCvc.setFocusableInTouchMode(focusable);
     }
 
     @Override
@@ -541,6 +546,7 @@ public class EditCardView extends ViewGroup {
         }
     }
 
+    @SuppressWarnings("ResourceType")
     protected void applyBehaviour(EditText... fields) {
         int id = 1;
         for (EditText et : fields) {
@@ -1178,9 +1184,8 @@ public class EditCardView extends ViewGroup {
         }
     }
 
-
+    @SuppressLint("AppCompatCustomView")
     public static class CardNumberEditText extends EditText {
-
 
         public static final int FULL_MODE = 0;
         public static final int SHORT_MODE = 1;

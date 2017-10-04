@@ -169,11 +169,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
         if (chargeMode) {
-            ecvCard.setEnabled(false);
-            ecvCard.setFocusable(false);
-            ecvCard.clearFocus();
-            ecvCard.setFullCardNumberModeEnable(false);
-            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+            setRecurrentModeForCardView(true);
         }
 
         if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {
@@ -233,6 +229,21 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 initPayment(sdk, requestBuilder, cardData, enteredEmail);
             }
         });
+    }
+
+    private void setRecurrentModeForCardView(boolean recurrentMode) {
+        if (recurrentMode) {
+            ecvCard.setEnabled(false);
+            ecvCard.setFocusable(false);
+            ecvCard.clearFocus();
+            ecvCard.setFullCardNumberModeEnable(false);
+            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+        } else {
+            ecvCard.setEnabled(true);
+            ecvCard.setFocusable(true);
+            ecvCard.setFullCardNumberModeEnable(true);
+            ecvCard.setCardHint(getString(R.string.acq_card_number_hint));
+        }
     }
 
     private void resolveButtonAndIconsPosition(View root) {
@@ -425,7 +436,14 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     @Override
     public void onStart() {
         super.onStart();
-        onCardReady();
+        PayFormActivity activity = (PayFormActivity) getActivity();
+        if (activity == null) {
+            return;
+        }
+        Card[] cards = activity.getCards();
+        if (cards != null) {
+            onCardReady();
+        }
     }
 
     @Override
@@ -497,7 +515,6 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     @Override
     public void onCardReady() {
-
         PayFormActivity.handler.post(new Runnable() {
             @Override
             public void run() {
@@ -514,22 +531,30 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                     if (hasCard) {
                         ecvCard.setRecurrentPaymentMode(true);
                         ecvCard.setCardNumber(sourceCard.getPan());
-                    }
-                    hideSoftKeyboard();
-                    if (customKeyboard != null) {
-                        customKeyboard.hide();
+                        hideSoftKeyboard();
+                        if (customKeyboard != null) {
+                            customKeyboard.hide();
+                        }
+                    } else {
+                        chargeMode = false;
+                        setRecurrentModeForCardView(false);
+                        prepareEditableCardView(activity, null, false);
                     }
                 } else {
-                    ecvCard.setSavedCardState(hasCard);
-                    if (hasCard) {
-                        ecvCard.setCardNumber(sourceCard.getPan());
+                    prepareEditableCardView(activity, sourceCard, hasCard);
+                }
+            }
+
+            private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {
+                ecvCard.setSavedCardState(hasCard);
+                if (hasCard) {
+                    ecvCard.setCardNumber(sourceCard.getPan());
+                } else {
+                    Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+                    if (bundle != null) {
+                        ecvCard.clear();
                     } else {
-                        Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
-                        if (bundle != null) {
-                            ecvCard.clear();
-                        } else {
-                            ecvCard.dispatchFocus();
-                        }
+                        ecvCard.dispatchFocus();
                     }
                 }
             }
