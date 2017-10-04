@@ -526,7 +526,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 Card sourceCard = activity.getSourceCard();
                 boolean hasCard = sourceCard != null;
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
-                tvSrcCardLabel.setText(hasCard ? R.string.acq_saved_card_label : R.string.acq_new_card_label);
+                tvSrcCardLabel.setText(getLabel(chargeMode, hasCard));
                 if (chargeMode) {
                     if (hasCard) {
                         ecvCard.setRecurrentPaymentMode(true);
@@ -535,7 +535,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                         if (customKeyboard != null) {
                             customKeyboard.hide();
                         }
-                    } else {
+                    } else if (cards == null || cards.length == 0) {
                         chargeMode = false;
                         setRecurrentModeForCardView(false);
                         prepareEditableCardView(activity, null, false);
@@ -556,6 +556,16 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                     } else {
                         ecvCard.dispatchFocus();
                     }
+                }
+            }
+
+            private String getLabel(boolean chargeMode, boolean hasCard) {
+                if (hasCard) {
+                    return getString(R.string.acq_saved_card_label);
+                } else if (chargeMode) {
+                    return "";
+                } else {
+                    return getString(R.string.acq_new_card_label);
                 }
             }
         });
