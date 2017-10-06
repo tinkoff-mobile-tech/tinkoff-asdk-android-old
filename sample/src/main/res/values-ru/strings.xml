@@ -38,4 +38,8 @@
     <string name="settings_title_use_system_keyboard">Использовать системную клавиатуру</string>
     <string name="settings_title_recurrent_payment">Рекуррентный платёж</string>
     <string name="settings_title_terminal_id">Терминал</string>
+    <string name="settings_title_style_id">Стиль</string>
+
+    <string name="acq_pay_with_amount_custom">Пополнить %s</string>
+    <string name="acq_screen_title_custom">Пополнение</string>
 </resources>

@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -67,6 +68,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     static final String EXTRA_RECEIPT_VALUE = "receipt_value";
     static final String EXTRA_DATA_VALUE = "data_value";
     static final String EXTRA_CHARGE_MODE = "charge_mode";
+    static final String EXTRA_THEME = "theme";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -121,6 +123,10 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Intent intent = getIntent();
+        int theme = intent.getIntExtra(EXTRA_THEME, R.style.AcquiringTheme);
+        setTheme(theme);
+
         mFragmentsCommunicator.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -133,8 +139,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         setTitle(title);
 
         dialogsManager = new DialogsManager(this);
-
-        Intent intent = getIntent();
 
         String terminalKey = intent.getStringExtra(EXTRA_TERMINAL_KEY);
         String password = intent.getStringExtra(EXTRA_PASSWORD);
@@ -291,10 +295,11 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                     Throwable cause = e.getCause();
                     if (cause == null) {
                         Journal.log(e);
+                        PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                     } else if (cause instanceof AcquiringApiException) {
                         AcquiringResponse apiResponse = ((AcquiringApiException) cause).getResponse();
                         if (apiResponse != null && API_ERROR_NO_CUSTOMER.equals(apiResponse.getErrorCode())) {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, null).sendToTarget();
+                            PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                         } else {
                             throw e;
                         }
@@ -302,6 +307,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                         PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK).sendToTarget();
                     } else {
                         Journal.log(cause);
+                        PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                     }
                 }
             }
@@ -385,7 +391,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         hideProgressDialog();
     }
 
-    private Card[] filterCards(Card[] cards) {
+    private Card[] filterCards(@NonNull Card[] cards) {
         if (!chargeMode) {
             return cards;
         }

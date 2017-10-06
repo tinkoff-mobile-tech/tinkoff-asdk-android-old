@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -129,6 +130,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 .setChargeMode(sharedPreferences.getBoolean(getString(R.string.acq_sp_recurrent_payment), false))
                 //.setReceipt(createReceipt())
                 //.setData(createData())
+                .setTheme(resolveStyle())
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
@@ -157,6 +159,17 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
             return SessionInfo.TEST_SDK_CUSTOMER_EMAIL;
         }
         return SessionInfo.DEFAULT_CUSTOMER_EMAIL;
+    }
+
+    @StyleRes
+    private int resolveStyle() {
+        String defaultStyleName = getString(R.string.acq_sp_default_style_id);
+        String customStyleName = getString(R.string.acq_sp_custom_style_id);
+        String styleName = sharedPreferences.getString(getString(R.string.acq_sp_style_id), defaultStyleName);
+        if (customStyleName.equals(styleName)) {
+            return R.style.AcquiringTheme_Custom;
+        }
+        return R.style.AcquiringTheme;
     }
 
     private Receipt createReceipt() {

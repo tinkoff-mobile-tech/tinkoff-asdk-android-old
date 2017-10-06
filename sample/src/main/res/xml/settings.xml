@@ -16,4 +16,11 @@
         android:key="@string/acq_sp_terminal_id"
         android:title="@string/settings_title_terminal_id" />
 
+    <ListPreference
+        android:defaultValue="@string/acq_sp_default_style_id"
+        android:entries="@array/acq_sp_styles_keys"
+        android:entryValues="@array/acq_sp_styles_keys"
+        android:key="@string/acq_sp_style_id"
+        android:title="@string/settings_title_style_id" />
+
 </PreferenceScreen>

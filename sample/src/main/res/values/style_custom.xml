@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Acquiring -->
+    <style name="AcquiringTheme.Custom">
+        <item name="colorPrimary">#2E3359</item>
+        <item name="colorPrimaryDark">#222645</item>
+        <item name="colorAccent">#3DB2E6</item>
+        <item name="colorControlHighlight">#ffffff</item>
+        <item name="colorControlActivated">#3DB2E6</item>
+        <item name="acqEditTextStyle">@style/AcquiringFieldStyle.Custom</item>
+        <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.Custom</item>
+        <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom</item>
+        <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle.Custom</item>
+        <item name="acqPayAmountPosition">onPayButton</item>
+        <item name="acqPayButtonAndIconPosition">iconsUnderFieldsButtonOnBottom</item>
+        <item name="acqPayFormTitle">@string/acq_screen_title_custom</item>
+        <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount_custom</item>
+        <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle.Custom</item>
+    </style>
+
+    <style name="AcquiringPayTitleStyle.Custom" parent="AcquiringPayTitleStyle">
+        <item name="android:visibility">invisible</item>
+    </style>
+
+    <style name="AcquiringPayDescriptionStyle.Custom" parent="AcquiringPayDescriptionStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#444</item>
+    </style>
+
+    <style name="AcquiringFieldStyle.Custom" parent="AcquiringFieldStyle">
+        <item name="android:textColor">@color/acq_colorTitle</item>
+        <item name="android:textColorHint">@color/acq_colorDescription</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="AcquiringPayEmailStyle.Custom" parent="AcquiringPayEmailStyle">
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="AcquiringPayButtonStyle.Custom" parent="AcquiringButtonStyle">
+        <item name="android:layout_marginLeft">70dp</item>
+        <item name="android:layout_marginRight">70dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:layout_marginTop">15dp</item>
+    </style>
+
+    <style name="AcquiringKeyboardStyle.Custom" parent="AcquiringKeyboardStyle">
+        <item name="android:background">#222645</item>
+        <item name="keyTextColor">#ffffff</item>
+        <item name="keyCircleColor">#3f446c</item>
+    </style>
+</resources>

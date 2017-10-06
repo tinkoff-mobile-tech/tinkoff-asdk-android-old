@@ -18,6 +18,7 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.StyleRes;
 
 import java.util.HashMap;
 
@@ -84,8 +85,13 @@ public class PayFormStarter {
         return this;
     }
 
-    public PayFormStarter setChargeMode(boolean mode){
+    public PayFormStarter setChargeMode(boolean mode) {
         intent.putExtra(PayFormActivity.EXTRA_CHARGE_MODE, mode);
+        return this;
+    }
+
+    public PayFormStarter setTheme(@StyleRes int theme) {
+        intent.putExtra(PayFormActivity.EXTRA_THEME, theme);
         return this;
     }
 

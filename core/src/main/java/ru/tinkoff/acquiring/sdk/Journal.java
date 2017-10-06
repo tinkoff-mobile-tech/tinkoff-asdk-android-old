@@ -43,8 +43,8 @@ public abstract class Journal {
         return Journal.debug;
     }
 
-    public static void log(CharSequence message){
-        if(debug) {
+    public static void log(CharSequence message) {
+        if (debug) {
             logger.log(message);
         }
     }
