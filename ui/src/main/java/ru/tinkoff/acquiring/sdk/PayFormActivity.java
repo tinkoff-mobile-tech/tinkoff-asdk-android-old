@@ -124,8 +124,10 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        int theme = intent.getIntExtra(EXTRA_THEME, R.style.AcquiringTheme);
-        setTheme(theme);
+        int theme = intent.getIntExtra(EXTRA_THEME, 0);
+        if (theme != 0) {
+            setTheme(theme);
+        }
 
         mFragmentsCommunicator.onCreate(savedInstanceState);
 

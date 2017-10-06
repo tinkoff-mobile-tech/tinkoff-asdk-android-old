@@ -48,7 +48,7 @@
 
         <activity
             android:name="ru.tinkoff.acquiring.sdk.PayFormActivity"
-            android:theme="@style/AcquiringTheme" />
+            android:theme="@style/AcquiringTheme.Custom" />
 
         <activity
             android:name="ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity"
