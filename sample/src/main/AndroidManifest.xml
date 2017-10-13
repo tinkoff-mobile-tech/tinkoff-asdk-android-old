@@ -51,6 +51,10 @@
             android:theme="@style/AcquiringTheme.Custom" />
 
         <activity
+            android:name="ru.tinkoff.acquiring.sdk.AttachCardFormActivity"
+            android:theme="@style/AcquiringTheme.Custom" />
+
+        <activity
             android:name="ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity"
             android:screenOrientation="portrait" />
 

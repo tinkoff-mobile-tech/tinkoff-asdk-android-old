@@ -178,6 +178,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         resolveButtonAndIconsPosition(view);
 
+        ecvCard.setCardNumber("5136 9149 2034 4072");
+        ecvCard.setExpireDate("11/17");
+
         return view;
     }
 
@@ -225,8 +228,18 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 final CardData cardData = getCardData(activity);
                 activity.showProgressDialog();
 
-                InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
-                initPayment(sdk, requestBuilder, cardData, enteredEmail);
+//                InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
+//                initPayment(sdk, requestBuilder, cardData, enteredEmail);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
+                        String requestKey = sdk.addCard(customerKey, CheckType.NO);
+
+                        String result = sdk.attachCard(requestKey, cardData, null, null);
+                    }
+                }).start();
             }
         });
     }

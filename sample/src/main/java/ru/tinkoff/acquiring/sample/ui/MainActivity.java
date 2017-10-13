@@ -26,11 +26,16 @@ import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.BooksRegistry;
+import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
+import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
+import ru.tinkoff.acquiring.sdk.AttachCardFormActivity;
 
 public class MainActivity extends AppCompatActivity implements
         BooksListAdapter.BookDetailsClickListener {
+
+    private static final int ATTACH_CARD_REQUEST_CODE = 11;
 
     private ListView listViewBooks;
     private BooksListAdapter adapter;
@@ -63,6 +68,15 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.menu_action_cart:
                 CartActivity.start(this);
+                return true;
+            case R.id.menu_action_attach_card:
+                SettingsSdkManager settings = new SettingsSdkManager(this);
+                String terminalId = settings.getTerminalId();
+                AttachCardFormActivity
+                        .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                        .prepare(settings.resolveCustomerKey(terminalId), settings.isCustomKeyboardEnabled())
+                        .setTheme(settings.resolveStyle())
+                        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;
             case R.id.menu_action_about:
                 AboutActivity.start(this);

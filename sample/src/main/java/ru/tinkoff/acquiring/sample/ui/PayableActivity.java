@@ -31,6 +31,7 @@ import java.util.HashMap;
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SessionInfo;
+import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
@@ -49,14 +50,13 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
     private Money paymentAmount;
     private String paymentDescription;
     private String paymentTitle;
-    private SharedPreferences sharedPreferences;
+    private SettingsSdkManager settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        settings = new SettingsSdkManager(this);
     }
 
     @Override
@@ -113,8 +113,8 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentAmount = amount;
         this.paymentTitle = title;
         this.paymentDescription = description;
-        boolean isCustomKeyboardEnabled = isCustomKeyboardEnabled();
-        String terminalId = getTerminalId();
+        boolean isCustomKeyboardEnabled = settings.isCustomKeyboardEnabled();
+        String terminalId = settings.getTerminalId();
         PayFormActivity
                 .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                 .prepare(orderId,
@@ -122,54 +122,16 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                         paymentTitle,
                         paymentDescription,
                         null,
-                        resolveCustomerEmail(terminalId),
+                        settings.resolveCustomerEmail(terminalId),
                         true,
                         isCustomKeyboardEnabled
                 )
-                .setCustomerKey(resolveCustomerKey(terminalId))
-                .setChargeMode(sharedPreferences.getBoolean(getString(R.string.acq_sp_recurrent_payment), false))
+                .setCustomerKey(settings.resolveCustomerKey(terminalId))
+                .setChargeMode(settings.isRecurrentPayment())
                 //.setReceipt(createReceipt())
                 //.setData(createData())
-                .setTheme(resolveStyle())
+                .setTheme(settings.resolveStyle())
                 .startActivityForResult(this, REQUEST_CODE_PAY);
-    }
-
-    private boolean isCustomKeyboardEnabled() {
-        String key = getString(R.string.acq_sp_use_system_keyboard);
-        return !sharedPreferences.getBoolean(key, false);
-    }
-
-    private String getTerminalId() {
-        String key = getString(R.string.acq_sp_terminal_id);
-        String fallback = getString(R.string.acq_sp_default_value_terminal_id);
-        return sharedPreferences.getString(key, fallback);
-    }
-
-    private String resolveCustomerKey(String terminalId) {
-        String testSdkTerminalId = getString(R.string.acq_sp_test_sdk_terminal_id);
-        if (testSdkTerminalId.equals(terminalId)) {
-            return SessionInfo.TEST_SDK_CUSTOMER_KEY;
-        }
-        return SessionInfo.DEFAULT_CUSTOMER_KEY;
-    }
-
-    private String resolveCustomerEmail(String terminalId) {
-        String testSdkTerminalId = getString(R.string.acq_sp_test_sdk_terminal_id);
-        if (testSdkTerminalId.equals(terminalId)) {
-            return SessionInfo.TEST_SDK_CUSTOMER_EMAIL;
-        }
-        return SessionInfo.DEFAULT_CUSTOMER_EMAIL;
-    }
-
-    @StyleRes
-    private int resolveStyle() {
-        String defaultStyleName = getString(R.string.acq_sp_default_style_id);
-        String customStyleName = getString(R.string.acq_sp_custom_style_id);
-        String styleName = sharedPreferences.getString(getString(R.string.acq_sp_style_id), defaultStyleName);
-        if (customStyleName.equals(styleName)) {
-            return R.style.AcquiringTheme_Custom;
-        }
-        return R.style.AcquiringTheme;
     }
 
     private Receipt createReceipt() {

@@ -17,7 +17,12 @@
 package ru.tinkoff.acquiring.sdk;
 
 import java.security.PublicKey;
+import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
@@ -30,6 +35,8 @@ import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequestBuilder;
+import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 
 /**
@@ -103,7 +110,7 @@ public class AcquiringSdk extends Journal {
     /**
      * Инициирует платежную сессию
      *
-     * @param builder       Билдер связанный с запросом Init
+     * @param builder Билдер связанный с запросом Init
      * @return уникальный идентификатор транзакции в системе Банка
      */
     public Long init(InitRequestBuilder builder) {
@@ -220,6 +227,38 @@ public class AcquiringSdk extends Journal {
 
         try {
             return api.removeCard(request).isSuccess();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+
+    public String addCard(final String customerKey, final CheckType checkType) {
+        final AddCardRequest request = new AddCardRequestBuilder(password, terminalKey)
+                .setCustomerKey(customerKey)
+                .setCheckType(checkType)
+                .build();
+
+        try {
+            AddCardResponse response = api.addCard(request);
+            return response.getRequestKey();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    public String attachCard(final String requestKey, final CardData cardData, final String email, final Map<String, String> data) {
+        final AttachCardRequest request = new AttachCardRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .setCardData(cardData.encode(publicKey))
+                .setEmail(email)
+                .setData(data)
+                .build();
+
+
+        try {
+            AttachCardResponse response = api.attachCard(request);
+            return response.toString();
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }

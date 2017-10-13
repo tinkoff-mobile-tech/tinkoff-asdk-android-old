@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.requests.AcquiringRequest;
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
@@ -40,6 +42,8 @@ import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
+import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.ChargeResponse;
 import ru.tinkoff.acquiring.sdk.responses.FinishAuthorizeResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
@@ -62,7 +66,7 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard"};
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
     static String getUrl(String apiMethod) {
@@ -105,6 +109,14 @@ public class AcquiringApi {
 
     RemoveCardResponse removeCard(final RemoveCardRequest request) throws AcquiringApiException, NetworkException {
         return performRequest(request, RemoveCardResponse.class);
+    }
+
+    AddCardResponse addCard(final AddCardRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, AddCardResponse.class);
+    }
+
+    AttachCardResponse attachCard(final AttachCardRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, AttachCardResponse.class);
     }
 
     private <R extends AcquiringResponse> R performRequest(final AcquiringRequest request,
