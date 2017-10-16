@@ -16,7 +16,6 @@
 
 package ru.tinkoff.acquiring.sdk;
 
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -29,15 +28,11 @@ import java.util.Set;
  */
 class SdkHandler extends Handler {
 
-    public static final int SUCCESS = 0;
-    public static final int CANCEL = 1;
-    public static final int EXCEPTION = 2;
-    public static final int START_3DS = 3;
-    public static final int CARDS_READY = 4;
-    public static final int DELETE_CARD = 5;
-    public static final int SHOW_ERROR_DIALOG = 6;
-    public static final int PAYMENT_INIT_COMPLETED = 7;
-    public static final int NO_NETWORK = 8;
+    static SdkHandler INSTANCE = new SdkHandler();
+
+    public static final int CARDS_READY = 0;
+    public static final int DELETE_CARD = 1;
+    public static final int PAYMENT_INIT_COMPLETED = 2;
 
     public SdkHandler() {
         super(Looper.getMainLooper());
@@ -53,33 +48,11 @@ class SdkHandler extends Handler {
         callbacks.remove(activity);
     }
 
-
     @Override
     public void handleMessage(Message msg) {
         int action = msg.what;
 
         switch (action) {
-            case SUCCESS:
-                for (PayFormActivity activity : callbacks) {
-                    activity.announceSuccess();
-                }
-                return;
-            case CANCEL:
-                for (PayFormActivity activity : callbacks) {
-                    activity.setResult(Activity.RESULT_CANCELED);
-                    activity.finish();
-                }
-                return;
-            case EXCEPTION:
-                for (PayFormActivity activity : callbacks) {
-                    activity.announceException((Exception) msg.obj);
-                }
-                return;
-            case START_3DS:
-                for (PayFormActivity activity : callbacks) {
-                    activity.startThreeDs((ThreeDsData) msg.obj);
-                }
-                return;
             case CARDS_READY:
                 for (PayFormActivity activity : callbacks) {
                     activity.onCardsReady((Card[]) msg.obj);
@@ -90,25 +63,12 @@ class SdkHandler extends Handler {
                     activity.onDeleteCard((Card) msg.obj);
                 }
                 return;
-            case SHOW_ERROR_DIALOG:
-                for (PayFormActivity activity : callbacks) {
-                    activity.showErrorDialog((Exception) msg.obj);
-                }
-                return;
             case PAYMENT_INIT_COMPLETED:
                 for (PayFormActivity activity : callbacks) {
                     activity.onPaymentInitCompleted((Long) msg.obj);
                 }
                 return;
-            case NO_NETWORK:
-                for (PayFormActivity activity : callbacks) {
-                    activity.onNoNetwork();
-                }
-                return;
         }
-
         super.handleMessage(msg);
     }
-
-
 }

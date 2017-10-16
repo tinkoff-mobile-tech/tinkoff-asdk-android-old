@@ -418,26 +418,26 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
                 try {
                     requestBuilder.setChargeFlag(chargeMode);
                     final Long paymentId = sdk.init(requestBuilder);
-                    PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
+                    SdkHandler.INSTANCE.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     if (!chargeMode) {
                         final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
                         if (threeDsData.isThreeDsNeed()) {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.START_3DS, threeDsData).sendToTarget();
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
                         } else {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                         }
                     } else {
                         PaymentInfo paymentInfo = sdk.charge(paymentId, cardData.getRebillId());
-                        PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;
                     if (cause != null && cause instanceof NetworkException) {
-                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK);
+                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK);
                     } else {
-                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, e);
+                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);
                     }
                     msg.sendToTarget();
                 }
@@ -448,7 +448,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
 
     @Override
     public void onCardReady() {
-        PayFormActivity.handler.post(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 PayFormActivity activity = (PayFormActivity) getActivity();

@@ -110,12 +110,12 @@ public class ThreeDsFragment extends Fragment {
                 try {
                     PaymentStatus status = acquiringSdk.getState(threeDsData.getPaymentId());
                     if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
-                        PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                     } else {
-                        PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
                     }
                 } catch (final Exception e) {
-                    PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, e).sendToTarget();
+                    CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e).sendToTarget();
                 }
             }
         }).start();

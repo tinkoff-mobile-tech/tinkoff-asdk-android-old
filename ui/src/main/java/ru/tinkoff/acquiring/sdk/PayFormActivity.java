@@ -17,6 +17,7 @@
 package ru.tinkoff.acquiring.sdk;
 
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,12 +43,10 @@ import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
  *
  * @author a.shishkin1
  */
-public final class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender {
+public final class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender, IBaseSdkActivity {
 
     public static final int RESULT_ERROR = 500;
     public static final String API_ERROR_NO_CUSTOMER = "7";
-
-    static SdkHandler handler = new SdkHandler();
 
     static final String EXTRA_ERROR = "error";
 
@@ -187,14 +186,16 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     @Override
     protected void onStart() {
         super.onStart();
-        handler.register(this);
+        SdkHandler.INSTANCE.register(this);
+        CommonSdkHandler.INSTANCE.register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         dialogsManager.dismissDialogs();
-        handler.unregister(this);
+        SdkHandler.INSTANCE.unregister(this);
+        CommonSdkHandler.INSTANCE.unregister(this);
     }
 
     @Override
@@ -207,29 +208,101 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         return super.onOptionsItemSelected(item);
     }
 
-    void showProgressDialog() {
+    @Override
+    public void success() {
+        hideProgressDialog();
+        final Intent data = new Intent();
+        data.putExtra(EXTRA_PAYMENT_ID, paymentId);
+        setResult(RESULT_OK, data);
+        if (isCardChooseEnable()) {
+            cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
+        }
+        finish();
+    }
+
+    @Override
+    public void cancel() {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+    }
+
+    @Override
+    public void showProgressDialog() {
         dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
     }
 
-    void hideProgressDialog() {
+    @Override
+    public void hideProgressDialog() {
         dialogsManager.hideProgressDialog();
     }
 
-    void startFinishAuthorized() {
-        Fragment fragment = EnterCardFragment.newInstance(chargeMode);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();
+    @Override
+    public void exception(Exception e) {
+        hideProgressDialog();
+        Intent data = new Intent();
+        data.putExtra(EXTRA_ERROR, e);
+        setResult(RESULT_ERROR, data);
+        finish();
     }
 
-    void startThreeDs(ThreeDsData data) {
+    @Override
+    public void start3DS(ThreeDsData data) {
         hideProgressDialog();
         Fragment fragment = new ThreeDsFragment();
         Bundle args = new Bundle();
         args.putBundle(ThreeDsFragment.EXTRA_3DS, new ThreeDsBundlePacker().pack(data));
         fragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+    }
+
+    @Override
+    public void showErrorDialog(Exception exception) {
+        String message = exception.getMessage();
+        if (TextUtils.isEmpty(message)) {
+            message = getString(R.string.acq_default_error_message);
+        }
+        dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
+    }
+
+    @Override
+    public void noNetwork() {
+        String title = getString(R.string.acq_default_error_title);
+        String message = getString(R.string.acq_network_error_message);
+        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setResult(RESULT_CANCELED);
+                PayFormActivity.this.finish();
+            }
+        };
+        dialogsManager.showErrorDialog(title, message, onClickListener);
+        hideProgressDialog();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment instanceof OnBackPressedListener) {
+            final OnBackPressedListener listener = ((OnBackPressedListener) fragment);
+            if (listener.onBackPressed()) {
+                return;
+            }
+        }
+
+        navigateBack();
+    }
+
+    @Override
+    public FragmentsCommunicator getFragmentsCommunicator() {
+        return mFragmentsCommunicator;
+    }
+
+    void startFinishAuthorized() {
+        Fragment fragment = EnterCardFragment.newInstance(chargeMode);
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
     }
@@ -279,38 +352,30 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         onCardsReady(cards);
     }
 
-    void showErrorDialog(Exception exception) {
-        String message = exception.getMessage();
-        if (TextUtils.isEmpty(message)) {
-            message = getString(R.string.acq_default_error_message);
-        }
-        dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
-    }
-
     static void requestCards(final String customerKey, final CardManager cardManager) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     Card[] cards = cardManager.getActiveCards(customerKey);
-                    PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, cards).sendToTarget();
+                    SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, cards).sendToTarget();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     if (cause == null) {
                         Journal.log(e);
-                        PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                        SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                     } else if (cause instanceof AcquiringApiException) {
                         AcquiringResponse apiResponse = ((AcquiringApiException) cause).getResponse();
                         if (apiResponse != null && API_ERROR_NO_CUSTOMER.equals(apiResponse.getErrorCode())) {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                            SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                         } else {
                             throw e;
                         }
                     } else if (cause instanceof NetworkException) {
-                        PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK).sendToTarget();
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK).sendToTarget();
                     } else {
                         Journal.log(cause);
-                        PayFormActivity.handler.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                        SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
                     }
                 }
             }
@@ -321,40 +386,8 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         this.paymentId = paymentId;
     }
 
-    void announceSuccess() {
-        hideProgressDialog();
-        final Intent data = new Intent();
-        data.putExtra(EXTRA_PAYMENT_ID, paymentId);
-        setResult(RESULT_OK, data);
-        if (isCardChooseEnable()) {
-            cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
-        }
-        finish();
-    }
-
-    void announceException(Exception e) {
-        hideProgressDialog();
-        Intent data = new Intent();
-        data.putExtra(EXTRA_ERROR, e);
-        setResult(RESULT_ERROR, data);
-        finish();
-    }
-
     public boolean isCardChooseEnable() {
         return getIntent().getStringExtra(EXTRA_CUSTOMER_KEY) != null;
-    }
-
-    @Override
-    public void onBackPressed() {
-        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (fragment instanceof OnBackPressedListener) {
-            final OnBackPressedListener listener = ((OnBackPressedListener) fragment);
-            if (listener.onBackPressed()) {
-                return;
-            }
-        }
-
-        navigateBack();
     }
 
     private void navigateBack() {
@@ -372,26 +405,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         } else if (resultCode == RESULT_ERROR) {
             listener.onError((Exception) data.getSerializableExtra(EXTRA_ERROR));
         }
-    }
-
-
-    @Override
-    public FragmentsCommunicator getFragmentsCommunicator() {
-        return mFragmentsCommunicator;
-    }
-
-    public void onNoNetwork() {
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_network_error_message);
-        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                setResult(RESULT_CANCELED);
-                PayFormActivity.this.finish();
-            }
-        };
-        dialogsManager.showErrorDialog(title, message, onClickListener);
-        hideProgressDialog();
     }
 
     private Card[] filterCards(@NonNull Card[] cards) {
