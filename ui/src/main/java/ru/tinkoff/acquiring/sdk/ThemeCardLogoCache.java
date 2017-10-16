@@ -18,20 +18,24 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.util.TypedValue;
 
 import java.util.Arrays;
+
+import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
 
 /**
  * @author a.shishkin1
  */
+class ThemeCardLogoCache extends CardLogoCache implements EditCardView.CardSystemIconsHolder {
 
-
-class ThemeCardLogoCache extends CardLogoCache {
+    private Context context;
 
     public ThemeCardLogoCache(Context context) {
         super();
+        this.context = context;
         int[] attributes = new int[]{
                 R.attr.acqMaestroIcon,
                 R.attr.acqMasterCardIcon,
@@ -42,27 +46,23 @@ class ThemeCardLogoCache extends CardLogoCache {
         TypedValue tv = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.acqCardIcons, tv, true);
 
-        TypedArray array = null;
-        try {
+        TypedArray array = context.obtainStyledAttributes(tv.resourceId, attributes);
+        int maestroId = array.getResourceId(indexOf(R.attr.acqMaestroIcon, attributes), 0);
+        int masterId = array.getResourceId(indexOf(R.attr.acqMasterCardIcon, attributes), 0);
+        int mirId = array.getResourceId(indexOf(R.attr.acqMirIcon, attributes), 0);
+        int visaId = array.getResourceId(indexOf(R.attr.acqVisaIcon, attributes), 0);
 
-            array = context.obtainStyledAttributes(tv.resourceId, attributes);
-            int maestroId = array.getResourceId(indexOf(R.attr.acqMaestroIcon, attributes), 0);
-            int masterId = array.getResourceId(indexOf(R.attr.acqMasterCardIcon, attributes), 0);
-            int mirId = array.getResourceId(indexOf(R.attr.acqMirIcon, attributes), 0);
-            int visaId = array.getResourceId(indexOf(R.attr.acqVisaIcon, attributes), 0);
+        setMaestroId(maestroId);
+        setVisaId(visaId);
+        setMasterCardId(masterId);
+        setMirId(mirId);
 
-            setMaestroId(maestroId);
-            setVisaId(visaId);
-            setMasterCardId(masterId);
-            setMirId(mirId);
+        array.recycle();
+    }
 
-        } catch (Exception e) {
-            Journal.log(e);
-        } finally {
-            if (array != null) {
-                array.recycle();
-            }
-        }
+    @Override
+    public Bitmap getCardSystemBitmap(String cardNumber) {
+        return getLogoByNumber(context, cardNumber);
     }
 
     private int indexOf(int id, int[] attributes) {
@@ -73,5 +73,4 @@ class ThemeCardLogoCache extends CardLogoCache {
         }
         throw new RuntimeException("Failed to find attribute " + id);
     }
-
 }

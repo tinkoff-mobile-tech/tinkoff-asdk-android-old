@@ -19,9 +19,11 @@ public class AttachCardFormActivity extends AppCompatActivity {
     static final String EXTRA_PUBLIC_KEY = "public_key";
 
     static final String EXTRA_CUSTOMER_KEY = "customer_key";
+    static final String EXTRA_CHECK_TYPE = "check_type";
     static final String EXTRA_CUSTOM_KEYBOARD = "keyboard";
     static final String EXTRA_DATA = "data";
     static final String EXTRA_THEME = "theme";
+    static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
 
     private DialogsManager dialogsManager;
     private AcquiringSdk sdk;
@@ -58,8 +60,28 @@ public class AttachCardFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment instanceof OnBackPressedListener) {
+            final OnBackPressedListener listener = ((OnBackPressedListener) fragment);
+            if (listener.onBackPressed()) {
+                return;
+            }
+        }
+        navigateBack();
+    }
+
     boolean shouldUseCustomKeyboard() {
         return useCustomKeyboard;
+    }
+
+    void showProgressDialog() {
+        dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
+    }
+
+    AcquiringSdk getSdk() {
+        return sdk;
     }
 
     private void initActivity(Intent intent) {
@@ -100,5 +122,4 @@ public class AttachCardFormActivity extends AppCompatActivity {
                 .commit();
 
     }
-
 }

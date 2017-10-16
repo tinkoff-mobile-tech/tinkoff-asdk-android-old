@@ -31,6 +31,7 @@ import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
 import ru.tinkoff.acquiring.sdk.AttachCardFormActivity;
+import ru.tinkoff.acquiring.sdk.CheckType;
 
 public class MainActivity extends AppCompatActivity implements
         BooksListAdapter.BookDetailsClickListener {
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
                 String terminalId = settings.getTerminalId();
                 AttachCardFormActivity
                         .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
-                        .prepare(settings.resolveCustomerKey(terminalId), settings.isCustomKeyboardEnabled())
+                        .prepare(settings.resolveCustomerKey(terminalId), CheckType.THREE_DS_HOLD, settings.isCustomKeyboardEnabled())
                         .setTheme(settings.resolveStyle())
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;

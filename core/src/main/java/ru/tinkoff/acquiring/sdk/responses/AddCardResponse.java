@@ -10,7 +10,7 @@ public class AddCardResponse extends AcquiringResponse {
     @SerializedName("CustomerKey")
     private String customerKey;
 
-    @SerializedName("PaymentURL")
+    @SerializedName("RequestKey")
     private String requestKey;
 
     public String getCustomerKey() {
@@ -18,6 +18,6 @@ public class AddCardResponse extends AcquiringResponse {
     }
 
     public String getRequestKey() {
-        return requestKey.replace("https://rest-api-test.tinkoff.ru/AddCard/","");
+        return requestKey;
     }
 }

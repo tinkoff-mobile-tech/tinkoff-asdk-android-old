@@ -28,9 +28,6 @@ import java.util.regex.Pattern;
 /**
  * @author a.shishkin1
  */
-
-
-
 class CardLogoCache {
 
     private static final Pattern MIR_REGEXP = Pattern.compile("^220[0-4]");

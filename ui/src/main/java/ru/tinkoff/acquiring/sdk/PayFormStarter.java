@@ -95,6 +95,11 @@ public class PayFormStarter {
         return this;
     }
 
+    public PayFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
+        intent.putExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        return this;
+    }
+
     public void startActivityForResult(Activity context, int requestCode) {
         if (intent == null) {
             throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) after initialization");

@@ -17,10 +17,7 @@
 package ru.tinkoff.acquiring.sample.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,8 +27,8 @@ import java.util.HashMap;
 
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
-import ru.tinkoff.acquiring.sample.SessionInfo;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
+import ru.tinkoff.acquiring.sdk.CameraCardIOScanner;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
@@ -128,6 +125,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 )
                 .setCustomerKey(settings.resolveCustomerKey(terminalId))
                 .setChargeMode(settings.isRecurrentPayment())
+                .setCameraCardScanner(new CameraCardIOScanner())
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())

@@ -61,6 +61,10 @@ final public class AttachCardRequest extends AcquiringRequest {
     }
 
     private void putDataIfNonNull(Map<String, Object> map) {
+        if (data == null && (email == null || email.length() == 0)) {
+            return;
+        }
+
         HashMap<String, String> dataMap = new HashMap<>();
         if (data != null) {
             dataMap.putAll(data);

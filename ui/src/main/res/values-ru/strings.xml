@@ -25,6 +25,7 @@
     <string name="acq_nfc_need_enable">Для сканирования карты необходимо включить NFC</string>
     <string name="acq_nfc_scan_failed">Не удалось распознать карту</string>
     <string name="acq_progress_dialog_text">Оплата…</string>
+    <string name="acq_progress_dialog_attach_card_text">Привязка карты…</string>
     <string name="acq_invalid_email">Введен некорректный e-mail</string>
     <string name="acq_invalid_card">Введены некорректные данные карты</string>
 

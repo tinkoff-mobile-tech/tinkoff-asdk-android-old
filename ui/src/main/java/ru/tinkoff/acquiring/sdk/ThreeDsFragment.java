@@ -77,8 +77,6 @@ public class ThreeDsFragment extends Fragment {
 
     private class ThisWebViewClient extends WebViewClient {
 
-
-
         boolean canceled = false;
 
         @Override
@@ -99,12 +97,8 @@ public class ThreeDsFragment extends Fragment {
             }
         }
 
-
-
-
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
             return super.shouldOverrideUrlLoading(view, url);
         }
     }

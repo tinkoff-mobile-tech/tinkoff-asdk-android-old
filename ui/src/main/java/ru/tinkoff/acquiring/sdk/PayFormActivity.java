@@ -69,6 +69,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     static final String EXTRA_DATA_VALUE = "data_value";
     static final String EXTRA_CHARGE_MODE = "charge_mode";
     static final String EXTRA_THEME = "theme";
+    static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 

@@ -16,14 +16,9 @@
 
 package ru.tinkoff.acquiring.sdk;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -47,9 +42,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import io.card.payment.CardIOActivity;
-import io.card.payment.CreditCard;
-import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -59,12 +51,7 @@ import static android.widget.Toast.makeText;
 /**
  * @author a.shishkin1
  */
-public class EnterCardFragment extends Fragment implements EditCardView.Actions,
-        ICardInterest,
-        OnBackPressedListener {
-
-    public static final int REQUEST_CARD_IO = 1;
-    public static final int REQUEST_CARD_NFC = 2;
+public class EnterCardFragment extends Fragment implements ICardInterest, OnBackPressedListener {
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
@@ -92,6 +79,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private View srcCardChooser;
 
     private AcquiringSdk sdk;
+    private FullCardScanner cardScanner;
 
     private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 
@@ -138,8 +126,9 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         etEmail = (EditText) view.findViewById(R.id.et_email);
 
         final FragmentActivity activity = getActivity();
-        ecvCard.setCardSystemIconsHolder(new CardSystemIconsHolderImpl(activity));
-        ecvCard.setActions(this);
+        cardScanner = new FullCardScanner(this, (ICameraCardScanner) activity.getIntent().getSerializableExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER));
+        ecvCard.setCardSystemIconsHolder(new ThemeCardLogoCache(activity));
+        ecvCard.setActions(cardScanner);
 
         customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
 
@@ -177,9 +166,6 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
 
         resolveButtonAndIconsPosition(view);
-
-        ecvCard.setCardNumber("5136 9149 2034 4072");
-        ecvCard.setExpireDate("11/17");
 
         return view;
     }
@@ -228,18 +214,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 final CardData cardData = getCardData(activity);
                 activity.showProgressDialog();
 
-//                InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
-//                initPayment(sdk, requestBuilder, cardData, enteredEmail);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
-                        String requestKey = sdk.addCard(customerKey, CheckType.NO);
-
-                        String result = sdk.attachCard(requestKey, cardData, null, null);
-                    }
-                }).start();
+                InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
+                initPayment(sdk, requestBuilder, cardData, enteredEmail);
             }
         });
     }
@@ -388,58 +364,10 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         return input.isEmpty() ? null : input;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void onPressScanCard(EditCardView editCardView) {
-        //noinspection ConstantConditions,ConstantConditions
-        if (isNfcEnable()) {
-            AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-            CharSequence items[] = getResources().getStringArray(R.array.acq_scan_types);
-            adb.setItems(items, new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int i) {
-                    if (i == 0) {
-                        startCardIo();
-                    } else if (i == 1) {
-                        startNfcScan();
-                    }
-                    dialog.dismiss();
-                }
-
-            });
-            adb.show();
-        } else {
-            startCardIo();
-        }
-    }
-
-    @Override
-    public void onUpdate(EditCardView editCardView) {
-    }
-
-    private boolean isNfcEnable() {
-        return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
-    }
-
     @Override
     public void onPause() {
         super.onPause();
         hideSoftKeyboard();
-    }
-
-    private void startCardIo() {
-        Intent scanIntent = new Intent(getActivity(), CardIOActivity.class);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
-        startActivityForResult(scanIntent, REQUEST_CARD_IO);
-    }
-
-    private void startNfcScan() {
-        Intent cardFromNfcIntent = new Intent(getActivity(), NfcCardScanActivity.class);
-        startActivityForResult(cardFromNfcIntent, REQUEST_CARD_NFC);
     }
 
     private void startChooseCard() {
@@ -461,30 +389,22 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CARD_IO && data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
-            CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
-            ecvCard.setCardNumber(scanResult.getFormattedCardNumber());
-            if (scanResult.expiryMonth != 0 && scanResult.expiryYear != 0) {
-                Locale locale = Locale.getDefault();
-                int expiryYear = scanResult.expiryYear % 100;
-                String format = String.format(locale, "%02d%02d", scanResult.expiryMonth, expiryYear);
-                ecvCard.setExpireDate(format);
-            }
-            return;
+        if (cardScanner.hasCameraResult(requestCode, data)) {
+            ICreditCard card = cardScanner.parseCameraData(data);
+            setCreditCardData(card);
+        } else if (cardScanner.hasNfcResult(requestCode, resultCode)) {
+            ICreditCard card = cardScanner.parseNfcData(data);
+            setCreditCardData(card);
+        } else if (cardScanner.isNfcError(requestCode, resultCode)) {
+            Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
+    }
 
-        if (requestCode == REQUEST_CARD_NFC && resultCode == Activity.RESULT_OK) {
-            ru.tinkoff.core.nfc.model.Card card = (ru.tinkoff.core.nfc.model.Card) data.getSerializableExtra(NfcCardScanActivity.EXTRA_CARD);
-            ecvCard.setCardNumber(card.getNumber());
-            ecvCard.setExpireDate(card.getExpirationDate());
-            return;
-        } else if (requestCode == REQUEST_CARD_NFC && resultCode == NfcCardScanActivity.RESULT_ERROR) {
-            Toast t = Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT);
-            t.show();
-            return;
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
+    private void setCreditCardData(ICreditCard card) {
+        ecvCard.setCardNumber(card.getCardNumber());
+        ecvCard.setExpireDate(card.getExpireDate());
     }
 
     private void initPayment(final AcquiringSdk sdk,
@@ -602,20 +522,4 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             return false;
         }
     }
-
-    private static class CardSystemIconsHolderImpl extends ThemeCardLogoCache implements EditCardView.CardSystemIconsHolder {
-
-        private Context context;
-
-        public CardSystemIconsHolderImpl(Context context) {
-            super(context);
-            this.context = context;
-        }
-
-        @Override
-        public Bitmap getCardSystemBitmap(String cardNumber) {
-            return getLogoByNumber(context, cardNumber);
-        }
-    }
-
 }

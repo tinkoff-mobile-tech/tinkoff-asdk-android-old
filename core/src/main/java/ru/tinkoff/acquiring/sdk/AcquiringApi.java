@@ -228,6 +228,7 @@ public class AcquiringApi {
                 .registerTypeAdapter(CardStatus.class, new CardStatusSerializer())
                 .registerTypeAdapter(PaymentStatus.class, new PaymentStatusSerializer())
                 .registerTypeAdapter(GetCardListResponse.class, new CardsListDeserializer())
+                .registerTypeAdapter(AttachCardResponse.Status.class, new AttachCardStatusDeserializer())
                 .registerTypeAdapter(Tax.class, new TaxSerializer())
                 .registerTypeAdapter(Taxation.class, new TaxationSerializer())
                 .create();

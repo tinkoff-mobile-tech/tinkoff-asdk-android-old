@@ -23,9 +23,10 @@ public class AttachCardFormStarter {
         this.publicKey = publicKey;
     }
 
-    public AttachCardFormStarter prepare(String customerKey, boolean customKeyboard) {
+    public AttachCardFormStarter prepare(String customerKey, CheckType checkType, boolean customKeyboard) {
         intent = new Intent();
         intent.putExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
+        intent.putExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE, checkType);
         intent.putExtra(AttachCardFormActivity.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
 
         intent.putExtra(AttachCardFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
@@ -35,26 +36,32 @@ public class AttachCardFormStarter {
     }
 
     public AttachCardFormStarter setData(HashMap<String, String> data) {
-        if (intent == null) {
-            throw new IllegalStateException("Use prepare() method for initialization");
-        }
+        checkIntent();
         intent.putExtra(AttachCardFormActivity.EXTRA_DATA, data);
         return this;
     }
 
     public AttachCardFormStarter setTheme(@StyleRes int theme) {
-        if (intent == null) {
-            throw new IllegalStateException("Use prepare() method for initialization");
-        }
+        checkIntent();
         intent.putExtra(AttachCardFormActivity.EXTRA_THEME, theme);
         return this;
     }
 
+    public AttachCardFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
+        checkIntent();
+        intent.putExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        return this;
+    }
+
     public void startActivityForResult(Activity context, int requestCode) {
+        checkIntent();
+        intent.setClass(context, AttachCardFormActivity.class);
+        context.startActivityForResult(intent, requestCode);
+    }
+
+    private void checkIntent() {
         if (intent == null) {
             throw new IllegalStateException("Use prepare() method for initialization");
         }
-        intent.setClass(context, AttachCardFormActivity.class);
-        context.startActivityForResult(intent, requestCode);
     }
 }
