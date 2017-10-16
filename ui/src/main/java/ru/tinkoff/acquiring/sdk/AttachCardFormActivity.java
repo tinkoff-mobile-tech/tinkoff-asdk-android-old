@@ -1,18 +1,24 @@
 package ru.tinkoff.acquiring.sdk;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
 
 /**
  * @author Vitaliy Markus
  */
-public class AttachCardFormActivity extends AppCompatActivity {
+public class AttachCardFormActivity extends AppCompatActivity implements IBaseSdkActivity {
+
+    public static final int RESULT_ERROR = 500;
+    static final String EXTRA_ERROR = "error";
 
     static final String EXTRA_TERMINAL_KEY = "terminal_key";
     static final String EXTRA_PASSWORD = "password";
@@ -51,6 +57,19 @@ public class AttachCardFormActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        CommonSdkHandler.INSTANCE.register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dialogsManager.dismissDialogs();
+        CommonSdkHandler.INSTANCE.unregister(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             navigateBack();
@@ -58,6 +77,67 @@ public class AttachCardFormActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void success() {
+        hideProgressDialog();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void cancel() {
+        setResult(Activity.RESULT_CANCELED);
+        finish();
+    }
+
+    @Override
+    public void showProgressDialog() {
+        dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_attach_card_text));
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        dialogsManager.hideProgressDialog();
+    }
+
+    @Override
+    public void exception(Exception e) {
+        hideProgressDialog();
+        Intent data = new Intent();
+        data.putExtra(EXTRA_ERROR, e);
+        setResult(RESULT_ERROR, data);
+        finish();
+    }
+
+    @Override
+    public void start3DS(ThreeDsData data) {
+
+    }
+
+    @Override
+    public void showErrorDialog(Exception e) {
+        String message = e.getMessage();
+        if (TextUtils.isEmpty(message)) {
+            message = getString(R.string.acq_default_error_message);
+        }
+        dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
+    }
+
+    @Override
+    public void noNetwork() {
+        String title = getString(R.string.acq_default_error_title);
+        String message = getString(R.string.acq_network_error_message);
+        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setResult(RESULT_CANCELED);
+                AttachCardFormActivity.this.finish();
+            }
+        };
+        dialogsManager.showErrorDialog(title, message, onClickListener);
+        hideProgressDialog();
     }
 
     @Override
@@ -72,16 +152,12 @@ public class AttachCardFormActivity extends AppCompatActivity {
         navigateBack();
     }
 
-    boolean shouldUseCustomKeyboard() {
-        return useCustomKeyboard;
-    }
-
-    void showProgressDialog() {
-        dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
-    }
-
     AcquiringSdk getSdk() {
         return sdk;
+    }
+
+    boolean shouldUseCustomKeyboard() {
+        return useCustomKeyboard;
     }
 
     private void initActivity(Intent intent) {

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
@@ -97,7 +98,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 //                }
 
                 AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
-                //activity.showProgressDialog();
+                activity.showProgressDialog();
                 CardData cardData = new CardData(editCardView.getCardNumber(), editCardView.getExpireDate(), editCardView.getCvc());
                 attachCard(activity.getSdk(), cardData, null);
             }
@@ -152,11 +153,23 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                     String requestKey = sdk.addCard(customerKey, checkType);
 
                     Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_DATA);
-                    sdk.attachCard(requestKey, cardData, email, data);
+                    AttachCardResponse response = sdk.attachCard(requestKey, cardData, email, data);
 
+                    AttachCardResponse.Status status = response.getStatus();
+                    if (status == null || status == AttachCardResponse.Status.NONE) {
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                    } else if (status == AttachCardResponse.Status.THREE_DS_CHECKING) {
 
+                    } else if (status == AttachCardResponse.Status.LOOP_CHECKING) {
+
+                    }
                 } catch (Exception e) {
-                    int i = 0;
+                    Throwable cause = e.getCause();
+                    if (cause != null && cause instanceof NetworkException) {
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK).sendToTarget();
+                    } else {
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e).sendToTarget();
+                    }
                 }
             }
         }).start();

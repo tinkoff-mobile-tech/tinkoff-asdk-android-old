@@ -247,7 +247,7 @@ public class AcquiringSdk extends Journal {
         }
     }
 
-    public String attachCard(final String requestKey, final CardData cardData, final String email, final Map<String, String> data) {
+    public AttachCardResponse attachCard(final String requestKey, final CardData cardData, final String email, final Map<String, String> data) {
         final AttachCardRequest request = new AttachCardRequestBuilder(password, terminalKey)
                 .setRequestKey(requestKey)
                 .setCardData(cardData.encode(publicKey))
@@ -258,7 +258,7 @@ public class AcquiringSdk extends Journal {
 
         try {
             AttachCardResponse response = api.attachCard(request);
-            return response.toString();
+            return response;
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }

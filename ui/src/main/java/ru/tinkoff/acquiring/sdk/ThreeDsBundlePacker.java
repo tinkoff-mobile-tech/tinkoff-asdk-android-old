@@ -31,7 +31,6 @@ class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
     private static final String PAREQ = "paReq";
     private static final String IS_NEED = "isThreeDsNeed";
 
-
     @Override
     public ThreeDsData unpack(Bundle bundle) {
         if (bundle == null) {
