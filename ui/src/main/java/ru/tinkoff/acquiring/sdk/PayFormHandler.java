@@ -26,15 +26,15 @@ import java.util.Set;
 /**
  * @author a.shishkin1
  */
-class SdkHandler extends Handler {
+class PayFormHandler extends Handler {
 
-    static SdkHandler INSTANCE = new SdkHandler();
+    static PayFormHandler INSTANCE = new PayFormHandler();
 
     public static final int CARDS_READY = 0;
     public static final int DELETE_CARD = 1;
     public static final int PAYMENT_INIT_COMPLETED = 2;
 
-    public SdkHandler() {
+    public PayFormHandler() {
         super(Looper.getMainLooper());
     }
 

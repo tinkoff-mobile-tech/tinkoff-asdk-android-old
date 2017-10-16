@@ -113,7 +113,14 @@ public class AttachCardFormActivity extends AppCompatActivity implements IBaseSd
 
     @Override
     public void start3DS(ThreeDsData data) {
-
+        hideProgressDialog();
+        Fragment fragment = new ThreeDsFragment();
+        Bundle args = new Bundle();
+        args.putBundle(ThreeDsFragment.EXTRA_3DS, new ThreeDsBundlePacker().pack(data));
+        fragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
     }
 
     @Override
@@ -152,7 +159,8 @@ public class AttachCardFormActivity extends AppCompatActivity implements IBaseSd
         navigateBack();
     }
 
-    AcquiringSdk getSdk() {
+    @Override
+    public AcquiringSdk getSdk() {
         return sdk;
     }
 

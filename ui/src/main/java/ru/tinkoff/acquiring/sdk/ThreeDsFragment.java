@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.net.URLEncoder;
+
+import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 
 /**
  * @author a.shishkin1
@@ -60,7 +61,7 @@ public class ThreeDsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        sdk = ((PayFormActivity) getActivity()).getSdk();
+        sdk = ((IBaseSdkActivity) getActivity()).getSdk();
         String url = data.getAcsUrl();
         termUrl = sdk.getUrl(SUBMIT_3DS_AUTHORIZATION) + SUBMIT_3DS_AUTHORIZATION;
         try {
@@ -84,7 +85,7 @@ public class ThreeDsFragment extends Fragment {
             super.onPageFinished(view, url);
             if (url.contains(CANCEL_ACTION)) {
                 canceled = true;
-                Activity activity = (Activity)view.getContext();
+                Activity activity = (Activity) view.getContext();
                 activity.setResult(Activity.RESULT_CANCELED);
                 activity.finish();
             }
@@ -103,18 +104,28 @@ public class ThreeDsFragment extends Fragment {
         }
     }
 
-    private static void requestState(final AcquiringSdk acquiringSdk, final ThreeDsData threeDsData) {
+    private static void requestState(final AcquiringSdk sdk, final ThreeDsData threeDsData) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    PaymentStatus status = acquiringSdk.getState(threeDsData.getPaymentId());
-                    if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
-                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                    if (threeDsData.isPayment()) {
+                        PaymentStatus status = sdk.getState(threeDsData.getPaymentId());
+                        if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                        } else {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
+                        }
                     } else {
-                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
+                        GetAddCardStateResponse response = sdk.getAddCardState(threeDsData.getRequestKey());
+                        PaymentStatus status = response.getStatus();
+                        if (status == PaymentStatus.COMPLETED) {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                        } else {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
+                        }
                     }
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e).sendToTarget();
                 }
             }

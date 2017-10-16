@@ -418,7 +418,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
                 try {
                     requestBuilder.setChargeFlag(chargeMode);
                     final Long paymentId = sdk.init(requestBuilder);
-                    SdkHandler.INSTANCE.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
+                    PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     if (!chargeMode) {
                         final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);

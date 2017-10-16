@@ -55,7 +55,7 @@ final public class FinishAuthorizeResponse extends AcquiringResponse {
             if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
                 threeDsData = ThreeDsData.EMPTY_THREE_DS_DATA;
             } else if (status == PaymentStatus.THREE_DS_CHECKING) {
-                threeDsData = new ThreeDsData(paymentId, orderId, amount, acsUrl, md, paReq);
+                threeDsData = new ThreeDsData(paymentId, acsUrl, md, paReq);
             } else {
                 throw new AcquiringSdkException(new IllegalStateException("incorrect PaymentStatus " + status));
             }

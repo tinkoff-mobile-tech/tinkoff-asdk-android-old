@@ -155,12 +155,13 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                     Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_DATA);
                     AttachCardResponse response = sdk.attachCard(requestKey, cardData, email, data);
 
-                    AttachCardResponse.Status status = response.getStatus();
-                    if (status == null || status == AttachCardResponse.Status.NONE) {
+                    PaymentStatus status = response.getStatus();
+                    if (status == null) {
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
-                    } else if (status == AttachCardResponse.Status.THREE_DS_CHECKING) {
-
-                    } else if (status == AttachCardResponse.Status.LOOP_CHECKING) {
+                    } else if (status == PaymentStatus.THREE_DS_CHECKING) {
+                        ThreeDsData threeDsData = response.getThreeDsData();
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
+                    } else if (status == PaymentStatus.LOOP_CHECKING) {
 
                     }
                 } catch (Exception e) {

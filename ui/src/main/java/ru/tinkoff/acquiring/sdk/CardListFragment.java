@@ -273,7 +273,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 try {
                     boolean isDeleted = sdk.removeCard(customerKey, card.getCardId());
                     if (isDeleted) {
-                        SdkHandler.INSTANCE.obtainMessage(SdkHandler.DELETE_CARD, card).sendToTarget();
+                        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.DELETE_CARD, card).sendToTarget();
                     } else {
                         throw new AcquiringSdkException(new RuntimeException(cardNotDeletedErrMsg));
                     }

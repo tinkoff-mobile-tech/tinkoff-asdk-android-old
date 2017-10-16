@@ -27,6 +27,8 @@ import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
@@ -37,6 +39,7 @@ import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequestBuilder;
 import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 
 /**
@@ -255,9 +258,21 @@ public class AcquiringSdk extends Journal {
                 .setData(data)
                 .build();
 
-
         try {
             AttachCardResponse response = api.attachCard(request);
+            return response;
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    public GetAddCardStateResponse getAddCardState(final String requestKey) {
+        final GetAddCardStateRequest request = new GetAddCardStateRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .build();
+
+        try {
+            GetAddCardStateResponse response = api.getAddCardState(request);
             return response;
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);

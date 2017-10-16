@@ -2,6 +2,10 @@ package ru.tinkoff.acquiring.sdk.responses;
 
 import com.google.gson.annotations.SerializedName;
 
+import ru.tinkoff.acquiring.sdk.AcquiringSdkException;
+import ru.tinkoff.acquiring.sdk.PaymentStatus;
+import ru.tinkoff.acquiring.sdk.ThreeDsData;
+
 /**
  * @author Vitaliy Markus
  */
@@ -21,7 +25,7 @@ public class AttachCardResponse extends AcquiringResponse {
     private String rebillId;
 
     @SerializedName("Status")
-    private Status status;
+    private PaymentStatus status;
 
     @SerializedName("ACSUrl")
     private String acsUrl;
@@ -31,6 +35,8 @@ public class AttachCardResponse extends AcquiringResponse {
 
     @SerializedName("PaReq")
     private String paReq;
+
+    private transient ThreeDsData threeDsData;
 
     public String getRequestKey() {
         return requestKey;
@@ -48,7 +54,7 @@ public class AttachCardResponse extends AcquiringResponse {
         return rebillId;
     }
 
-    public Status getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
@@ -64,34 +70,14 @@ public class AttachCardResponse extends AcquiringResponse {
         return paReq;
     }
 
-    public enum Status {
-
-        NONE(""),
-        THREE_DS_CHECKING("3DS_CHECKING"),
-        LOOP_CHECKING("LOOP_CHECKING");
-
-        private final String value;
-
-        Status(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-
-        public static Status fromString(String status) {
-            if (status == null || status.isEmpty()) {
-                return NONE;
+    public ThreeDsData getThreeDsData() {
+        if (threeDsData == null) {
+            if (status == PaymentStatus.THREE_DS_CHECKING) {
+                threeDsData = new ThreeDsData(requestKey, acsUrl, md, paReq);
+            } else {
+                threeDsData = ThreeDsData.EMPTY_THREE_DS_DATA;
             }
-            if ("3DS_CHECKING".equals(status)) {
-                return THREE_DS_CHECKING;
-            }
-            if ("LOOP_CHECKING".equals(status)) {
-                return LOOP_CHECKING;
-            }
-            return NONE;
         }
+        return threeDsData;
     }
 }

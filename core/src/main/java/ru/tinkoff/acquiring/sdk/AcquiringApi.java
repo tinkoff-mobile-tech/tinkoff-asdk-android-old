@@ -37,6 +37,7 @@ import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequest;
@@ -46,6 +47,7 @@ import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.ChargeResponse;
 import ru.tinkoff.acquiring.sdk.responses.FinishAuthorizeResponse;
+import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.InitResponse;
@@ -66,7 +68,7 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard"};
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
     static String getUrl(String apiMethod) {
@@ -117,6 +119,10 @@ public class AcquiringApi {
 
     AttachCardResponse attachCard(final AttachCardRequest request) throws AcquiringApiException, NetworkException {
         return performRequest(request, AttachCardResponse.class);
+    }
+
+    GetAddCardStateResponse getAddCardState(final GetAddCardStateRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, GetAddCardStateResponse.class);
     }
 
     private <R extends AcquiringResponse> R performRequest(final AcquiringRequest request,
@@ -228,7 +234,6 @@ public class AcquiringApi {
                 .registerTypeAdapter(CardStatus.class, new CardStatusSerializer())
                 .registerTypeAdapter(PaymentStatus.class, new PaymentStatusSerializer())
                 .registerTypeAdapter(GetCardListResponse.class, new CardsListDeserializer())
-                .registerTypeAdapter(AttachCardResponse.Status.class, new AttachCardStatusDeserializer())
                 .registerTypeAdapter(Tax.class, new TaxSerializer())
                 .registerTypeAdapter(Taxation.class, new TaxationSerializer())
                 .create();

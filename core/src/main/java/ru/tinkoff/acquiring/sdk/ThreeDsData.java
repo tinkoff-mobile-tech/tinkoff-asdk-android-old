@@ -22,31 +22,36 @@ package ru.tinkoff.acquiring.sdk;
 public class ThreeDsData {
 
     private final Long paymentId;
-    private final String orderId;
-    private final Long amount;
+    private final String requestKey;
     private final String acsUrl;
     private final String md;
     private final String paReq;
     private final boolean isThreeDsNeed;
-
 
     public static final ThreeDsData EMPTY_THREE_DS_DATA = new ThreeDsData();
 
     private ThreeDsData() {
         this.isThreeDsNeed = false;
         this.paymentId = null;
-        this.orderId = null;
-        this.amount = null;
+        this.requestKey = null;
         this.acsUrl = null;
         this.md = null;
         this.paReq = null;
     }
 
-    public ThreeDsData(Long paymentId, String orderId, Long amount, String acsUrl, String md, String paReq) {
+    public ThreeDsData(Long paymentId, String acsUrl, String md, String paReq) {
         this.isThreeDsNeed = true;
         this.paymentId = paymentId;
-        this.orderId = orderId;
-        this.amount = amount;
+        this.requestKey = null;
+        this.acsUrl = acsUrl;
+        this.md = md;
+        this.paReq = paReq;
+    }
+
+    public ThreeDsData(String requestKey, String acsUrl, String md, String paReq) {
+        this.isThreeDsNeed = true;
+        this.paymentId = null;
+        this.requestKey = requestKey;
         this.acsUrl = acsUrl;
         this.md = md;
         this.paReq = paReq;
@@ -56,12 +61,8 @@ public class ThreeDsData {
         return paymentId;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public Long getAmount() {
-        return amount;
+    public String getRequestKey() {
+        return requestKey;
     }
 
     public String getAcsUrl() {
@@ -80,18 +81,23 @@ public class ThreeDsData {
         return isThreeDsNeed;
     }
 
+    public boolean isPayment() {
+        return paymentId != null && requestKey == null;
+    }
+
+    public boolean isAttaching() {
+        return paymentId == null && requestKey != null;
+    }
+
     @Override
     public String toString() {
         return "Data: " +
                 paymentId + ", " +
-                orderId + ", " +
-                amount + ", " +
                 acsUrl + ", " +
                 md + ", " +
                 paReq + ", " +
                 isThreeDsNeed + ";";
     }
-
 
 
 }

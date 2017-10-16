@@ -91,7 +91,8 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     private boolean isCardsReady;
     private boolean chargeMode;
 
-    AcquiringSdk getSdk() {
+    @Override
+    public AcquiringSdk getSdk() {
         return sdk;
     }
 
@@ -186,7 +187,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     @Override
     protected void onStart() {
         super.onStart();
-        SdkHandler.INSTANCE.register(this);
+        PayFormHandler.INSTANCE.register(this);
         CommonSdkHandler.INSTANCE.register(this);
     }
 
@@ -194,7 +195,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     protected void onStop() {
         super.onStop();
         dialogsManager.dismissDialogs();
-        SdkHandler.INSTANCE.unregister(this);
+        PayFormHandler.INSTANCE.unregister(this);
         CommonSdkHandler.INSTANCE.unregister(this);
     }
 
@@ -358,16 +359,16 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             public void run() {
                 try {
                     Card[] cards = cardManager.getActiveCards(customerKey);
-                    SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, cards).sendToTarget();
+                    PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CARDS_READY, cards).sendToTarget();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     if (cause == null) {
                         Journal.log(e);
-                        SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CARDS_READY, new Card[0]).sendToTarget();
                     } else if (cause instanceof AcquiringApiException) {
                         AcquiringResponse apiResponse = ((AcquiringApiException) cause).getResponse();
                         if (apiResponse != null && API_ERROR_NO_CUSTOMER.equals(apiResponse.getErrorCode())) {
-                            SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                            PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CARDS_READY, new Card[0]).sendToTarget();
                         } else {
                             throw e;
                         }
@@ -375,7 +376,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK).sendToTarget();
                     } else {
                         Journal.log(cause);
-                        SdkHandler.INSTANCE.obtainMessage(SdkHandler.CARDS_READY, new Card[0]).sendToTarget();
+                        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CARDS_READY, new Card[0]).sendToTarget();
                     }
                 }
             }

@@ -20,4 +20,6 @@ public interface IBaseSdkActivity {
     void showErrorDialog(Exception e);
 
     void noNetwork();
+
+    AcquiringSdk getSdk();
 }
