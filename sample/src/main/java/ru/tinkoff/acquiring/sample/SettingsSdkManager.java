@@ -63,6 +63,17 @@ public class SettingsSdkManager {
         return R.style.AcquiringTheme;
     }
 
+    @StyleRes
+    public int resolveAttachCardStyle() {
+        String defaultStyleName = context.getString(R.string.acq_sp_default_style_id);
+        String customStyleName = context.getString(R.string.acq_sp_custom_style_id);
+        String styleName = preferences.getString(context.getString(R.string.acq_sp_style_id), defaultStyleName);
+        if (customStyleName.equals(styleName)) {
+            return R.style.AcquiringTheme_Custom_AttachCard;
+        }
+        return R.style.AcquiringTheme_AttachCard;
+    }
+
     public CheckType getCheckType() {
         String defaultCheckType = context.getString(R.string.acq_sp_check_type_no);
         String checkType = preferences.getString(context.getString(R.string.acq_sp_check_type_id), defaultCheckType);

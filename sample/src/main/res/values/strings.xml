@@ -42,6 +42,7 @@
     <string name="settings_title_style_id">Style</string>
     <string name="settings_title_check_type_id">CheckType</string>
 
+    <string name="acq_pay_replenish">Replenish</string>
     <string name="acq_pay_with_amount_custom">Replenish %s</string>
     <string name="acq_screen_title_custom">Replenishment</string>
 
@@ -49,4 +50,10 @@
     <string name="attachment_succeeded">Attachment successful</string>
     <string name="attachment_cancelled">Attachment canceled</string>
     <string name="attachment_loading">Waiting</string>
+
+    <string name="attachment_toolbar_title">Attaching Card</string>
+    <string name="attachment_title">Attachment Title</string>
+    <string name="attachment_description">Attachment Descriptions</string>
+    <string name="attachment_button">Attach Card</string>
+    <string name="attachment_button_ex">"Attach Card ¯\\_(ツ)_/¯"</string>
 </resources>

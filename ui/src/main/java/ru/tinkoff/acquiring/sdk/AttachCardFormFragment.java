@@ -103,7 +103,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
                 activity.showProgressDialog();
                 CardData cardData = new CardData(editCardView.getCardNumber(), editCardView.getExpireDate(), editCardView.getCvc());
-                attachCard(activity.getSdk(), cardData, null);
+                attachCard(activity.getSdk(), cardData, email);
             }
         });
 

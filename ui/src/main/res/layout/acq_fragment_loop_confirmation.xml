@@ -11,7 +11,8 @@
         style="?acqPayDescriptionStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/acq_attaching_card_loop_title" />
+        android:text="@string/acq_attaching_card_loop_title"
+        android:visibility="visible" />
 
     <ru.tinkoff.acquiring.sdk.views.FixCompatEditText
         android:id="@+id/et_amount"

@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
                 AttachCardFormActivity
                         .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                         .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
-                        .setTheme(settings.resolveStyle())
+                        .setTheme(settings.resolveAttachCardStyle())
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;
             case R.id.menu_action_about:

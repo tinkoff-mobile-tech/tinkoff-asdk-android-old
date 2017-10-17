@@ -19,6 +19,22 @@
         <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle.Custom</item>
     </style>
 
+    <style name="AcquiringTheme.Custom.AttachCard">
+        <item name="acqPayFormTitle">@string/attachment_toolbar_title</item>
+        <item name="acqPayAmountPosition">overFields</item>
+        <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom.AttachCard</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom.AttachCard</item>
+        <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.Custom.AttachCard</item>
+    </style>
+
+    <style name="AcquiringTheme.AttachCard">
+        <item name="acqPayFormTitle">@string/attachment_toolbar_title</item>
+        <item name="acqPayAmountPosition">overFields</item>
+        <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.AttachCard</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.AttachCard</item>
+        <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.AttachCard</item>
+    </style>
+
     <style name="AcquiringPayTitleStyle.Custom" parent="AcquiringPayTitleStyle">
         <item name="android:visibility">invisible</item>
     </style>
@@ -44,6 +60,7 @@
         <item name="android:layout_marginRight">70dp</item>
         <item name="android:layout_marginBottom">15dp</item>
         <item name="android:layout_marginTop">15dp</item>
+        <item name="android:text">@string/acq_pay_replenish</item>
     </style>
 
     <style name="AcquiringKeyboardStyle.Custom" parent="AcquiringKeyboardStyle">
@@ -51,4 +68,31 @@
         <item name="keyTextColor">#ffffff</item>
         <item name="keyCircleColor">#3f446c</item>
     </style>
+
+    <style name="AcquiringPayTitleStyle.Custom.AttachCard">
+        <item name="android:visibility">visible</item>
+        <item name="android:text">@string/attachment_title</item>
+    </style>
+
+    <style name="AcquiringPayDescriptionStyle.Custom.AttachCard">
+        <item name="android:visibility">visible</item>
+        <item name="android:text">@string/attachment_description</item>
+    </style>
+
+    <style name="AcquiringPayButtonStyle.Custom.AttachCard">
+        <item name="android:text">@string/attachment_button</item>
+    </style>
+
+    <style name="AcquiringPayTitleStyle.AttachCard">
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="AcquiringPayDescriptionStyle.AttachCard">
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="AcquiringPayButtonStyle.AttachCard" parent="AcquiringButtonStyle">
+        <item name="android:text">@string/attachment_button_ex</item>
+    </style>
+
 </resources>

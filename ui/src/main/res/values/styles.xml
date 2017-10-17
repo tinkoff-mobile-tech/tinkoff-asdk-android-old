@@ -55,6 +55,7 @@
 
     <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button">
         <item name="android:background">@drawable/acq_button_bg</item>
+        <item name="android:text">@string/acq_pay</item>
     </style>
 
     <style name="AcquiringTitleStyle">
