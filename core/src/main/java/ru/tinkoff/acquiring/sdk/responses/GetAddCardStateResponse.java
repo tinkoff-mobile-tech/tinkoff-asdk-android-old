@@ -30,4 +30,11 @@ public class GetAddCardStateResponse extends AcquiringResponse {
         return status;
     }
 
+    public String getCardId() {
+        return cardId;
+    }
+
+    public String getRebillId() {
+        return rebillId;
+    }
 }

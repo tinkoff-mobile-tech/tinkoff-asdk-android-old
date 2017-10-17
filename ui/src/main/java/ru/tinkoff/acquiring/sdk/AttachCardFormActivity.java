@@ -73,6 +73,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     protected void onStart() {
         super.onStart();
         CommonSdkHandler.INSTANCE.register(this);
+        AttachCardFormHandler.INSTANCE.register(this);
     }
 
     @Override
@@ -80,6 +81,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
         super.onStop();
         dialogsManager.dismissDialogs();
         CommonSdkHandler.INSTANCE.unregister(this);
+        AttachCardFormHandler.INSTANCE.unregister(this);
     }
 
     @Override

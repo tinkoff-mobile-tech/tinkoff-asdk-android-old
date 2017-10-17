@@ -120,6 +120,7 @@ public class ThreeDsFragment extends Fragment {
                         GetAddCardStateResponse response = sdk.getAddCardState(threeDsData.getRequestKey());
                         PaymentStatus status = response.getStatus();
                         if (status == PaymentStatus.COMPLETED) {
+                            AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.CARD_ID, response.getCardId()).sendToTarget();
                             CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                         } else {
                             CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();

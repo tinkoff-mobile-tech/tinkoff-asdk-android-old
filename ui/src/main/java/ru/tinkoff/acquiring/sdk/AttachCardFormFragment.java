@@ -157,6 +157,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
                     PaymentStatus status = response.getStatus();
                     if (status == null) {
+                        AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.CARD_ID, response.getCardId()).sendToTarget();
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                     } else if (status == PaymentStatus.THREE_DS_CHECKING) {
                         ThreeDsData threeDsData = response.getThreeDsData();
