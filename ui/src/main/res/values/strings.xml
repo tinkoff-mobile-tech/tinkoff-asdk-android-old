@@ -10,6 +10,7 @@
     <string name="acq_cvc_hint">CVC</string>
     <string name="acq_email_hint">E-mail for receipt</string>
     <string name="acq_pay">Pay</string>
+    <string name="acq_check">Check</string>
     <string name="acq_pay_with_amount">Pay %s</string>
     <string name="acq_screen_title">Payment</string>
     <string name="acq_enter_new_card_label">Add new card</string>
@@ -27,6 +28,8 @@
     <string name="acq_progress_dialog_attach_card_text">Attaching card…</string>
     <string name="acq_invalid_email">Invalid e-mail</string>
     <string name="acq_invalid_card">Invalid card data</string>
+    <string name="acq_attaching_card_loop_title">In order to confirm the binding of your card we wrote off and returned a small amount of money (up to 1,99 ₽)/ Please, specify the sum with accuracy to amount of coins.</string>
+    <string name="acq_attaching_card_loop_parse_error">Please enter correct amount in coins</string>
 
     <string-array name="acq_scan_types">
         <item>Scan with camera</item>

@@ -6,4 +6,6 @@ package ru.tinkoff.acquiring.sdk;
 public interface IAttachCardFormActivity extends IBaseSdkActivity {
 
     void onAttachCardId(String cardId);
+
+    void showLoopConfirmations(String requestKey);
 }

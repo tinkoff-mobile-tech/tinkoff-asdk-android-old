@@ -170,6 +170,16 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     }
 
     @Override
+    public void showLoopConfirmations(String requestKey) {
+        hideProgressDialog();
+        Fragment fragment = LoopConfirmationFragment.newInstance(requestKey);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .addToBackStack("loop_confirmation")
+                .commit();
+    }
+
+    @Override
     public void onBackPressed() {
         final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (fragment instanceof OnBackPressedListener) {

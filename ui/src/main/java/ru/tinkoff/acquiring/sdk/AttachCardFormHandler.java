@@ -15,6 +15,7 @@ public class AttachCardFormHandler extends Handler {
     static AttachCardFormHandler INSTANCE = new AttachCardFormHandler();
 
     public static final int CARD_ID = 0;
+    public static final int SHOW_LOOP_CONFIRMATIONS = 1;
 
     public AttachCardFormHandler() {
         super(Looper.getMainLooper());
@@ -38,6 +39,11 @@ public class AttachCardFormHandler extends Handler {
             case CARD_ID:
                 for (IAttachCardFormActivity activity : callbacks) {
                     activity.onAttachCardId((String) msg.obj);
+                }
+                return;
+            case SHOW_LOOP_CONFIRMATIONS:
+                for (IAttachCardFormActivity activity : callbacks) {
+                    activity.showLoopConfirmations((String)msg.obj);
                 }
                 return;
         }

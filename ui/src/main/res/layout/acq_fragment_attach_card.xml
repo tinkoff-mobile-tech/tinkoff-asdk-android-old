@@ -41,7 +41,6 @@
                 app:dateHint="@string/acq_exp_date_hint"
                 app:numberHint="@string/acq_card_number_hint" />
 
-
             <ru.tinkoff.acquiring.sdk.views.FixCompatEditText
                 android:id="@+id/et_email"
                 style="?acqPayEmailStyle"

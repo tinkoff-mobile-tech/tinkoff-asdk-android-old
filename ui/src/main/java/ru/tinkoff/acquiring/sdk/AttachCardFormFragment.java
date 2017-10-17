@@ -163,7 +163,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                         ThreeDsData threeDsData = response.getThreeDsData();
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
                     } else if (status == PaymentStatus.LOOP_CHECKING) {
-
+                        AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.SHOW_LOOP_CONFIRMATIONS, requestKey).sendToTarget();
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();

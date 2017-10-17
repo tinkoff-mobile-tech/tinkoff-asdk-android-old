@@ -46,7 +46,7 @@
     <string name="acq_pay_with_amount_custom">Пополнить %s</string>
     <string name="acq_screen_title_custom">Пополнение</string>
 
-    <string name="attachment_failed">Невозможно совершить оплату</string>
+    <string name="attachment_failed">Невозможно завершить привязку карты</string>
     <string name="attachment_succeeded">Привязка карты успешно завершена</string>
     <string name="attachment_cancelled">Привязка карты была отменена</string>
     <string name="attachment_loading">Ожидание привязки карты</string>

@@ -37,10 +37,13 @@ import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequest;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequestBuilder;
 import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
+import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
 
 /**
  * <p>
@@ -235,7 +238,13 @@ public class AcquiringSdk extends Journal {
         }
     }
 
-
+    /**
+     * Метод подготовки для привязки карты, необходимо вызвать {@link AcquiringSdk#addCard(String, CheckType)} перед методом {@link AcquiringSdk#attachCard(String, CardData, String, Map)}
+     *
+     * @param customerKey идентификатор покупателя в системе Продавца
+     * @param checkType   тип привязки {@link CheckType}
+     * @return возвращет ключ запроса (RequestKey)
+     */
     public String addCard(final String customerKey, final CheckType checkType) {
         final AddCardRequest request = new AddCardRequestBuilder(password, terminalKey)
                 .setCustomerKey(customerKey)
@@ -250,6 +259,15 @@ public class AcquiringSdk extends Journal {
         }
     }
 
+    /**
+     * Метод привязки карты, вызывается после {@link AcquiringSdk#addCard(String, CheckType)}
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @param cardData   данные привязанной карты
+     * @param email      email
+     * @param data       дополнительные параметры в виде ключ, значение
+     * @return возвращает результат запроса
+     */
     public AttachCardResponse attachCard(final String requestKey, final CardData cardData, final String email, final Map<String, String> data) {
         final AttachCardRequest request = new AttachCardRequestBuilder(password, terminalKey)
                 .setRequestKey(requestKey)
@@ -266,6 +284,12 @@ public class AcquiringSdk extends Journal {
         }
     }
 
+    /**
+     * Метод проверки состояния привязки карты после 3DS
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @return возвращает результат запроса
+     */
     public GetAddCardStateResponse getAddCardState(final String requestKey) {
         final GetAddCardStateRequest request = new GetAddCardStateRequestBuilder(password, terminalKey)
                 .setRequestKey(requestKey)
@@ -274,6 +298,27 @@ public class AcquiringSdk extends Journal {
         try {
             GetAddCardStateResponse response = api.getAddCardState(request);
             return response;
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
+     * Метод подтверждения при {@link CheckType#THREE_DS_HOLD} привязки
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @param amount     забронированная сумма в копейках
+     * @return возвращает идентификатор привязанной карты (CardId)
+     */
+    public String submitRandomAmount(final String requestKey, final Long amount) {
+        final SubmitRandomAmountRequest request = new SubmitRandomAmountRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .setAmount(amount)
+                .build();
+
+        try {
+            SubmitRandomAmountResponse response = api.submitRandomAmount(request);
+            return response.getCardId();
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }

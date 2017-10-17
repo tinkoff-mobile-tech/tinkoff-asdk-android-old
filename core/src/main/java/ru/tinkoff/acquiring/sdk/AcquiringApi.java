@@ -42,6 +42,7 @@ import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequest;
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
 import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
@@ -52,6 +53,7 @@ import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.InitResponse;
 import ru.tinkoff.acquiring.sdk.responses.RemoveCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
 
 /**
  * @author Mikhail Artemyev
@@ -68,7 +70,7 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState"};
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState","SubmitRandomAmount"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
     static String getUrl(String apiMethod) {
@@ -123,6 +125,10 @@ public class AcquiringApi {
 
     GetAddCardStateResponse getAddCardState(final GetAddCardStateRequest request) throws AcquiringApiException, NetworkException {
         return performRequest(request, GetAddCardStateResponse.class);
+    }
+
+    SubmitRandomAmountResponse submitRandomAmount(final SubmitRandomAmountRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, SubmitRandomAmountResponse.class);
     }
 
     private <R extends AcquiringResponse> R performRequest(final AcquiringRequest request,
