@@ -6,6 +6,8 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,12 +94,13 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                     customKeyboard.hide();
                 }
 
-//                final String enteredEmail = getEmail();
-//                if (!validateInput(enteredEmail)) {
-//                    return;
-//                }
-
                 AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
+                final String email = getEmail();
+                if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(activity, R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 activity.showProgressDialog();
                 CardData cardData = new CardData(editCardView.getCardNumber(), editCardView.getExpireDate(), editCardView.getCvc());
                 attachCard(activity.getSdk(), cardData, null);
@@ -138,6 +141,16 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     public void onPause() {
         super.onPause();
         hideSoftKeyboard();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        boolean isUsingCustomKeyboard = ((AttachCardFormActivity) getActivity()).shouldUseCustomKeyboard();
+        if (customKeyboard != null && isUsingCustomKeyboard) {
+            return customKeyboard.hide();
+        } else {
+            return false;
+        }
     }
 
     private void attachCard(final AcquiringSdk sdk, final CardData cardData, final String email) {
@@ -186,6 +199,11 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         attachButtton = (Button) root.findViewById(R.id.btn_attach);
         secureIcons = (ImageView) root.findViewById(R.id.iv_secure_icons);
         customKeyboard = (BankKeyboard) root.findViewById(R.id.acq_keyboard);
+
+        final String email = getActivity().getIntent().getStringExtra(AttachCardFormActivity.EXTRA_E_MAIL);
+        if (email != null) {
+            emailView.setText(email);
+        }
 
         editCardView.setCardNumber("5136 9149 2034 4072");
         editCardView.setExpireDate("11/17");
@@ -236,13 +254,8 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         }
     }
 
-    @Override
-    public boolean onBackPressed() {
-        boolean isUsingCustomKeyboard = ((AttachCardFormActivity) getActivity()).shouldUseCustomKeyboard();
-        if (customKeyboard != null && isUsingCustomKeyboard) {
-            return customKeyboard.hide();
-        } else {
-            return false;
-        }
+    private String getEmail() {
+        String input = emailView.getText().toString().trim();
+        return input.isEmpty() ? null : input;
     }
 }

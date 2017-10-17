@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
                 String terminalId = settings.getTerminalId();
                 AttachCardFormActivity
                         .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
-                        .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled())
+                        .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
                         .setTheme(settings.resolveStyle())
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;

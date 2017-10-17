@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:digits="0123456789"
-        android:gravity="center"
+        android:gravity="left"
+        android:hint="@string/acq_attaching_card_loop_amount_hint"
         android:imeOptions="actionDone"
         android:inputType="number" />
 

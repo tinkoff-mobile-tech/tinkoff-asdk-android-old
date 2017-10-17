@@ -31,6 +31,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
     static final String EXTRA_CARD_ID = "card_id";
+    static final String EXTRA_E_MAIL = "email";
 
     private DialogsManager dialogsManager;
     private AcquiringSdk sdk;
