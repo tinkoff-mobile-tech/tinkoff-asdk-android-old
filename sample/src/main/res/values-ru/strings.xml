@@ -23,6 +23,7 @@
     <string name="clear_cart">Очистить корзину</string>
     <string name="delete">Удалить</string>
     <string name="payment_result_success">Покупка на сумму %1$s\nпрошла успешно</string>
+    <string name="attachment_result_success">Привязка карты с ID=%1$s\nпрошла успешно</string>
     <string name="close">Закрыть</string>
     <string name="version">Tinkoff Acquiring SDK v%1$s(%2$d)</string>
 
@@ -40,7 +41,13 @@
     <string name="settings_title_recurrent_payment">Рекуррентный платёж</string>
     <string name="settings_title_terminal_id">Терминал</string>
     <string name="settings_title_style_id">Стиль</string>
+    <string name="settings_title_check_type_id">CheckType</string>
 
     <string name="acq_pay_with_amount_custom">Пополнить %s</string>
     <string name="acq_screen_title_custom">Пополнение</string>
+
+    <string name="attachment_failed">Невозможно совершить оплату</string>
+    <string name="attachment_succeeded">Привязка карты успешно завершена</string>
+    <string name="attachment_cancelled">Привязка карты была отменена</string>
+    <string name="attachment_loading">Ожидание привязки карты</string>
 </resources>

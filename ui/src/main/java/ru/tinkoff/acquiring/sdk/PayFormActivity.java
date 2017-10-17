@@ -43,7 +43,7 @@ import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
  *
  * @author a.shishkin1
  */
-public final class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender, IBaseSdkActivity {
+public final class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender, IPayFormActivity {
 
     public static final int RESULT_ERROR = 500;
     public static final String API_ERROR_NO_CUSTOMER = "7";
@@ -283,6 +283,46 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     @Override
+    public void onCardsReady(Card[] cards) {
+        hideProgressDialog();
+        this.cards = filterCards(cards);
+        if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
+            String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
+            if (cardId != null) {
+                sourceCard = cardManager.getCardById(cardId);
+            }
+        }
+        isCardsReady = true;
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null && fragment instanceof ICardInterest) {
+            ((ICardInterest) fragment).onCardReady();
+        }
+    }
+
+    @Override
+    public void onDeleteCard(Card card) {
+        cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
+        if (sourceCard == card) {
+            sourceCard = null;
+        }
+        if (cards.length == 1 && cards[0] == card) {
+            cards = new Card[0];
+        } else {
+            List<Card> list = new ArrayList<>(Arrays.asList(cards));
+            list.remove(card);
+            Card[] array = new Card[list.size()];
+            list.toArray(array);
+            cards = array;
+        }
+        onCardsReady(cards);
+    }
+
+    @Override
+    public void onPaymentInitCompleted(final Long paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    @Override
     public void onBackPressed() {
         final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (fragment instanceof OnBackPressedListener) {
@@ -320,39 +360,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         getSupportFragmentManager().popBackStack("choose_card", FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
-    void onCardsReady(Card[] cards) {
-        hideProgressDialog();
-        this.cards = filterCards(cards);
-        if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
-            String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
-            if (cardId != null) {
-                sourceCard = cardManager.getCardById(cardId);
-            }
-        }
-        isCardsReady = true;
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (fragment != null && fragment instanceof ICardInterest) {
-            ((ICardInterest) fragment).onCardReady();
-        }
-    }
-
-    void onDeleteCard(Card card) {
-        cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
-        if (sourceCard == card) {
-            sourceCard = null;
-        }
-        if (cards.length == 1 && cards[0] == card) {
-            cards = new Card[0];
-        } else {
-            List<Card> list = new ArrayList<>(Arrays.asList(cards));
-            list.remove(card);
-            Card[] array = new Card[list.size()];
-            list.toArray(array);
-            cards = array;
-        }
-        onCardsReady(cards);
-    }
-
     static void requestCards(final String customerKey, final CardManager cardManager) {
         new Thread(new Runnable() {
             @Override
@@ -381,10 +388,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                 }
             }
         }).start();
-    }
-
-    void onPaymentInitCompleted(final Long paymentId) {
-        this.paymentId = paymentId;
     }
 
     public boolean isCardChooseEnable() {

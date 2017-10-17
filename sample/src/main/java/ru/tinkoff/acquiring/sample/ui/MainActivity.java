@@ -16,11 +16,14 @@
 
 package ru.tinkoff.acquiring.sample.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,9 +35,10 @@ import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
 import ru.tinkoff.acquiring.sdk.AttachCardFormActivity;
 import ru.tinkoff.acquiring.sdk.CheckType;
+import ru.tinkoff.acquiring.sdk.OnAttachCardListener;
 
 public class MainActivity extends AppCompatActivity implements
-        BooksListAdapter.BookDetailsClickListener {
+        BooksListAdapter.BookDetailsClickListener, OnAttachCardListener {
 
     private static final int ATTACH_CARD_REQUEST_CODE = 11;
 
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
                 String terminalId = settings.getTerminalId();
                 AttachCardFormActivity
                         .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
-                        .prepare(settings.resolveCustomerKey(terminalId), CheckType.THREE_DS_HOLD, settings.isCustomKeyboardEnabled())
+                        .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled())
                         .setTheme(settings.resolveStyle())
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;
@@ -88,6 +92,29 @@ public class MainActivity extends AppCompatActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        AttachCardFormActivity.dispatchResult(resultCode, data, this);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSuccess(String cardId) {
+        PaymentResultActivity.start(this, cardId);
+    }
+
+    @Override
+    public void onCancelled() {
+        Toast.makeText(this, R.string.attachment_cancelled, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(Exception e) {
+        Toast.makeText(this, R.string.attachment_failed, Toast.LENGTH_SHORT).show();
+        Log.e("SAMPLE", e.getMessage(), e);
+    }
+
 
     @Override
     public void onBookDetailsClicked(Book book) {

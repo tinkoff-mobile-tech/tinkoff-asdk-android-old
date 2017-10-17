@@ -15,7 +15,7 @@ import android.view.MenuItem;
 /**
  * @author Vitaliy Markus
  */
-public class AttachCardFormActivity extends AppCompatActivity implements IBaseSdkActivity {
+public class AttachCardFormActivity extends AppCompatActivity implements IAttachCardFormActivity {
 
     public static final int RESULT_ERROR = 500;
     static final String EXTRA_ERROR = "error";
@@ -30,13 +30,26 @@ public class AttachCardFormActivity extends AppCompatActivity implements IBaseSd
     static final String EXTRA_DATA = "data";
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
+    static final String EXTRA_CARD_ID = "card_id";
 
     private DialogsManager dialogsManager;
     private AcquiringSdk sdk;
+
     private boolean useCustomKeyboard;
+    private String cardId;
 
     public static AttachCardFormStarter init(String terminalKey, String password, String publicKey) {
         return new AttachCardFormStarter(terminalKey, password, publicKey);
+    }
+
+    public static void dispatchResult(int resultCode, Intent data, OnAttachCardListener listener) {
+        if (resultCode == RESULT_OK) {
+            listener.onSuccess(data.getStringExtra(AttachCardFormActivity.EXTRA_CARD_ID));
+        } else if (resultCode == RESULT_CANCELED) {
+            listener.onCancelled();
+        } else if (resultCode == RESULT_ERROR) {
+            listener.onError((Exception) data.getSerializableExtra(EXTRA_ERROR));
+        }
     }
 
     @Override
@@ -82,7 +95,9 @@ public class AttachCardFormActivity extends AppCompatActivity implements IBaseSd
     @Override
     public void success() {
         hideProgressDialog();
-        setResult(RESULT_OK);
+        Intent data = new Intent();
+        data.putExtra(EXTRA_CARD_ID, cardId);
+        setResult(RESULT_OK, data);
         finish();
     }
 
@@ -145,6 +160,11 @@ public class AttachCardFormActivity extends AppCompatActivity implements IBaseSd
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+    }
+
+    @Override
+    public void onAttachCardId(String cardId) {
+        this.cardId = cardId;
     }
 
     @Override

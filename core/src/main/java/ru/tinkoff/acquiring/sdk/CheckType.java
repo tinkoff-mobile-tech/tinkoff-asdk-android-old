@@ -35,4 +35,18 @@ public enum CheckType {
     public String toString() {
         return checkType;
     }
+
+    public static CheckType fromString(String string) {
+        switch (string) {
+            case "NO":
+                return NO;
+            case "HOLD":
+                return HOLD;
+            case "3DS":
+                return THREE_DS;
+            case "3DSHOLD":
+                return THREE_DS_HOLD;
+        }
+        return NO;
+    }
 }

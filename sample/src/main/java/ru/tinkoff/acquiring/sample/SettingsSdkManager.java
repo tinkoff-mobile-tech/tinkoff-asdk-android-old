@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StyleRes;
 
+import ru.tinkoff.acquiring.sdk.CheckType;
+
 /**
  * @author Vitaliy Markus
  */
@@ -46,7 +48,7 @@ public class SettingsSdkManager {
         return SessionInfo.DEFAULT_CUSTOMER_EMAIL;
     }
 
-    public boolean isRecurrentPayment(){
+    public boolean isRecurrentPayment() {
         return preferences.getBoolean(context.getString(R.string.acq_sp_recurrent_payment), false);
     }
 
@@ -59,5 +61,11 @@ public class SettingsSdkManager {
             return R.style.AcquiringTheme_Custom;
         }
         return R.style.AcquiringTheme;
+    }
+
+    public CheckType getCheckType() {
+        String defaultCheckType = context.getString(R.string.acq_sp_check_type_no);
+        String checkType = preferences.getString(context.getString(R.string.acq_sp_check_type_id), defaultCheckType);
+        return CheckType.fromString(checkType);
     }
 }

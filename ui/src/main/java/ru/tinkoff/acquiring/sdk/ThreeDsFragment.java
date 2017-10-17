@@ -131,6 +131,4 @@ public class ThreeDsFragment extends Fragment {
             }
         }).start();
     }
-
-
 }

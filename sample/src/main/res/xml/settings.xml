@@ -23,4 +23,11 @@
         android:key="@string/acq_sp_style_id"
         android:title="@string/settings_title_style_id" />
 
+    <ListPreference
+        android:defaultValue="@string/acq_sp_check_type_no"
+        android:entries="@array/acq_sp_check_type_keys"
+        android:entryValues="@array/acq_sp_check_type_keys"
+        android:key="@string/acq_sp_check_type_id"
+        android:title="@string/settings_title_check_type_id" />
+
 </PreferenceScreen>

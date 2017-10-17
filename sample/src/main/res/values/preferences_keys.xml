@@ -25,4 +25,15 @@
         <item>@string/acq_sp_custom_style_id</item>
     </string-array>
 
+    <string name="acq_sp_check_type_id" translatable="false">acq_sp_check_type_id</string>
+
+    <string name="acq_sp_check_type_no" translatable="false">NO</string>
+
+    <string-array name="acq_sp_check_type_keys">
+        <item>@string/acq_sp_check_type_no</item>
+        <item>HOLD</item>
+        <item>3DS</item>
+        <item>3DSHOLD</item>
+    </string-array>
+
 </resources>

@@ -38,13 +38,13 @@ class PayFormHandler extends Handler {
         super(Looper.getMainLooper());
     }
 
-    private Set<PayFormActivity> callbacks = new HashSet<>();
+    private Set<IPayFormActivity> callbacks = new HashSet<>();
 
-    public void register(PayFormActivity activity) {
+    public void register(IPayFormActivity activity) {
         callbacks.add(activity);
     }
 
-    public void unregister(PayFormActivity activity) {
+    public void unregister(IPayFormActivity activity) {
         callbacks.remove(activity);
     }
 
@@ -54,17 +54,17 @@ class PayFormHandler extends Handler {
 
         switch (action) {
             case CARDS_READY:
-                for (PayFormActivity activity : callbacks) {
+                for (IPayFormActivity activity : callbacks) {
                     activity.onCardsReady((Card[]) msg.obj);
                 }
                 return;
             case DELETE_CARD:
-                for (PayFormActivity activity : callbacks) {
+                for (IPayFormActivity activity : callbacks) {
                     activity.onDeleteCard((Card) msg.obj);
                 }
                 return;
             case PAYMENT_INIT_COMPLETED:
-                for (PayFormActivity activity : callbacks) {
+                for (IPayFormActivity activity : callbacks) {
                     activity.onPaymentInitCompleted((Long) msg.obj);
                 }
                 return;

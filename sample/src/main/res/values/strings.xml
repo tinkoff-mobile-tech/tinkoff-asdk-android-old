@@ -21,7 +21,8 @@
     <string name="added_to_cart">Book added to cart</string>
     <string name="clear_cart">Clear all items</string>
     <string name="delete">Delete</string>
-    <string name="payment_result_success">Total payment for %1$s\nhas been succesfull</string>
+    <string name="payment_result_success">Total payment for %1$s\nhas been successful</string>
+    <string name="attachment_result_success">Attachment card with ID=%1$s\nhas been successful</string>
     <string name="close">Close</string>
     <string name="version">Tinkoff Acquiring SDK v%1$s(%2$d)</string>
 
@@ -39,7 +40,13 @@
     <string name="settings_title_recurrent_payment">Recurrent payment</string>
     <string name="settings_title_terminal_id">Terminal</string>
     <string name="settings_title_style_id">Style</string>
+    <string name="settings_title_check_type_id">CheckType</string>
 
     <string name="acq_pay_with_amount_custom">Replenish %s</string>
     <string name="acq_screen_title_custom">Replenishment</string>
+
+    <string name="attachment_failed">Attachment failed. Try later.</string>
+    <string name="attachment_succeeded">Attachment successful</string>
+    <string name="attachment_cancelled">Attachment canceled</string>
+    <string name="attachment_loading">Waiting</string>
 </resources>
