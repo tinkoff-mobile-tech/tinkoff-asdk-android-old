@@ -10,10 +10,6 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="io.card.payment.CardIOActivity"
-            android:configChanges="keyboardHidden|orientation" />
-        <activity android:name="io.card.payment.DataEntryActivity" />
-        <activity
             android:name=".nfc.NfcCardScanActivity"
             android:theme="@style/AcquiringNfcTheme" />
 
