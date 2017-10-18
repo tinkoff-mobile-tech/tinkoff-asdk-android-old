@@ -29,7 +29,7 @@
 
     <string name="acq_sp_check_type_no" translatable="false">NO</string>
 
-    <string-array name="acq_sp_check_type_keys">
+    <string-array name="acq_sp_check_type_keys" translatable="false">
         <item>@string/acq_sp_check_type_no</item>
         <item>HOLD</item>
         <item>3DS</item>
