@@ -4,12 +4,8 @@ def coreVersion = '3.0.13'
 
 dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'io.card:android-sdk:5.2.0'
-    compile 'com.github.devnied:bit-lib4j:1.4.10'
-    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'io.card:android-sdk:5.4.2'
     compile "ru.tinkoff.core:core-nfc:${coreVersion}"
-    compile "ru.tinkoff.core:core-log:${coreVersion}"
-    compile "ru.tinkoff.core:core-log-android:${coreVersion}"
 
     compile project(':core')
 }
@@ -33,6 +29,8 @@ android {
         targetSdkVersion 23
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
+
+        consumerProguardFiles 'proguard-rules.pro'
     }
     buildTypes {
         release {

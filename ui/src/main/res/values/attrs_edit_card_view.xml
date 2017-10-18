@@ -2,9 +2,12 @@
 <resources>
 
     <declare-styleable name="EditCardView">
-        <attr name="numberHint" format="string"/>
-        <attr name="dateHint" format="string"/>
-        <attr name="cvcHint" format="string"/>
+        <attr name="numberHint" format="string|reference" />
+        <attr name="dateHint" format="string|reference" />
+        <attr name="cvcHint" format="string|reference" />
+        <attr name="scanIcon" format="reference" />
+        <attr name="changeModeIcon" format="reference" />
+        <attr name="cardLogoMargin" format="dimension|reference" />
     </declare-styleable>
 
 </resources>

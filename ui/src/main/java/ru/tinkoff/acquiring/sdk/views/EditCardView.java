@@ -42,7 +42,6 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -155,7 +154,6 @@ public class EditCardView extends ViewGroup {
 
         setAddStatesFromChildren(true);
 
-        additionalPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
         btnChangeMode = new SimpleButton(null);
         btnScanCard = new SimpleButton(null);
 
@@ -402,23 +400,14 @@ public class EditCardView extends ViewGroup {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         cardFormatter = new CardFormatter();
 
-        setBtnScanIcon(R.drawable.acq_scan_grey);
-        setChangeModeIcon(R.drawable.acq_next_grey);
-
-        if (attributeSet != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(
-                    attributeSet,
-                    R.styleable.EditCardView,
-                    0, 0);
-
-            try {
-                etCardNumber.setHint(a.getString(R.styleable.EditCardView_numberHint));
-                etDate.setHint(a.getString(R.styleable.EditCardView_dateHint));
-                etCvc.setHint(a.getString(R.styleable.EditCardView_cvcHint));
-            } finally {
-                a.recycle();
-            }
-        }
+        TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.EditCardView, 0, 0);
+        additionalPadding = a.getDimensionPixelSize(R.styleable.EditCardView_cardLogoMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_logo_margin));
+        etCardNumber.setHint(a.getString(R.styleable.EditCardView_numberHint));
+        etDate.setHint(a.getString(R.styleable.EditCardView_dateHint));
+        etCvc.setHint(a.getString(R.styleable.EditCardView_cvcHint));
+        setBtnScanIcon(a.getResourceId(R.styleable.EditCardView_scanIcon, R.drawable.acq_scan_grey));
+        setChangeModeIcon(a.getResourceId(R.styleable.EditCardView_changeModeIcon, R.drawable.acq_next_grey));
+        a.recycle();
     }
 
     @Override
