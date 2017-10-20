@@ -44,6 +44,4 @@ public class CardsListDeserializer implements JsonDeserializer<GetCardListRespon
         final Card[] cards = context.deserialize(json, Card[].class);
         return new GetCardListResponse(cards);
     }
-
-
 }

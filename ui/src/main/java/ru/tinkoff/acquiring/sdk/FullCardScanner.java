@@ -9,7 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
+import ru.tinkoff.acquiring.sdk.nfc.AsdkNfcScanActivity;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
 /**
@@ -66,7 +66,7 @@ public class FullCardScanner implements EditCardView.Actions {
     }
 
     public boolean isNfcError(int requestCode, int resultCode) {
-        return requestCode == REQUEST_CARD_NFC && resultCode == NfcCardScanActivity.RESULT_ERROR;
+        return requestCode == REQUEST_CARD_NFC && resultCode == AsdkNfcScanActivity.RESULT_ERROR;
     }
 
     @NonNull
@@ -76,8 +76,7 @@ public class FullCardScanner implements EditCardView.Actions {
 
     @NonNull
     public ICreditCard parseNfcData(Intent data) {
-        ru.tinkoff.core.nfc.model.Card card = (ru.tinkoff.core.nfc.model.Card) data.getSerializableExtra(NfcCardScanActivity.EXTRA_CARD);
-        return new CreditCard(card.getNumber(), card.getExpirationDate(), "");
+        return (ICreditCard) data.getSerializableExtra(AsdkNfcScanActivity.EXTRA_CARD);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class FullCardScanner implements EditCardView.Actions {
     }
 
     private void startNfcScan(Activity activity) {
-        Intent cardFromNfcIntent = new Intent(activity, NfcCardScanActivity.class);
+        Intent cardFromNfcIntent = new Intent(activity, AsdkNfcScanActivity.class);
         fragment.startActivityForResult(cardFromNfcIntent, REQUEST_CARD_NFC);
     }
 }

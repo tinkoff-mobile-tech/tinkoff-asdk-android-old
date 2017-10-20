@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".nfc.NfcCardScanActivity"
+            android:name=".nfc.AsdkNfcScanActivity"
             android:theme="@style/AcquiringNfcTheme" />
 
     </application>

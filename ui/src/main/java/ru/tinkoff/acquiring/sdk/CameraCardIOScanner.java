@@ -26,7 +26,7 @@ public class CameraCardIOScanner implements ICameraCardScanner {
     public ICreditCard parseIntentData(Intent data) {
         String cardNumber;
         String expireDate = "";
-        String cvc = "";
+        String cardholderName = "";
 
         io.card.payment.CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
         cardNumber = scanResult.getFormattedCardNumber();
@@ -36,7 +36,7 @@ public class CameraCardIOScanner implements ICameraCardScanner {
             expireDate = String.format(locale, "%02d%02d", scanResult.expiryMonth, expiryYear);
         }
 
-        return new CreditCard(cardNumber, expireDate, cvc);
+        return new CreditCard(cardNumber, expireDate, cardholderName);
     }
 
     @NonNull

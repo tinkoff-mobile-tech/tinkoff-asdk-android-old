@@ -23,6 +23,7 @@
     <string name="acq_network_error_message">Вероятно, соединение с интернетом прервано, попробуйте позже</string>
     <string name="acq_cant_delete_card_message">Не удалось удалить карту, попробуйте позже</string>
     <string name="acq_nfc_description">Поднесите карту\nк задней крышке телефона</string>
+    <string name="acq_nfc_is_disable">NFC выключен</string>
     <string name="acq_nfc_need_enable">Для сканирования карты необходимо включить NFC</string>
     <string name="acq_nfc_scan_failed">Не удалось распознать карту</string>
     <string name="acq_progress_dialog_text">Оплата…</string>

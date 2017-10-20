@@ -9,10 +9,10 @@ public class CreditCard implements ICreditCard {
     private final String expireDate;
     private final String cardholderName;
 
-    public CreditCard(String cardNumber, String expireDate, String cvc) {
+    public CreditCard(String cardNumber, String expireDate, String cardholderName) {
         this.cardNumber = cardNumber;
         this.expireDate = expireDate;
-        this.cardholderName = cvc;
+        this.cardholderName = cardholderName;
     }
 
     @Override
@@ -25,6 +25,7 @@ public class CreditCard implements ICreditCard {
         return expireDate;
     }
 
+    @Override
     public String getCardholderName() {
         return cardholderName;
     }

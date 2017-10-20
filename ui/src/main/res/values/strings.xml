@@ -22,6 +22,7 @@
     <string name="acq_network_error_message">Probably the Internet connection is interrupted, try again later</string>
     <string name="acq_cant_delete_card_message">Unable to remove the card, try again later</string>
     <string name="acq_nfc_description">Bring the card to the back of the phone</string>
+    <string name="acq_nfc_is_disable">NFC is turn off</string>
     <string name="acq_nfc_need_enable">Turn on NFC to scan a card</string>
     <string name="acq_nfc_scan_failed">Failed to scan a card</string>
     <string name="acq_progress_dialog_text">Payment…</string>

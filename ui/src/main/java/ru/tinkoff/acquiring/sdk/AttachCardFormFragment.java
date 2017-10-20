@@ -204,9 +204,6 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         if (email != null) {
             emailView.setText(email);
         }
-
-        editCardView.setCardNumber("5136 9149 2034 4072");
-        editCardView.setExpireDate("11/17");
     }
 
     private void setCreditCardData(ICreditCard card) {
