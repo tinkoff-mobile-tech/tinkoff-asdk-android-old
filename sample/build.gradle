@@ -23,7 +23,7 @@ android {
         applicationId "ru.tinkoff.acquiring.sample"
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 33
+        versionCode 34
         versionName "1.3.0"
     }
 
