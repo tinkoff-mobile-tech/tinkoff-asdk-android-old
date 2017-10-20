@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * @author Vitaliy Markus
@@ -121,10 +122,15 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     }
 
     @Override
-    public void exception(Exception e) {
+    public void exception(Throwable throwable) {
         hideProgressDialog();
+
+        if (throwable instanceof AcquiringApiException) {
+            Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
         Intent data = new Intent();
-        data.putExtra(EXTRA_ERROR, e);
+        data.putExtra(EXTRA_ERROR, throwable);
         setResult(RESULT_ERROR, data);
         finish();
     }

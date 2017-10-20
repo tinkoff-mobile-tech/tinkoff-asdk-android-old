@@ -207,7 +207,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
                 }
 
                 final String enteredEmail = getEmail();
-                if (!validateInput(enteredEmail)) {
+                if (!validateInput(ecvCard, enteredEmail)) {
                     return;
                 }
                 final PayFormActivity activity = (PayFormActivity) getActivity();
@@ -278,9 +278,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
         }
     }
 
-    private boolean validateInput(String enteredEmail) {
+    private boolean validateInput(EditCardView cardView, String enteredEmail) {
         int errorMessage = 0;
-        if (!ecvCard.isFilledAndCorrect()) {
+        if (!cardView.isFilledAndCorrect()) {
             errorMessage = R.string.acq_invalid_card;
         } else if (!TextUtils.isEmpty(enteredEmail) && !emailPattern.matcher(enteredEmail).matches()) {
             errorMessage = R.string.acq_invalid_email;

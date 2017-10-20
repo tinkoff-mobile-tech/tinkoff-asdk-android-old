@@ -96,8 +96,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
                 AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
                 final String email = getEmail();
-                if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    Toast.makeText(activity, R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
+                if (!validateInput(editCardView, email)) {
                     return;
                 }
 
@@ -254,5 +253,17 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     private String getEmail() {
         String input = emailView.getText().toString().trim();
         return input.isEmpty() ? null : input;
+    }
+
+    private boolean validateInput(EditCardView cardView, String email) {
+        if (!cardView.isFilledAndCorrect()) {
+            Toast.makeText(getActivity(), R.string.acq_invalid_card, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(getActivity(), R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 }

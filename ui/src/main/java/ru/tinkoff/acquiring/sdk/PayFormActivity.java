@@ -29,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -238,10 +239,15 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     @Override
-    public void exception(Exception e) {
+    public void exception(Throwable throwable) {
         hideProgressDialog();
+
+        if (throwable instanceof AcquiringApiException) {
+            Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
         Intent data = new Intent();
-        data.putExtra(EXTRA_ERROR, e);
+        data.putExtra(EXTRA_ERROR, throwable);
         setResult(RESULT_ERROR, data);
         finish();
     }
@@ -377,7 +383,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                         if (apiResponse != null && API_ERROR_NO_CUSTOMER.equals(apiResponse.getErrorCode())) {
                             PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CARDS_READY, new Card[0]).sendToTarget();
                         } else {
-                            throw e;
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, cause).sendToTarget();
                         }
                     } else if (cause instanceof NetworkException) {
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK).sendToTarget();

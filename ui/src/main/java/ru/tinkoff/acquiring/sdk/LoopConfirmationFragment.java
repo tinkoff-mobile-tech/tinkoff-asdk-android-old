@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.math.BigDecimal;
 
 /**
  * @author Vitaliy Markus
@@ -56,17 +58,21 @@ public class LoopConfirmationFragment extends Fragment {
     }
 
     private void initViews(View root) {
-        final TextView amountView = (TextView) root.findViewById(R.id.et_amount);
+        final EditText amountView = root.findViewById(R.id.et_amount);
+        MoneyUtils.MoneyWatcher moneyWatcher = new MoneyUtils.MoneyWatcher(amountView);
+        moneyWatcher.setLengthLimit(3);
+        amountView.addTextChangedListener(moneyWatcher);
 
-        checkButton = (Button) root.findViewById(R.id.btn_check);
+        checkButton = root.findViewById(R.id.btn_check);
         checkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
                 Long amount;
                 try {
-                    amount = Long.parseLong(amountView.getText().toString());
-                } catch (NumberFormatException e) {
+                    String value = MoneyUtils.normalize(amountView.getText().toString());
+                    amount = Money.ofRubles(new BigDecimal(value)).getCoins();
+                } catch (Exception e) {
                     Toast.makeText(activity, R.string.acq_attaching_card_loop_parse_error, Toast.LENGTH_SHORT).show();
                     return;
                 }

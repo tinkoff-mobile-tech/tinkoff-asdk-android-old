@@ -13,7 +13,7 @@ public interface IBaseSdkActivity {
 
     void hideProgressDialog();
 
-    void exception(Exception e);
+    void exception(Throwable throwable);
 
     void start3DS(ThreeDsData data);
 
