@@ -83,7 +83,7 @@ AttachCardFormActivity
                 "CUSTOMER_KEY",                         // уникальный ID пользователя для сохранения данных его карты                             
                 CheckType.THREE_DS,                     // тип привязки карты
                 true,                                   // флаг использования безопасной клавиатуры
-                "E-MAIL")                               // e-mail  gjkmpjdfntkz
+                "E-MAIL")                               // e-mail клиента
         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
 ```
 
