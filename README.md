@@ -52,7 +52,8 @@ PayFormActivity
 
 ```
 
-Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_:
+Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_.
+Так же можно указать тему и запустить форму для оплаты уже с привязанных карт (реккурентынй платеж)
 
 ```java
 PayFormActivity
@@ -61,6 +62,8 @@ PayFormActivity
         .setCustomerKey("CUSTOMER_KEY")     // уникальный ID пользователя для сохранения данных его карты
         .setReceipt(receipt)
         .setData(dataMap)
+        .setTheme(themeId)
+        .setChargeMode(chargeMode)
         .startActivityForResult(this, REQUEST_CODE_PAYMENT);
 
 ```
@@ -70,6 +73,36 @@ PayFormActivity
 [1] _Рекуррентный платеж_ может производиться для дальнейшего списания средств с сохраненной карты, без ввода ее реквизитов. Эта возможность, например, может использоваться для осуществления платежей по подписке.
 
 [2] _Безопасная клавиатура_ используется вместо системной и обеспечивает дополнительную безопасность ввода, т.к. сторонние клавиатуры на устройстве клиента могут перехватывать данные и отправлять их злоумышленнику.
+
+### Экран привязки карт
+Для запуска привязки карт необходимо запустить _**AttachCardFormActivity**_.  Активити должна быть настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо вызвать цепочку из методов AttachCardFormActivity#init, AttachCardFormActivity#prepare:
+```java
+AttachCardFormActivity
+        .init("TERMINAL_KEY", "PASSWORD", "PUBLIC_KEY") // данные продавца
+        .prepare(
+                "CUSTOMER_KEY",                         // уникальный ID пользователя для сохранения данных его карты                             
+                CheckType.THREE_DS,                     // тип привязки карты
+                true,                                   // флаг использования безопасной клавиатуры
+                "E-MAIL")                               // e-mail  gjkmpjdfntkz
+        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
+```
+
+По аналогии с _**PayFormActivity**_, форму привязки карты можно кастомизировать
+
+```java
+AttachCardFormActivity
+        .init("TERMINAL_KEY", "PASSWORD", "PUBLIC_KEY") // данные продавца
+        .prepare("CUSTOMER_KEY", CheckType.THREE_DS, true, "E-MAIL")   
+        .setData(data)
+        .setTheme(themeId)
+        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
+```
+
+### Темы
+для более подробного раздела прочитайте соответвующую тему на wiki страничке.
+В приложении есть базовая тема **AcquiringTheme**. Если вы хотите что-то изменить, то отнаследуйтесь от нее и переопределите нужные аттрибуты.
+
+На обоих активити используется одна и та же тема, просто на **AttachCardFormActivity** не используются некоторые аттрибуты.
 
 ### Структура
 SDK состоит из следующих модулей:
