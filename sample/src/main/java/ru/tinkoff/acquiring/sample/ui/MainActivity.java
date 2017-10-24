@@ -34,7 +34,6 @@ import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
 import ru.tinkoff.acquiring.sdk.AttachCardFormActivity;
-import ru.tinkoff.acquiring.sdk.CheckType;
 import ru.tinkoff.acquiring.sdk.OnAttachCardListener;
 
 public class MainActivity extends AppCompatActivity implements
@@ -81,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements
                         .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                         .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
                         .setTheme(settings.resolveAttachCardStyle())
+                        .setCameraCardScanner(settings.getCameraScanner())
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;
             case R.id.menu_action_about:

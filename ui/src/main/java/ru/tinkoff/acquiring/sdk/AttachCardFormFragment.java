@@ -72,9 +72,12 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         View root = inflater.inflate(R.layout.acq_fragment_attach_card, container, false);
         initViews(root);
 
-        cardScanner = new FullCardScanner(this, null);
+        cardScanner = new FullCardScanner(this, (ICameraCardScanner) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER));
         editCardView.setCardSystemIconsHolder(new ThemeCardLogoCache(getActivity()));
         editCardView.setActions(cardScanner);
+        if (!cardScanner.isScanEnable()) {
+            editCardView.setBtnScanIcon(View.NO_ID);
+        }
 
         boolean isUsingCustomKeyboard = ((AttachCardFormActivity) getActivity()).shouldUseCustomKeyboard();
         if (isUsingCustomKeyboard) {

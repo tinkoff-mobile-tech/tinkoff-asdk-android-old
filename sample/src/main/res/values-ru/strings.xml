@@ -42,6 +42,7 @@
     <string name="settings_title_terminal_id">Терминал</string>
     <string name="settings_title_style_id">Стиль</string>
     <string name="settings_title_check_type_id">CheckType</string>
+    <string name="settings_title_camera">Модуль камеры</string>
 
     <string name="acq_pay_replenish">Пополнить</string>
     <string name="acq_pay_with_amount_custom">Пополнить %s</string>

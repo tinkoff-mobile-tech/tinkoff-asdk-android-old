@@ -30,4 +30,11 @@
         android:key="@string/acq_sp_check_type_id"
         android:title="@string/settings_title_check_type_id" />
 
+    <ListPreference
+        android:defaultValue="@string/acq_sp_camera_type_card_io"
+        android:entries="@array/acq_sp_camera_type_keys"
+        android:entryValues="@array/acq_sp_camera_type_keys"
+        android:key="@string/acq_sp_camera_type_id"
+        android:title="@string/settings_title_camera" />
+
 </PreferenceScreen>

@@ -1,1 +1,1 @@
-include ':core', ':sample', ':ui'
+include ':core', ':sample', ':ui', ':card-io'

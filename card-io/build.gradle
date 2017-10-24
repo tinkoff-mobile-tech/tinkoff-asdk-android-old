@@ -1,12 +1,8 @@
 apply plugin: 'com.android.library'
 
-def coreVersion = '3.1.7'
-
 dependencies {
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile "ru.tinkoff.core:core-nfc:${coreVersion}"
-
-    compile project(':core')
+    compile 'io.card:android-sdk:5.4.1'
+    compile project(':ui')
 }
 
 android {

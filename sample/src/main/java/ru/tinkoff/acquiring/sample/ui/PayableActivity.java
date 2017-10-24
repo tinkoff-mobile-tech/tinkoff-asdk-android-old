@@ -28,7 +28,6 @@ import java.util.HashMap;
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
-import ru.tinkoff.acquiring.sdk.CameraCardIOScanner;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
@@ -125,7 +124,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 )
                 .setCustomerKey(settings.resolveCustomerKey(terminalId))
                 .setChargeMode(settings.isRecurrentPayment())
-                .setCameraCardScanner(new CameraCardIOScanner())
+                .setCameraCardScanner(settings.getCameraScanner())
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())

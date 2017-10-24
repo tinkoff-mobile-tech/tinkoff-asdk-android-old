@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import ru.tinkoff.acquiring.sdk.nfc.AsdkNfcScanActivity;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -22,7 +23,7 @@ public class FullCardScanner implements EditCardView.Actions {
     @NonNull
     private final Fragment fragment;
 
-    @NonNull
+    @Nullable
     private final ICameraCardScanner cameraCardScanner;
 
     public FullCardScanner(@NonNull Fragment fragment, @Nullable ICameraCardScanner cameraCardScanner) {
@@ -30,14 +31,16 @@ public class FullCardScanner implements EditCardView.Actions {
         if (cameraCardScanner != null) {
             this.cameraCardScanner = cameraCardScanner;
         } else {
-            this.cameraCardScanner = new CameraCardIOScanner();
+            this.cameraCardScanner = null;
         }
     }
 
     @Override
     public void onPressScanCard(EditCardView editCardView) {
         final Activity activity = fragment.getActivity();
-        if (isNfcEnable(activity)) {
+        boolean nfcEnable = isNfcEnable(activity);
+        boolean cameraEnabled = isCameraEnable();
+        if (nfcEnable && cameraEnabled) {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             CharSequence items[] = activity.getResources().getStringArray(R.array.acq_scan_types);
             builder.setItems(items, new DialogInterface.OnClickListener() {
@@ -52,9 +55,17 @@ public class FullCardScanner implements EditCardView.Actions {
                 }
             });
             builder.show();
-        } else {
+        } else if (cameraEnabled) {
             startCameraScan();
+        } else if (nfcEnable) {
+            startNfcScan(activity);
+        } else {
+            Toast.makeText(activity, R.string.acq_no_scan_providers, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public boolean isScanEnable() {
+        return isNfcEnable(fragment.getActivity()) || isCameraEnable();
     }
 
     public boolean hasCameraResult(int requestCode, Intent data) {
@@ -86,6 +97,10 @@ public class FullCardScanner implements EditCardView.Actions {
 
     private boolean isNfcEnable(Activity activity) {
         return activity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
+    }
+
+    private boolean isCameraEnable() {
+        return cameraCardScanner != null;
     }
 
     private void startCameraScan() {

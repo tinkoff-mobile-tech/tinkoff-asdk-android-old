@@ -32,6 +32,7 @@
     <string name="acq_attaching_card_loop_title">In order to confirm the binding of your card we wrote off and returned a small amount of money (up to 1,99 ₽)/ Please, specify the sum with accuracy to amount of coins.</string>
     <string name="acq_attaching_card_loop_parse_error">Please enter correct amount in coins</string>
     <string name="acq_attaching_card_loop_amount_hint">Blocked amount</string>
+    <string name="acq_no_scan_providers">There aren\'t any providers</string>
 
     <string-array name="acq_scan_types">
         <item>Scan with camera</item>

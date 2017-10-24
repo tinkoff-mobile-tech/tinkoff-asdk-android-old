@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StyleRes;
 
+import ru.tinkoff.acquiring.sample.camera.DemoCameraScanner;
+import ru.tinkoff.acquiring.sdk.ICameraCardScanner;
+import ru.tinkoff.acquiring.sdk.card.io.CameraCardIOScanner;
+
 /**
  * @author Vitaliy Markus
  */
@@ -76,5 +80,14 @@ public class SettingsSdkManager {
         String defaultCheckType = context.getString(R.string.acq_sp_check_type_no);
         String checkType = preferences.getString(context.getString(R.string.acq_sp_check_type_id), defaultCheckType);
         return checkType;
+    }
+
+    public ICameraCardScanner getCameraScanner() {
+        String cardIOCameraScan = context.getString(R.string.acq_sp_camera_type_card_io);
+        String cameraScan = preferences.getString(context.getString(R.string.acq_sp_camera_type_id), cardIOCameraScan);
+        if (cardIOCameraScan.equals(cameraScan)) {
+            return new CameraCardIOScanner();
+        }
+        return new DemoCameraScanner();
     }
 }

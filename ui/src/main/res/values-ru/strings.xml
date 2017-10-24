@@ -33,6 +33,7 @@
     <string name="acq_attaching_card_loop_title">Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ₽)\nПожалуйста, укажите ее с точностью до копеек</string>
     <string name="acq_attaching_card_loop_parse_error">Введите корректную сумму в копейках</string>
     <string name="acq_attaching_card_loop_amount_hint">Заблокированная сумма</string>
+    <string name="acq_no_scan_providers">Отсутвуют провайдеры для сканирования</string>
 
     <string-array name="acq_scan_types">
         <item>Сканировать камерой</item>

@@ -129,6 +129,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
         cardScanner = new FullCardScanner(this, (ICameraCardScanner) activity.getIntent().getSerializableExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER));
         ecvCard.setCardSystemIconsHolder(new ThemeCardLogoCache(activity));
         ecvCard.setActions(cardScanner);
+        if (!cardScanner.isScanEnable()) {
+            ecvCard.setBtnScanIcon(View.NO_ID);
+        }
 
         customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
 

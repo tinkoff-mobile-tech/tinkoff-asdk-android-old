@@ -41,6 +41,7 @@
     <string name="settings_title_terminal_id">Terminal</string>
     <string name="settings_title_style_id">Style</string>
     <string name="settings_title_check_type_id">CheckType</string>
+    <string name="settings_title_camera">Camera module</string>
 
     <string name="acq_pay_replenish">Replenish</string>
     <string name="acq_pay_with_amount_custom">Replenish %s</string>
