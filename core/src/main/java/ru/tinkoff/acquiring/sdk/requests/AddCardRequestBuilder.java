@@ -32,6 +32,13 @@ final public class AddCardRequestBuilder extends AcquiringRequestBuilder<AddCard
      * @param checkType Тип проверки при привязки карты. {@link CheckType}
      */
     public AddCardRequestBuilder setCheckType(final CheckType checkType) {
+        return setCheckType(checkType.toString());
+    }
+
+    /**
+     * @param checkType Тип проверки при привязки карты. {@link CheckType}
+     */
+    public AddCardRequestBuilder setCheckType(final String checkType) {
         request.setCheckType(checkType);
         return this;
     }

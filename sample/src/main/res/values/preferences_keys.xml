@@ -34,6 +34,7 @@
         <item>HOLD</item>
         <item>3DS</item>
         <item>3DSHOLD</item>
+        <item>AUTO</item>
     </string-array>
 
 </resources>

@@ -161,7 +161,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                     Intent intent = activity.getIntent();
 
                     String customerKey = intent.getStringExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY);
-                    CheckType checkType = (CheckType) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE);
+                    String checkType = intent.getStringExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE);
                     String requestKey = sdk.addCard(customerKey, checkType);
 
                     Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_DATA);

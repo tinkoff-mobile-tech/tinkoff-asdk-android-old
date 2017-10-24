@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StyleRes;
 
-import ru.tinkoff.acquiring.sdk.CheckType;
-
 /**
  * @author Vitaliy Markus
  */
@@ -74,9 +72,9 @@ public class SettingsSdkManager {
         return R.style.AcquiringTheme_AttachCard;
     }
 
-    public CheckType getCheckType() {
+    public String getCheckType() {
         String defaultCheckType = context.getString(R.string.acq_sp_check_type_no);
         String checkType = preferences.getString(context.getString(R.string.acq_sp_check_type_id), defaultCheckType);
-        return CheckType.fromString(checkType);
+        return checkType;
     }
 }

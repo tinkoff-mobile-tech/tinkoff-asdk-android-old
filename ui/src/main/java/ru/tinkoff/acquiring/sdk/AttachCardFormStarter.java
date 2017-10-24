@@ -24,6 +24,10 @@ public class AttachCardFormStarter {
     }
 
     public AttachCardFormStarter prepare(String customerKey, CheckType checkType, boolean customKeyboard, String email) {
+        return prepare(customerKey, checkType.toString(), customKeyboard, email);
+    }
+
+    public AttachCardFormStarter prepare(String customerKey, String checkType, boolean customKeyboard, String email) {
         intent = new Intent();
         intent.putExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
         intent.putExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE, checkType);

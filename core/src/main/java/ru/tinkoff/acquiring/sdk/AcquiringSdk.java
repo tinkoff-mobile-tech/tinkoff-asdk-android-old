@@ -246,6 +246,17 @@ public class AcquiringSdk extends Journal {
      * @return возвращет ключ запроса (RequestKey)
      */
     public String addCard(final String customerKey, final CheckType checkType) {
+        return addCard(customerKey, checkType.toString());
+    }
+
+    /**
+     * Метод подготовки для привязки карты, необходимо вызвать {@link AcquiringSdk#addCard(String, CheckType)} перед методом {@link AcquiringSdk#attachCard(String, CardData, String, Map)}
+     *
+     * @param customerKey идентификатор покупателя в системе Продавца
+     * @param checkType   тип привязки {@link CheckType}
+     * @return возвращет ключ запроса (RequestKey)
+     */
+    public String addCard(final String customerKey, final String checkType) {
         final AddCardRequest request = new AddCardRequestBuilder(password, terminalKey)
                 .setCustomerKey(customerKey)
                 .setCheckType(checkType)
