@@ -8,6 +8,7 @@
         <attr name="scanIcon" format="reference" />
         <attr name="changeModeIcon" format="reference" />
         <attr name="cardLogoMargin" format="dimension|reference" />
+        <attr name="cardTextMargin" format="dimension|reference" />
     </declare-styleable>
 
 </resources>

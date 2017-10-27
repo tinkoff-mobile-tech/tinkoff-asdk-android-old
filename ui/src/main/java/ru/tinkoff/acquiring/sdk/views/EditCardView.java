@@ -89,7 +89,8 @@ public class EditCardView extends ViewGroup {
     private Paint cardSystemLogoPaint;
     private Paint paint;
 
-    private int additionalPadding;
+    private int cardLogoMargin;
+    private int cardTextMargin;
 
     private SimpleButton btnChangeMode;
     private SimpleButton btnScanCard;
@@ -401,7 +402,8 @@ public class EditCardView extends ViewGroup {
         cardFormatter = new CardFormatter();
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.EditCardView, 0, 0);
-        additionalPadding = a.getDimensionPixelSize(R.styleable.EditCardView_cardLogoMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_logo_margin));
+        cardLogoMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardLogoMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_logo_margin));
+        cardTextMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardTextMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_text_margin));
         etCardNumber.setHint(a.getString(R.styleable.EditCardView_numberHint));
         etDate.setHint(a.getString(R.styleable.EditCardView_dateHint));
         etCvc.setHint(a.getString(R.styleable.EditCardView_cvcHint));
@@ -630,7 +632,7 @@ public class EditCardView extends ViewGroup {
             additionalRightSpace += calculateChangeModeWidth();
         }
 
-        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0) - (getPaddingRight() + getPaddingLeft());
+        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(FLAG_CARD_SYSTEM_LOGO) ? cardTextMargin : 0) - (getPaddingRight() + getPaddingLeft());
 
         int contentsWidth = accessWidth / 3;
 
@@ -684,7 +686,7 @@ public class EditCardView extends ViewGroup {
         int logoWidth = check(FLAG_CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
         int t;
         int l = getPaddingLeft();
-        int startLabels = logoWidth + l + (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0);
+        int startLabels = logoWidth + l + (check(FLAG_CARD_SYSTEM_LOGO) ? cardTextMargin : 0);
         int w = getWidth() - getPaddingRight() - getPaddingLeft();
         int hh = (getHeight() - getPaddingTop() - getPaddingBottom()) >> 1;
 
@@ -718,8 +720,7 @@ public class EditCardView extends ViewGroup {
     protected void dispatchDraw(Canvas canvas) {
         if (check(FLAG_CARD_SYSTEM_LOGO) && cardSystemLogo != null) {
             int yOffset = (getHeight() - cardSystemLogo.getHeight()) >> 1;
-            int xOffset = additionalPadding >> 1;
-            canvas.drawBitmap(cardSystemLogo, xOffset, yOffset, cardSystemLogoPaint);
+            canvas.drawBitmap(cardSystemLogo, cardLogoMargin, yOffset, cardSystemLogoPaint);
         }
         if (check(FLAG_CHANGE_MODE_BUTTON)) {
             btnChangeMode.drawWithPaint(canvas, paint);
