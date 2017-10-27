@@ -58,6 +58,11 @@ public class AttachCardFormStarter {
         return this;
     }
 
+    public Intent getIntent() {
+        checkIntent();
+        return intent;
+    }
+
     public void startActivityForResult(Activity context, int requestCode) {
         checkIntent();
         intent.setClass(context, AttachCardFormActivity.class);
