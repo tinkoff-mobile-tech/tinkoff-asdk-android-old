@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -70,7 +71,7 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState","SubmitRandomAmount"};
+    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState", "SubmitRandomAmount"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
     static String getUrl(String apiMethod) {
@@ -237,6 +238,7 @@ public class AcquiringApi {
 
     private Gson createGson() {
         return new GsonBuilder()
+                .excludeFieldsWithModifiers(Modifier.TRANSIENT)
                 .registerTypeAdapter(CardStatus.class, new CardStatusSerializer())
                 .registerTypeAdapter(PaymentStatus.class, new PaymentStatusSerializer())
                 .registerTypeAdapter(GetCardListResponse.class, new CardsListDeserializer())

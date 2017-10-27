@@ -16,8 +16,6 @@
 
 package ru.tinkoff.acquiring.sdk.responses;
 
-import com.google.gson.annotations.Expose;
-
 import ru.tinkoff.acquiring.sdk.Card;
 
 /**
@@ -25,8 +23,7 @@ import ru.tinkoff.acquiring.sdk.Card;
  */
 final public class GetCardListResponse extends AcquiringResponse {
 
-    @Expose
-    private Card[] card;
+    private transient Card[] card;
 
     public GetCardListResponse() {
     }
