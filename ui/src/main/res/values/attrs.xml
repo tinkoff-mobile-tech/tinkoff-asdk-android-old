@@ -4,6 +4,7 @@
     <attr name="acqTitleTextViewStyle" format="integer" />
     <attr name="acqTextViewStyle" format="integer" />
     <attr name="acqEditTextStyle" format="integer" />
+    <attr name="acqCardViewTextStyle" format="integer" />
     <attr name="acqContentViewStyle" format="integer" />
     <attr name="acqButtonStyle" format="integer" />
     <attr name="acqAccentTextStyle" format="integer" />

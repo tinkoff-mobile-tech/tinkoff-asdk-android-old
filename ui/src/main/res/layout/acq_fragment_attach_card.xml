@@ -33,13 +33,10 @@
 
             <ru.tinkoff.acquiring.sdk.views.EditCardView
                 android:id="@+id/ecv_card"
-                style="?acqEditTextStyle"
+                style="?acqCardViewTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?acqContentBlockDivider"
-                app:cvcHint="@string/acq_cvc_hint"
-                app:dateHint="@string/acq_exp_date_hint"
-                app:numberHint="@string/acq_card_number_hint" />
+                android:layout_marginTop="?acqContentBlockDivider" />
 
             <ru.tinkoff.acquiring.sdk.views.FixCompatEditText
                 android:id="@+id/et_email"

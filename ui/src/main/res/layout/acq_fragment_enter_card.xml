@@ -80,7 +80,7 @@
 
             <ru.tinkoff.acquiring.sdk.views.EditCardView
                 android:id="@+id/ecv_card"
-                style="?acqEditTextStyle"
+                style="?acqCardViewTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?acqContentBlockDivider"

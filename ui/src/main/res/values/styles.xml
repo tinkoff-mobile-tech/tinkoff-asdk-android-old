@@ -14,6 +14,7 @@
         <item name="acqTitleTextViewStyle">@style/AcquiringTitleStyle</item>
         <item name="acqTextViewStyle">@style/AcquiringDescriptionStyle</item>
         <item name="acqEditTextStyle">@style/AcquiringFieldStyle</item>
+        <item name="acqCardViewTextStyle">@style/AcquiringCardViewStyle</item>
         <item name="acqContentViewStyle">@style/AcquiringContentView</item>
         <item name="acqButtonStyle">@style/AcquiringButtonStyle</item>
         <item name="acqAccentTextStyle">@style/AcquiringAccentTextStyle</item>
@@ -51,6 +52,12 @@
         <item name="android:background">@drawable/acq_edit_text_bg</item>
         <item name="android:paddingTop">2dp</item>
         <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="AcquiringCardViewStyle" parent="AcquiringFieldStyle">
+        <item name="numberHint">@string/acq_card_number_hint</item>
+        <item name="dateHint">@string/acq_exp_date_hint</item>
+        <item name="cvcHint">@string/acq_cvc_hint</item>
     </style>
 
     <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button">

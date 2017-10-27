@@ -8,6 +8,7 @@
         <item name="colorControlHighlight">#ffffff</item>
         <item name="colorControlActivated">#3DB2E6</item>
         <item name="acqEditTextStyle">@style/AcquiringFieldStyle.Custom</item>
+        <item name="acqCardViewTextStyle">@style/AcquiringCardViewStyle.Custom</item>
         <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.Custom</item>
         <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom</item>
         <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom</item>
@@ -49,6 +50,10 @@
         <item name="android:textColorHint">@color/acq_colorDescription</item>
         <item name="android:paddingTop">12dp</item>
         <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="AcquiringCardViewStyle.Custom">
+        <item name="numberHint">Custom Card Number</item>
         <item name="cardLogoMargin">10dp</item>
         <item name="cardTextMargin">20dp</item>
         <item name="changeModeIcon">@drawable/acq_master</item>
