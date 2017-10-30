@@ -611,7 +611,7 @@ public class EditCardView extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        if (cardSystemIconsHolder != null && cardSystemLogo == null && check(FLAG_CARD_SYSTEM_LOGO)) {
+        if (cardSystemIconsHolder != null && check(FLAG_CARD_SYSTEM_LOGO)) {
             cardSystemLogo = cardSystemIconsHolder.getCardSystemBitmap(etCardNumber.getText().toString());
         }
 
@@ -632,7 +632,7 @@ public class EditCardView extends ViewGroup {
             additionalRightSpace += calculateChangeModeWidth();
         }
 
-        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(FLAG_CARD_SYSTEM_LOGO) ? cardTextMargin : 0) - (getPaddingRight() + getPaddingLeft());
+        int accessWidth = widthSize - logoWidth - additionalRightSpace - getRealCardLogoTextMargin() - (getPaddingRight() + getPaddingLeft());
 
         int contentsWidth = accessWidth / 3;
 
@@ -686,7 +686,7 @@ public class EditCardView extends ViewGroup {
         int logoWidth = check(FLAG_CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
         int t;
         int l = getPaddingLeft();
-        int startLabels = logoWidth + l + (check(FLAG_CARD_SYSTEM_LOGO) ? cardTextMargin : 0);
+        int startLabels = logoWidth + l + getRealCardLogoTextMargin();
         int w = getWidth() - getPaddingRight() - getPaddingLeft();
         int hh = (getHeight() - getPaddingTop() - getPaddingBottom()) >> 1;
 
@@ -749,7 +749,6 @@ public class EditCardView extends ViewGroup {
         return super.onTouchEvent(event);
     }
 
-
     public void setMode(boolean isFullNumber) {
         if (isFullNumber) {
             flags |= FLAG_FULL_CARD_NUMBER;
@@ -757,6 +756,10 @@ public class EditCardView extends ViewGroup {
             flags &= ~FLAG_FULL_CARD_NUMBER;
         }
         normalizeMode();
+    }
+
+    private int getRealCardLogoTextMargin() {
+        return check(FLAG_CARD_SYSTEM_LOGO) && cardSystemLogo != null ? cardTextMargin : 0;
     }
 
     private void normalizeMode() {
