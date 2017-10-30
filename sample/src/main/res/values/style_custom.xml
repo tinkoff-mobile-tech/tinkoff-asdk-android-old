@@ -54,6 +54,8 @@
 
     <style name="AcquiringCardViewStyle.Custom">
         <item name="numberHint">Custom Card Number</item>
+        <item name="dateHint">**/**</item>
+        <item name="cvcHint">***</item>
         <item name="cardLogoMargin">10dp</item>
         <item name="cardTextMargin">20dp</item>
         <item name="changeModeIcon">@drawable/acq_master</item>

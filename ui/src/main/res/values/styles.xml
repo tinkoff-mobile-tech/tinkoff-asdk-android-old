@@ -138,7 +138,7 @@
     </style>
 
     <style name="AcquiringPayEmailStyle" parent="AcquiringFieldStyle">
-
+        <item name="android:hint">@string/acq_email_hint</item>
     </style>
 
     <style name="AcquiringPaySecureIconStyle">
