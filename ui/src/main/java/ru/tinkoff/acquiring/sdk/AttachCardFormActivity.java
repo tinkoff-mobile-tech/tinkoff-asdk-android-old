@@ -179,7 +179,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     @Override
     public void showLoopConfirmations(String requestKey) {
         hideProgressDialog();
-        Fragment fragment = LoopConfirmationFragment.newInstance(requestKey);
+        Fragment fragment = createLoopConfirmationFragment(requestKey);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .addToBackStack("loop_confirmation")
@@ -201,6 +201,14 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     @Override
     public AcquiringSdk getSdk() {
         return sdk;
+    }
+
+    protected LoopConfirmationFragment createLoopConfirmationFragment(String requestKey) {
+        return LoopConfirmationFragment.newInstance(requestKey);
+    }
+
+    protected AttachCardFormFragment createAttachCardFormFragment() {
+        return AttachCardFormFragment.newInstance();
     }
 
     boolean shouldUseCustomKeyboard() {
@@ -238,7 +246,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     }
 
     private void addAttachCardFragment() {
-        Fragment fragment = AttachCardFormFragment.newInstance();
+        Fragment fragment = createAttachCardFormFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)

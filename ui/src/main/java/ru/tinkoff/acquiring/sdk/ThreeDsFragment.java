@@ -45,6 +45,14 @@ public class ThreeDsFragment extends Fragment {
     private AcquiringSdk sdk;
     private String termUrl;
 
+    public static ThreeDsFragment newInstance(Bundle threeDSBundle) {
+        ThreeDsFragment fragment = new ThreeDsFragment();
+        Bundle args = new Bundle();
+        args.putBundle(EXTRA_3DS, threeDSBundle);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

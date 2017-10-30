@@ -255,10 +255,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     @Override
     public void start3DS(ThreeDsData data) {
         hideProgressDialog();
-        Fragment fragment = new ThreeDsFragment();
-        Bundle args = new Bundle();
-        args.putBundle(ThreeDsFragment.EXTRA_3DS, new ThreeDsBundlePacker().pack(data));
-        fragment.setArguments(args);
+        Fragment fragment = createThreeDsFragment(data);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
@@ -346,8 +343,20 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         return mFragmentsCommunicator;
     }
 
+    protected ThreeDsFragment createThreeDsFragment(ThreeDsData data) {
+        return ThreeDsFragment.newInstance(new ThreeDsBundlePacker().pack(data));
+    }
+
+    protected EnterCardFragment createEnterCardFragment(boolean chargeMode) {
+        return EnterCardFragment.newInstance(chargeMode);
+    }
+
+    protected CardListFragment createCardListFragment(String customerKey, boolean chargeMode) {
+        return CardListFragment.newInstance(customerKey, chargeMode);
+    }
+
     void startFinishAuthorized() {
-        Fragment fragment = EnterCardFragment.newInstance(chargeMode);
+        Fragment fragment = createEnterCardFragment(chargeMode);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)
@@ -355,7 +364,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     void startChooseCard() {
-        Fragment fragment = CardListFragment.newInstance(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY), chargeMode);
+        Fragment fragment = createCardListFragment(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY), chargeMode);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .addToBackStack("choose_card")
