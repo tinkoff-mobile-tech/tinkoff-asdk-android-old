@@ -74,6 +74,9 @@ public class AcquiringApi {
     private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState", "SubmitRandomAmount"};
     private static final List<String> newMethodsList = Arrays.asList(newMethods);
 
+    private static final String[] performedErrorCodes = {"0", "104"};
+    private static final List<String> performedErrorCodesList = Arrays.asList(performedErrorCodes);
+
     static String getUrl(String apiMethod) {
         if (useV2Api(apiMethod)) {
             return Journal.isDebug() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
@@ -166,6 +169,10 @@ public class AcquiringApi {
         } finally {
             closeQuietly(requestContentStream);
             closeQuietly(responseReader);
+        }
+
+        if (performedErrorCodesList.contains(result.getErrorCode())) {
+            return result;
         }
 
         if (!result.isSuccess()) {

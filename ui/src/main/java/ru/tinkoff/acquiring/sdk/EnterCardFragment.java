@@ -16,7 +16,9 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -38,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -51,7 +54,7 @@ import static android.widget.Toast.makeText;
 /**
  * @author a.shishkin1
  */
-public class EnterCardFragment extends Fragment implements ICardInterest, OnBackPressedListener {
+public class EnterCardFragment extends Fragment implements ICardInterest, IChargeRejectPerformer, OnBackPressedListener {
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
@@ -67,6 +70,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
     private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
     private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
 
+    private static final String RECURRING_TYPE_KEY = "recurringType";
+    private static final String RECURRING_TYPE_VALUE = "12";
+    private static final String FAIL_MAPI_SESSION_ID = "failMapiSessionId";
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -89,6 +95,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
     private int amountPositionMode;
     private int buttonAndIconsPositionMode;
     private String payAmountFormat;
+    private PaymentInfo rejectedPaymentInfo;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
@@ -333,6 +340,14 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
             builder.setData(dataValue);
         }
 
+        if (rejectedPaymentInfo != null) { // rejected recurrent payment
+            HashMap<String, String> map = new HashMap<>();
+            map.put(RECURRING_TYPE_KEY, RECURRING_TYPE_VALUE);
+            map.put(FAIL_MAPI_SESSION_ID, Long.toString(rejectedPaymentInfo.getPaymentId()));
+            builder.addData(map);
+            rejectedPaymentInfo = null;
+        }
+
         return builder;
     }
 
@@ -432,9 +447,16 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
                         }
                     } else {
                         PaymentInfo paymentInfo = sdk.charge(paymentId, cardData.getRebillId());
-                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                        if (paymentInfo.isSuccess()) {
+                            rejectedPaymentInfo = null;
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                        } else {
+                            rejectedPaymentInfo = paymentInfo;
+                            PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget();
+                        }
                     }
                 } catch (Exception e) {
+                    rejectedPaymentInfo = null;
                     Throwable cause = e.getCause();
                     Message msg;
                     if (cause != null && cause instanceof NetworkException) {
@@ -480,32 +502,57 @@ public class EnterCardFragment extends Fragment implements ICardInterest, OnBack
                     prepareEditableCardView(activity, sourceCard, hasCard);
                 }
             }
+        });
+    }
 
-            private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {
-                ecvCard.setSavedCardState(hasCard);
-                if (hasCard) {
-                    ecvCard.setCardNumber(sourceCard.getPan());
-                } else {
-                    Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
-                    if (bundle != null) {
-                        ecvCard.clear();
-                    } else {
+    @Override
+    public void onChargeRequestRejected(PaymentInfo paymentInfo) {
+        chargeMode = false;
+        rejectedPaymentInfo = paymentInfo;
+        final PayFormActivity activity = (PayFormActivity) getActivity();
+        if (!TextUtils.isEmpty(paymentInfo.getCardId())) {
+            activity.selectCardById(paymentInfo.getCardId());
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.acq_complete_payment)
+                .setPositiveButton(R.string.acq_complete_payment_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Card selectedCard = activity.getSourceCard();
+                        srcCardChooser.setVisibility(View.INVISIBLE);
+                        srcCardChooser.setEnabled(false);
+                        ecvCard.setRecurrentPaymentMode(false);
+                        ecvCard.setCardNumber(selectedCard.getPan());
                         ecvCard.dispatchFocus();
                     }
-                }
-            }
+                })
+                .setCancelable(false)
+                .show();
+    }
 
-            private String getLabel(boolean chargeMode, boolean hasCard) {
-                if (hasCard) {
-                    return getString(R.string.acq_saved_card_label);
-                } else if (chargeMode) {
-                    return "";
-                } else {
-                    return getString(R.string.acq_new_card_label);
-                }
+    private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {
+        ecvCard.setSavedCardState(hasCard);
+        if (hasCard && sourceCard != null) {
+            ecvCard.setCardNumber(sourceCard.getPan());
+        } else {
+            Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+            if (bundle != null) {
+                ecvCard.clear();
+            } else {
+                ecvCard.dispatchFocus();
             }
-        });
+        }
+    }
 
+    private String getLabel(boolean chargeMode, boolean hasCard) {
+        if (hasCard) {
+            return getString(R.string.acq_saved_card_label);
+        } else if (chargeMode) {
+            return "";
+        } else {
+            return getString(R.string.acq_new_card_label);
+        }
     }
 
     private void hideSoftKeyboard() {

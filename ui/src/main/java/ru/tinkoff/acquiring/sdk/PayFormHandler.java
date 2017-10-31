@@ -33,6 +33,7 @@ class PayFormHandler extends Handler {
     public static final int CARDS_READY = 0;
     public static final int DELETE_CARD = 1;
     public static final int PAYMENT_INIT_COMPLETED = 2;
+    public static final int CHARGE_REQUEST_REJECTED = 3;
 
     public PayFormHandler() {
         super(Looper.getMainLooper());
@@ -66,6 +67,11 @@ class PayFormHandler extends Handler {
             case PAYMENT_INIT_COMPLETED:
                 for (IPayFormActivity activity : callbacks) {
                     activity.onPaymentInitCompleted((Long) msg.obj);
+                }
+                return;
+            case CHARGE_REQUEST_REJECTED:
+                for (IPayFormActivity activity : callbacks) {
+                    activity.onChargeRequestRejected((PaymentInfo) msg.obj);
                 }
                 return;
         }

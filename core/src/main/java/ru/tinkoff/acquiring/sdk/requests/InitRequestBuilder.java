@@ -128,6 +128,17 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
     }
 
     /**
+     * @param data Объект содержащий дополнительные параметры в виде “ключ”:”значение”. Данные параметры будут переданы на страницу оплаты (в случае ее кастомизации). Максимальная длина для каждого передаваемого параметра:
+     *             Ключ – 20 знаков,
+     *             Значение – 100 знаков.
+     *             Максимальное количество пар «ключ-значение» не может превышать 20.
+     */
+    public InitRequestBuilder addData(Map<String, String> data) {
+        request.addData(data);
+        return this;
+    }
+
+    /**
      * @param chargeFlag Флаг, о том, что происходит оплата в рекуретном режиме, и вместо вызова FinishAuthorize необходимо вызвать Charge
      */
     public InitRequestBuilder setChargeFlag(boolean chargeFlag) {

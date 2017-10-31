@@ -34,6 +34,8 @@
     <string name="acq_attaching_card_loop_parse_error">Введите корректную сумму в копейках</string>
     <string name="acq_attaching_card_loop_amount_hint">Заблокированная сумма</string>
     <string name="acq_no_scan_providers">Отсутвуют провайдеры для сканирования</string>
+    <string name="acq_complete_payment">Для совершения платежа, введите CVC</string>
+    <string name="acq_complete_payment_ok">ОК</string>
 
     <string-array name="acq_scan_types">
         <item>Сканировать камерой</item>

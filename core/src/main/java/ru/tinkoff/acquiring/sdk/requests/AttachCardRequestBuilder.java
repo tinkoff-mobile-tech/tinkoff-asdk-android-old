@@ -59,6 +59,17 @@ final public class AttachCardRequestBuilder extends AcquiringRequestBuilder<Atta
         return this;
     }
 
+    /**
+     * @param data Объект содержащий дополнительные параметры в виде “ключ”:”значение”. Данные параметры будут переданы на страницу оплаты (в случае ее кастомизации). Максимальная длина для каждого передаваемого параметра:
+     *             Ключ – 20 знаков,
+     *             Значение – 100 знаков.
+     *             Максимальное количество пар «ключ-значение» не может превышать 20.
+     */
+    public AttachCardRequestBuilder addData(final Map<String, String> data) {
+        request.addData(data);
+        return this;
+    }
+
     @Override
     protected AttachCardRequest getRequest() {
         return request;

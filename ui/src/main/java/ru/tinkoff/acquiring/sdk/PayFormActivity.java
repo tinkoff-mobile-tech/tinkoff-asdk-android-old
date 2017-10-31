@@ -326,6 +326,22 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     }
 
     @Override
+    public void onChargeRequestRejected(PaymentInfo paymentInfo) {
+        hideProgressDialog();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null && fragment instanceof IChargeRejectPerformer) {
+            ((IChargeRejectPerformer) fragment).onChargeRequestRejected(paymentInfo);
+        }
+    }
+
+    public void selectCardById(String cardId) {
+        Card selectedCard = cardManager.getCardById(cardId);
+        if (selectedCard != null) {
+            sourceCard = selectedCard;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         final Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (fragment instanceof OnBackPressedListener) {

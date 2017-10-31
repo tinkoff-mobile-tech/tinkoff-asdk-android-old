@@ -38,11 +38,14 @@ final public class ChargeResponse extends AcquiringResponse {
     @SerializedName("Status")
     private PaymentStatus status;
 
+    @SerializedName("CardId")
+    private String cardId;
+
     private transient PaymentInfo paymentInfo;
 
     public PaymentInfo getPaymentInfo() {
         if (paymentInfo == null) {
-            paymentInfo = new PaymentInfo(orderId, paymentId, amount);
+            paymentInfo = new PaymentInfo(orderId, paymentId, amount, cardId, getErrorCode());
         }
 
         return paymentInfo;
@@ -62,6 +65,10 @@ final public class ChargeResponse extends AcquiringResponse {
 
     public PaymentStatus getStatus() {
         return status;
+    }
+
+    public String getCardId() {
+        return cardId;
     }
 }
 

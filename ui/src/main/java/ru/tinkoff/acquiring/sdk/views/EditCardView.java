@@ -533,6 +533,9 @@ public class EditCardView extends ViewGroup {
             requestLayout();
         } else {
             flags &= ~FLAG_RECURRENT_MODE;
+            etCvc.setEnabled(true);
+            etCvc.setFocusable(true);
+            etCvc.setFocusableInTouchMode(true);
             setSavedCardState(true);
         }
     }

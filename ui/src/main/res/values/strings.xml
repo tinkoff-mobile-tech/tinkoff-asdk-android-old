@@ -33,6 +33,8 @@
     <string name="acq_attaching_card_loop_parse_error">Please enter correct amount in coins</string>
     <string name="acq_attaching_card_loop_amount_hint">Blocked amount</string>
     <string name="acq_no_scan_providers">There aren\'t any providers</string>
+    <string name="acq_complete_payment">To complete payment, enter CVC</string>
+    <string name="acq_complete_payment_ok">OK</string>
 
     <string-array name="acq_scan_types">
         <item>Scan with camera</item>

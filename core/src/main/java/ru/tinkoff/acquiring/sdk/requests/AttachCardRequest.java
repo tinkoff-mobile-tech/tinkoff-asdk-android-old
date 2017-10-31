@@ -60,6 +60,15 @@ final public class AttachCardRequest extends AcquiringRequest {
         this.data = data;
     }
 
+    void addData(Map<String, String> data) {
+        if (data != null) {
+            if (this.data == null) {
+                this.data = new HashMap<>();
+            }
+            this.data.putAll(data);
+        }
+    }
+
     private void putDataIfNonNull(Map<String, Object> map) {
         if (data == null && (email == null || email.length() == 0)) {
             return;
