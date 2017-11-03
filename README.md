@@ -22,6 +22,11 @@ Acquiring SDK позволяет интегрировать [Интернет-Э
 ```groovy
 compile 'ru.tinkoff.acquiring:ui:$latestVersion'
 ```
+Если вы хотите внедрить сканирование с помощью библиотеки Card-IO, то необходимо добавить в [_build.gradle_][build-config]
+```groovy
+compile 'ru.tinkoff.acquiring:card-io:$latestVersion'
+```
+
 
 ### Подготовка к работе
 Для начала работы с SDK вам понадобятся:
@@ -29,7 +34,7 @@ compile 'ru.tinkoff.acquiring:ui:$latestVersion'
 * Пароль
 * Public key
 
-которые выдаются после подключения к [Интернет-Эквайрингу][acquiring].
+Которые выдаются после подключения к [Интернет-Эквайрингу][acquiring].
 
 ### Пример работы
 Для проведения оплаты необходимо запустить _**PayFormActivity**_. Активити должна быть настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо вызвать цепочку из методов **PayFormActivity**#_init_, **PayFormStarter**#_prepare_ и **PayFormStarter**#_setCustomerKey_:
@@ -53,7 +58,7 @@ PayFormActivity
 ```
 
 Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_.
-Так же можно указать тему и запустить форму для оплаты уже с привязанных карт (реккурентынй платеж)
+Так же можно указать тему и запустить форму для оплаты уже с привязанных карт (реккурентынй платеж), а также указать модуль для сканирования (свой или **CameraCardIOScanner**)
 
 ```java
 PayFormActivity
@@ -64,6 +69,7 @@ PayFormActivity
         .setData(dataMap)
         .setTheme(themeId)
         .setChargeMode(chargeMode)
+        .setCameraCardScanner(new CameraCardIOScanner()))
         .startActivityForResult(this, REQUEST_CODE_PAYMENT);
 
 ```
@@ -95,6 +101,7 @@ AttachCardFormActivity
         .prepare("CUSTOMER_KEY", CheckType.THREE_DS, true, "E-MAIL")   
         .setData(data)
         .setTheme(themeId)
+        .setCameraCardScanner(new CameraCardIOScanner()))
         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
 ```
 
@@ -121,14 +128,14 @@ SDK состоит из следующих модулей:
 * проходить 3DS подтверждение
 * управлять списком ранее сохраненных карт
 
+#### Card-IO
+Модуль для сканирование карты с помощью камеры с помощью библиотеки Card-IO.
+
 #### Proguard
-```
--dontwarn org.apache.log4j.**
--dontwarn org.threeten.bp.**
-```
+Никаких дополнительных правил
 
 #### Sample
-Содержит пример интеграции Tinkoff Acquiring SDK в мобильное приложение по продаже книг.
+Содержит пример интеграции Tinkoff Acquiring SDK и модуля сканирования Card-IO в мобильное приложение по продаже книг.
 
 ### Поддержка
 - Просьба, по возникающим вопросам обращаться на [card_acquiring@tinkoff.ru][support-email]
