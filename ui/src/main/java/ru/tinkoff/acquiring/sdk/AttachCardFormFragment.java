@@ -105,7 +105,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
                 activity.showProgressDialog();
                 CardData cardData = new CardData(editCardView.getCardNumber(), editCardView.getExpireDate(), editCardView.getCvc());
-                attachCard(activity.getSdk(), cardData, email);
+                attachCard(activity.getSdk(), activity.getIntent(), cardData, email);
             }
         });
 
@@ -155,14 +155,11 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         }
     }
 
-    private void attachCard(final AcquiringSdk sdk, final CardData cardData, final String email) {
+    private static void attachCard(final AcquiringSdk sdk, final Intent intent, final CardData cardData, final String email) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
-                    Intent intent = activity.getIntent();
-
                     String customerKey = intent.getStringExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY);
                     String checkType = intent.getStringExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE);
                     String requestKey = sdk.addCard(customerKey, checkType);

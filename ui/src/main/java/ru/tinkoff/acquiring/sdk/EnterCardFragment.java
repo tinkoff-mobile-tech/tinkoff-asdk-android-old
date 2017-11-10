@@ -225,7 +225,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 activity.showProgressDialog();
 
                 InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
-                initPayment(sdk, requestBuilder, cardData, enteredEmail);
+                initPayment(sdk, requestBuilder, cardData, enteredEmail, chargeMode);
             }
         });
     }
@@ -425,10 +425,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         ecvCard.setExpireDate(card.getExpireDate());
     }
 
-    private void initPayment(final AcquiringSdk sdk,
-                             final InitRequestBuilder requestBuilder,
-                             final CardData cardData,
-                             final String email) {
+    private static void initPayment(final AcquiringSdk sdk,
+                                    final InitRequestBuilder requestBuilder,
+                                    final CardData cardData,
+                                    final String email,
+                                    final boolean chargeMode) {
 
         new Thread(new Runnable() {
             @Override
@@ -448,15 +449,12 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                     } else {
                         PaymentInfo paymentInfo = sdk.charge(paymentId, cardData.getRebillId());
                         if (paymentInfo.isSuccess()) {
-                            rejectedPaymentInfo = null;
                             CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                         } else {
-                            rejectedPaymentInfo = paymentInfo;
                             PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget();
                         }
                     }
                 } catch (Exception e) {
-                    rejectedPaymentInfo = null;
                     Throwable cause = e.getCause();
                     Message msg;
                     if (cause != null && cause instanceof NetworkException) {
@@ -529,6 +527,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    @Override
+    public void onChargeRequestRejectExpire() {
+        rejectedPaymentInfo = null;
     }
 
     private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {

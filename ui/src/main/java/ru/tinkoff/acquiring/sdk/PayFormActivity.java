@@ -44,7 +44,7 @@ import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
  *
  * @author a.shishkin1
  */
-public final class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender, IPayFormActivity {
+public class PayFormActivity extends AppCompatActivity implements FragmentsCommunicator.IFragmentManagerExtender, IPayFormActivity {
 
     public static final int RESULT_ERROR = 500;
     public static final String API_ERROR_NO_CUSTOMER = "7";
@@ -283,6 +283,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+        expireChargeRejectRequest();
     }
 
     @Override
@@ -454,5 +455,12 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
             }
         }
         return list.toArray(new Card[list.size()]);
+    }
+
+    private void expireChargeRejectRequest() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null && fragment instanceof IChargeRejectPerformer) {
+            ((IChargeRejectPerformer) fragment).onChargeRequestRejectExpire();
+        }
     }
 }

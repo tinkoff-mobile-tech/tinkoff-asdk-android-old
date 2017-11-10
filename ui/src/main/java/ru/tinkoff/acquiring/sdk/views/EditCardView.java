@@ -42,6 +42,9 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
+import android.util.FloatProperty;
+import android.util.IntProperty;
+import android.util.Property;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -782,7 +785,7 @@ public class EditCardView extends ViewGroup {
         flags |= FLAG_CARD_SYSTEM_LOGO;
         cardSystemLogoPaint.setAlpha(0);
 
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, "alpha", 0, 255);
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, PAINT_ALPHA, 0, 255);
         animatorAlpha.setDuration(150);
         animatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -790,7 +793,7 @@ public class EditCardView extends ViewGroup {
                 invalidate();
             }
         });
-        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, "cardSystemLogoAnimationFactor", 0f, 1f);
+        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, CARD_SYSTEM_LOGO_ANIMATION_FACTOR, 0f, 1f);
         animatorEditField.setDuration(150);
         animatorEditField.setInterpolator(new OvershootInterpolator());
         AnimatorSet set = new AnimatorSet();
@@ -806,7 +809,7 @@ public class EditCardView extends ViewGroup {
     }
 
     private void hideCardSystemLogo() {
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, "alpha", 255, 0);
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, PAINT_ALPHA, 255, 0);
         animatorAlpha.setDuration(150);
         animatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -814,7 +817,7 @@ public class EditCardView extends ViewGroup {
                 invalidate();
             }
         });
-        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, "cardSystemLogoAnimationFactor", 1f, 0f);
+        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, CARD_SYSTEM_LOGO_ANIMATION_FACTOR, 1f, 0f);
         animatorEditField.setDuration(150);
         animatorEditField.setInterpolator(new OvershootInterpolator());
         AnimatorSet set = new AnimatorSet();
@@ -836,7 +839,7 @@ public class EditCardView extends ViewGroup {
         final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
 
         etCardNumber.getText().setSpan(span, 0, Math.max(etCardNumber.length() - 4, 0), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, "alpha", 255, 0);
+        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 255, 0);
         animatorText.setDuration(200);
         animatorText.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -846,7 +849,7 @@ public class EditCardView extends ViewGroup {
                 }
             }
         });
-        ObjectAnimator toLeftAnimator = ObjectAnimator.ofFloat(etCardNumber, "animationFactor", 0f, 1f);
+        ObjectAnimator toLeftAnimator = ObjectAnimator.ofFloat(etCardNumber, CardNumberEditText.ANIMATION_FACTOR, 0f, 1f);
         toLeftAnimator.setStartDelay(140);
         toLeftAnimator.setDuration(210);
         toLeftAnimator.addListener(new AnimatorListenerAdapter() {
@@ -858,13 +861,13 @@ public class EditCardView extends ViewGroup {
 
         etDate.setVisibility(VISIBLE);
         etDate.setAlpha(0f);
-        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, "alpha", 0f, 1f);
+        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, View.ALPHA, 0f, 1f);
         animatorDate.setDuration(200);
         animatorDate.setStartDelay(200);
 
         etCvc.setVisibility(VISIBLE);
         etCvc.setAlpha(0f);
-        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, "alpha", 0f, 1f);
+        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, View.ALPHA, 0f, 1f);
         animatorCvc.setDuration(200);
         animatorCvc.setStartDelay(280);
 
@@ -886,7 +889,7 @@ public class EditCardView extends ViewGroup {
     private void hideCvcAndDate() {
         final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
         span.setAlpha(0);
-        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, "alpha", 0, 255);
+        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 0, 255);
         animatorText.setDuration(250);
         animatorText.setInterpolator(new AccelerateInterpolator());
         animatorText.setStartDelay(200);
@@ -899,10 +902,10 @@ public class EditCardView extends ViewGroup {
 
             }
         });
-        ObjectAnimator toRightAnimator = ObjectAnimator.ofFloat(etCardNumber, "animationFactor", 1f, 0f);
+        ObjectAnimator toRightAnimator = ObjectAnimator.ofFloat(etCardNumber, CardNumberEditText.ANIMATION_FACTOR, 1f, 0f);
         toRightAnimator.setDuration(200);
 
-        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, "alpha", 1f, 0f);
+        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, View.ALPHA, 1f, 0f);
         animatorDate.setDuration(150);
         animatorDate.setStartDelay(80);
         animatorDate.addListener(new AnimatorListenerAdapter() {
@@ -915,7 +918,7 @@ public class EditCardView extends ViewGroup {
             }
         });
 
-        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, "alpha", 1f, 0f);
+        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, View.ALPHA, 1f, 0f);
         animatorCvc.setDuration(150);
 
         AnimatorSet set = new AnimatorSet();
@@ -1233,6 +1236,10 @@ public class EditCardView extends ViewGroup {
             invalidate();
         }
 
+        public float getAnimationFactor() {
+            return animationFactor;
+        }
+
         public int getMode() {
             return mode;
         }
@@ -1259,6 +1266,19 @@ public class EditCardView extends ViewGroup {
         public void setCustomOnFocusChangedListener(OnFocusChangeListener customOnFocusChangedListener) {
             this.customOnFocusChangedListener = customOnFocusChangedListener;
         }
+
+        public static final Property<CardNumberEditText, Float> ANIMATION_FACTOR = new FloatProperty<CardNumberEditText>("card_number_animation_factor") {
+
+            @Override
+            public Float get(CardNumberEditText object) {
+                return object.getAnimationFactor();
+            }
+
+            @Override
+            public void setValue(CardNumberEditText object, float value) {
+                object.setAnimationFactor(value);
+            }
+        };
     }
 
     private static class MutableColorSpan extends CharacterStyle implements UpdateAppearance {
@@ -1276,11 +1296,27 @@ public class EditCardView extends ViewGroup {
             color = (color & 0x00FFFFFF) | (alpha << 24);
         }
 
+        public int getAlpha() {
+            return color >>> 24;
+        }
 
         @Override
         public void updateDrawState(TextPaint tp) {
             tp.setColor(color);
         }
+
+        public static final Property<MutableColorSpan, Integer> ALPHA = new IntProperty<MutableColorSpan>("span_alpha") {
+
+            @Override
+            public Integer get(MutableColorSpan object) {
+                return object.getAlpha();
+            }
+
+            @Override
+            public void setValue(MutableColorSpan object, int value) {
+                object.setAlpha(value);
+            }
+        };
     }
 
 
@@ -1391,5 +1427,31 @@ public class EditCardView extends ViewGroup {
 
         }
     }
+
+    public static final Property<EditCardView, Float> CARD_SYSTEM_LOGO_ANIMATION_FACTOR = new FloatProperty<EditCardView>("card_view_logo_animation_factor") {
+
+        @Override
+        public Float get(EditCardView object) {
+            return object.getCardSystemLogoAnimationFactor();
+        }
+
+        @Override
+        public void setValue(EditCardView object, float value) {
+            object.setCardSystemLogoAnimationFactor(value);
+        }
+    };
+
+    public static final Property<Paint, Integer> PAINT_ALPHA = new IntProperty<Paint>("paint_alpha") {
+
+        @Override
+        public Integer get(Paint object) {
+            return object.getAlpha();
+        }
+
+        @Override
+        public void setValue(Paint object, int value) {
+            object.setAlpha(value);
+        }
+    };
 }
 

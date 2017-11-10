@@ -6,4 +6,6 @@ package ru.tinkoff.acquiring.sdk;
 public interface IChargeRejectPerformer {
 
     void onChargeRequestRejected(PaymentInfo paymentInfo);
+
+    void onChargeRequestRejectExpire();
 }

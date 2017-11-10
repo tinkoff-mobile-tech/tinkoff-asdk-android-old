@@ -83,7 +83,7 @@ public class LoopConfirmationFragment extends Fragment {
         });
     }
 
-    private void submitRandomAmount(final AcquiringSdk sdk, final String requestKey, final long amount) {
+    private static void submitRandomAmount(final AcquiringSdk sdk, final String requestKey, final long amount) {
         new Thread(new Runnable() {
             @Override
             public void run() {
