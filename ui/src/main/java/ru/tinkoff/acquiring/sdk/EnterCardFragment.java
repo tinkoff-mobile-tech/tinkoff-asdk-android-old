@@ -529,11 +529,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 .show();
     }
 
-    @Override
-    public void onChargeRequestRejectExpire() {
-        rejectedPaymentInfo = null;
-    }
-
     private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {
         ecvCard.setSavedCardState(hasCard);
         if (hasCard && sourceCard != null) {

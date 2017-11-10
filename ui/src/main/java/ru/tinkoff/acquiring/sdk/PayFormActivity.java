@@ -283,7 +283,6 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
-        expireChargeRejectRequest();
     }
 
     @Override
@@ -455,12 +454,5 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
             }
         }
         return list.toArray(new Card[list.size()]);
-    }
-
-    private void expireChargeRejectRequest() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (fragment != null && fragment instanceof IChargeRejectPerformer) {
-            ((IChargeRejectPerformer) fragment).onChargeRequestRejectExpire();
-        }
     }
 }
