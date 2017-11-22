@@ -481,6 +481,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 Card[] cards = activity.getCards();
                 Card sourceCard = activity.getSourceCard();
                 boolean hasCard = sourceCard != null;
+                boolean needClearCardView = needClearCardView(activity);
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
                 tvSrcCardLabel.setText(getLabel(chargeMode, hasCard));
                 if (chargeMode) {
@@ -491,13 +492,14 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         if (customKeyboard != null) {
                             customKeyboard.hide();
                         }
-                    } else if (cards == null || cards.length == 0) {
+                    } else if (cards == null || cards.length == 0  || needClearCardView) {
                         chargeMode = false;
+                        ecvCard.setRecurrentPaymentMode(false);
                         setRecurrentModeForCardView(false);
-                        prepareEditableCardView(activity, null, false);
+                        prepareEditableCardView(null, false, needClearCardView);
                     }
                 } else {
-                    prepareEditableCardView(activity, sourceCard, hasCard);
+                    prepareEditableCardView(sourceCard, hasCard, needClearCardView);
                 }
             }
         });
@@ -529,18 +531,22 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 .show();
     }
 
-    private void prepareEditableCardView(PayFormActivity activity, Card sourceCard, boolean hasCard) {
+    private void prepareEditableCardView(Card sourceCard, boolean hasCard, boolean needClearCardView) {
         ecvCard.setSavedCardState(hasCard);
         if (hasCard && sourceCard != null) {
             ecvCard.setCardNumber(sourceCard.getPan());
         } else {
-            Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
-            if (bundle != null) {
+            if (needClearCardView) {
                 ecvCard.clear();
             } else {
                 ecvCard.dispatchFocus();
             }
         }
+    }
+
+    private boolean needClearCardView(PayFormActivity activity) {
+        Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+        return bundle != null;
     }
 
     private String getLabel(boolean chargeMode, boolean hasCard) {

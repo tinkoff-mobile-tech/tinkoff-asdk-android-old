@@ -185,7 +185,7 @@ public class EditCardView extends ViewGroup {
             @Override
             public void run() {
                 String number = etCardNumber.getText().toString();
-                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE);
+                boolean isCorrect = CardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE);
                 if (!isCorrect && check(FLAG_CHANGE_MODE_BUTTON)) {
                     hideChangeModeButton();
                 }
@@ -193,8 +193,8 @@ public class EditCardView extends ViewGroup {
                     showChangeModeButton();
                 }
                 etCardNumber.setTextColor(cardFormatter.isNeedToCheck(etCardNumber.length()) && !isCorrect ? Color.RED : textColor);
-                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE) ? Color.RED : textColor);
-                etCvc.setTextColor(etCvc.length() == 3 && !cardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
+                etDate.setTextColor(etDate.length() == 5 && !CardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE) ? Color.RED : textColor);
+                etCvc.setTextColor(etCvc.length() == 3 && !CardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
                 actions.onUpdate(EditCardView.this);
             }
         };

@@ -164,9 +164,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
                 }
                 items.add(new Item());
             }
-            if (!chargeMode) {
-                items.add(new Item(Item.NEW_CARD));
-            }
+            items.add(new Item(Item.NEW_CARD));
             this.items = items;
             notifyDataSetChanged();
         }
