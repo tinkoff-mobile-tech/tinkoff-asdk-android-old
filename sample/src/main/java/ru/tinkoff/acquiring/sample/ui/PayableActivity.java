@@ -124,6 +124,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 )
                 .setCustomerKey(settings.resolveCustomerKey(terminalId))
                 .setChargeMode(settings.isRecurrentPayment())
+                .useFirstAttachedCard(settings.useFirstAttachedCard())
                 .setCameraCardScanner(settings.getCameraScanner())
                 //.setReceipt(createReceipt())
                 //.setData(createData())

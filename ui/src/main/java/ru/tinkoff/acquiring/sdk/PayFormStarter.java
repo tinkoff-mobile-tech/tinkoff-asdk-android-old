@@ -91,6 +91,12 @@ public class PayFormStarter {
         return this;
     }
 
+    public PayFormStarter useFirstAttachedCard(boolean use){
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_USE_FIRST_ATTACHED_CARD, use);
+        return this;
+    }
+
     public PayFormStarter setTheme(@StyleRes int theme) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_THEME, theme);

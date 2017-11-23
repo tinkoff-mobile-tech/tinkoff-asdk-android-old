@@ -81,8 +81,6 @@ public class EditCardView extends ViewGroup {
 
     private int textColor;
 
-    private String cardHint = null;
-
     private CardValidator cardValidator;
 
     private CardNumberEditText etCardNumber;
@@ -144,14 +142,14 @@ public class EditCardView extends ViewGroup {
             return true;
         }
         if (check(FLAG_SAVED_CARD_STATE)) {
-            return cardValidator.validateSecurityCode(etCvc.getText().toString());
+            return CardValidator.validateSecurityCode(etCvc.getText().toString());
         }
 
-        boolean cardNumberReady = cardValidator.validateNumber(getCardNumber());
+        boolean cardNumberReady = CardValidator.validateNumber(getCardNumber());
         if (!cardNumberReady)
             return false;
         return check(FLAG_ONLY_NUMBER_STATE) ||
-                (cardValidator.validateExpirationDate(etDate.getText().toString()) && cardValidator.validateSecurityCode(etCvc.getText().toString()));
+                (CardValidator.validateExpirationDate(etDate.getText().toString()) && CardValidator.validateSecurityCode(etCvc.getText().toString()));
     }
 
     private void init(AttributeSet attributeSet) {
@@ -836,7 +834,7 @@ public class EditCardView extends ViewGroup {
 
     private void showCvcAndDate() {
         hideChangeModeButton();
-        final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
+        final MutableColorSpan span = new MutableColorSpan(textColor);
 
         etCardNumber.getText().setSpan(span, 0, Math.max(etCardNumber.length() - 4, 0), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 255, 0);
@@ -887,7 +885,7 @@ public class EditCardView extends ViewGroup {
     }
 
     private void hideCvcAndDate() {
-        final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
+        final MutableColorSpan span = new MutableColorSpan(textColor);
         span.setAlpha(0);
         ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 0, 255);
         animatorText.setDuration(250);
@@ -968,7 +966,6 @@ public class EditCardView extends ViewGroup {
     }
 
     public void setCardHint(String cardHint) {
-        this.cardHint = cardHint;
         etCardNumber.setHint(cardHint);
     }
 
@@ -1215,6 +1212,7 @@ public class EditCardView extends ViewGroup {
             String text = getText().toString();
             int l = text.length();
             Paint p = getPaint();
+            p.setColor(getCurrentTextColor());
             float dist = p.measureText(text.substring(0, Math.max(0, l - charsCount)));
             if (mode == FULL_MODE) {
                 canvas.save();
@@ -1282,7 +1280,6 @@ public class EditCardView extends ViewGroup {
     }
 
     private static class MutableColorSpan extends CharacterStyle implements UpdateAppearance {
-
 
         private int color;
 

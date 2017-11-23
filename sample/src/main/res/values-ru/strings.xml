@@ -39,6 +39,7 @@
 
     <string name="settings_title_use_system_keyboard">Использовать системную клавиатуру</string>
     <string name="settings_title_recurrent_payment">Рекуррентный платёж</string>
+    <string name="settings_title_use_first_saved_card">Подставлять привязанную карту</string>
     <string name="settings_title_terminal_id">Терминал</string>
     <string name="settings_title_style_id">Стиль</string>
     <string name="settings_title_check_type_id">CheckType</string>

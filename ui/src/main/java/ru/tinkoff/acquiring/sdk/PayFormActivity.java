@@ -68,6 +68,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_RECEIPT_VALUE = "receipt_value";
     static final String EXTRA_DATA_VALUE = "data_value";
     static final String EXTRA_CHARGE_MODE = "charge_mode";
+    static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
 
@@ -288,11 +289,15 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     public void onCardsReady(Card[] cards) {
         hideProgressDialog();
+        boolean useFirstAttachedCard = getIntent().getBooleanExtra(EXTRA_USE_FIRST_ATTACHED_CARD, true);
         this.cards = filterCards(cards);
         if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
             String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
             if (cardId != null) {
                 sourceCard = cardManager.getCardById(cardId);
+            }
+            if (useFirstAttachedCard && this.cards.length > 0 && sourceCard == null) {
+                sourceCard = this.cards[0];
             }
         }
         isCardsReady = true;

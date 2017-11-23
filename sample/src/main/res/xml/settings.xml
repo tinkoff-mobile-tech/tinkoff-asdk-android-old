@@ -9,6 +9,11 @@
         android:key="@string/acq_sp_recurrent_payment"
         android:title="@string/settings_title_recurrent_payment" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/acq_sp_use_first_saved_card"
+        android:title="@string/settings_title_use_first_saved_card" />
+
     <ListPreference
         android:defaultValue="@string/acq_sp_default_value_terminal_id"
         android:entries="@array/acq_sp_terminal_keys"

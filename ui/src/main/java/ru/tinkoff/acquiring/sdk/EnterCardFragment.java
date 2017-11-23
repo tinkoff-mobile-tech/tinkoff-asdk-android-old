@@ -169,6 +169,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
         if (chargeMode) {
             setRecurrentModeForCardView(true);
+            ecvCard.setRecurrentPaymentMode(true);
         }
 
         if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {

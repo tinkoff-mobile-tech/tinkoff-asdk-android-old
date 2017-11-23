@@ -54,6 +54,10 @@ public class SettingsSdkManager {
         return preferences.getBoolean(context.getString(R.string.acq_sp_recurrent_payment), false);
     }
 
+    public boolean useFirstAttachedCard() {
+        return preferences.getBoolean(context.getString(R.string.acq_sp_use_first_saved_card), true);
+    }
+
     @StyleRes
     public int resolveStyle() {
         String defaultStyleName = context.getString(R.string.acq_sp_default_style_id);
