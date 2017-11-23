@@ -46,7 +46,7 @@
     <string name="settings_title_camera">Модуль камеры</string>
 
     <string name="acq_pay_replenish">Пополнить</string>
-    <string name="acq_pay_with_amount_custom">Пополнить %s</string>
+    <string name="acq_pay_with_amount_custom">Пополнить %s $</string>
     <string name="acq_screen_title_custom">Пополнение</string>
 
     <string name="attachment_failed">Невозможно завершить привязку карты</string>

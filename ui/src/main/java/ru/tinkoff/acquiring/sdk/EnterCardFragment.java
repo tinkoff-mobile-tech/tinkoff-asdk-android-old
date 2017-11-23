@@ -207,7 +207,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             String text = btnPay.getText().toString();
             btnPay.setText(text + " " + amountText);
         } else {
-            btnPay.setText(String.format(payAmountFormat, amountText));
+            btnPay.setText(String.format(payAmountFormat, amount != null ? amount.toString() : ""));
         }
 
         btnPay.setOnClickListener(new View.OnClickListener() {
@@ -493,7 +493,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         if (customKeyboard != null) {
                             customKeyboard.hide();
                         }
-                    } else if (cards == null || cards.length == 0  || needClearCardView) {
+                    } else if (cards == null || cards.length == 0 || needClearCardView) {
                         chargeMode = false;
                         ecvCard.setRecurrentPaymentMode(false);
                         setRecurrentModeForCardView(false);
