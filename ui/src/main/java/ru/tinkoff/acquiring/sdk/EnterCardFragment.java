@@ -61,6 +61,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private static final int AMOUNT_POSITION_INDEX = 0;
     private static final int BUTTON_POSITION_INDEX = 1;
     private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
+    private static final int MONEY_AMOUNT_FORMAT_INDEX = 3;
 
     private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
 
@@ -95,6 +96,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private int amountPositionMode;
     private int buttonAndIconsPositionMode;
     private String payAmountFormat;
+    private String moneyAmountFormat;
     private PaymentInfo rejectedPaymentInfo;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
@@ -108,10 +110,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat});
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat, R.attr.acqMoneyAmountFormat});
         amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
         buttonAndIconsPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM);
         payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
+        moneyAmountFormat = typedArray.getString(MONEY_AMOUNT_FORMAT_INDEX);
         typedArray.recycle();
     }
 
@@ -200,14 +203,21 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         tvDescription.setText(description);
 
         final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
-        String amountText = amount != null ? amount.toHumanReadableString() : "";
+
+        String amountTextWithRubbles = amount != null ? amount.toHumanReadableString() : "";
+        String amountText = amount != null ? amount.toString() : "";
+
         if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS) {
-            tvAmount.setText(amountText);
+            if (TextUtils.isEmpty(moneyAmountFormat)) {
+                tvAmount.setText(amountTextWithRubbles);
+            } else {
+                tvAmount.setText(String.format(moneyAmountFormat, amountText));
+            }
         } else if (TextUtils.isEmpty(payAmountFormat)) {
             String text = btnPay.getText().toString();
-            btnPay.setText(text + " " + amountText);
+            btnPay.setText(text + " " + amountTextWithRubbles);
         } else {
-            btnPay.setText(String.format(payAmountFormat, amount != null ? amount.toString() : ""));
+            btnPay.setText(String.format(payAmountFormat, amountText));
         }
 
         btnPay.setOnClickListener(new View.OnClickListener() {

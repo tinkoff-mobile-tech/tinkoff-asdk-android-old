@@ -34,6 +34,7 @@
         <item name="acqPayAmountPosition">onPayButton</item>
         <item name="acqPayButtonAndIconPosition">buttonUnderFieldsIconsOnBottom</item>
         <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount</item>
+        <item name="acqMoneyAmountFormat">@string/acq_money_amount_format</item>
 
     </style>
 

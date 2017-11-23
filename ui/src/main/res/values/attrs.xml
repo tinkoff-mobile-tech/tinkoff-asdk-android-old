@@ -41,5 +41,6 @@
     </attr>
 
     <attr name="acqPayWithAmountFormat" format="string|reference" />
+    <attr name="acqMoneyAmountFormat" format="string|reference" />
 
 </resources>

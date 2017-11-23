@@ -47,6 +47,7 @@
 
     <string name="acq_pay_replenish">Пополнить</string>
     <string name="acq_pay_with_amount_custom">Пополнить %s $</string>
+    <string name="acq_money_amount_format_custom">%s $</string>
     <string name="acq_screen_title_custom">Пополнение</string>
 
     <string name="attachment_failed">Невозможно завершить привязку карты</string>

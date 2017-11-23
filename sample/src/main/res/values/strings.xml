@@ -45,7 +45,8 @@
     <string name="settings_title_camera">Camera module</string>
 
     <string name="acq_pay_replenish">Replenish</string>
-    <string name="acq_pay_with_amount_custom">Replenish %s</string>
+    <string name="acq_pay_with_amount_custom">Replenish %s $</string>
+    <string name="acq_money_amount_format_custom">%s $</string>
     <string name="acq_screen_title_custom">Replenishment</string>
 
     <string name="attachment_failed">Attachment failed. Try later.</string>

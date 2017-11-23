@@ -13,10 +13,11 @@
         <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom</item>
         <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom</item>
         <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle.Custom</item>
-        <item name="acqPayAmountPosition">onPayButton</item>
+        <item name="acqPayAmountPosition">overFields</item>
         <item name="acqPayButtonAndIconPosition">iconsUnderFieldsButtonOnBottom</item>
         <item name="acqPayFormTitle">@string/acq_screen_title_custom</item>
         <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount_custom</item>
+        <item name="acqMoneyAmountFormat">@string/acq_money_amount_format_custom</item>
         <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle.Custom</item>
     </style>
 

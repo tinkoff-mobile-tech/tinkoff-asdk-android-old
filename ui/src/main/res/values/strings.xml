@@ -11,7 +11,8 @@
     <string name="acq_email_hint">E-mail for receipt</string>
     <string name="acq_pay">Pay</string>
     <string name="acq_check">Check</string>
-    <string name="acq_pay_with_amount">Pay %s</string>
+    <string name="acq_pay_with_amount">Pay %s Р</string>
+    <string name="acq_money_amount_format">%s Р</string>
     <string name="acq_screen_title">Payment</string>
     <string name="acq_enter_new_card_label">Add new card</string>
     <string name="acq_delete_label">Delete</string>
