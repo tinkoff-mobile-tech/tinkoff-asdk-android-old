@@ -80,6 +80,9 @@ public class EditCardView extends ViewGroup {
     private static final String DATE_MASK = "\u2022\u2022/\u2022\u2022";
 
     private int textColor;
+    private String cardNumberHint;
+    private String dateHint;
+    private String cvcHint;
 
     private CardValidator cardValidator;
 
@@ -405,9 +408,12 @@ public class EditCardView extends ViewGroup {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.EditCardView, 0, 0);
         cardLogoMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardLogoMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_logo_margin));
         cardTextMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardTextMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_text_margin));
-        etCardNumber.setHint(a.getString(R.styleable.EditCardView_numberHint));
-        etDate.setHint(a.getString(R.styleable.EditCardView_dateHint));
-        etCvc.setHint(a.getString(R.styleable.EditCardView_cvcHint));
+        cardNumberHint = a.getString(R.styleable.EditCardView_numberHint);
+        dateHint = a.getString(R.styleable.EditCardView_dateHint);
+        cvcHint = a.getString(R.styleable.EditCardView_cvcHint);
+        etCardNumber.setHint(cardNumberHint);
+        etDate.setHint(dateHint);
+        etCvc.setHint(cvcHint);
         setBtnScanIcon(a.getResourceId(R.styleable.EditCardView_scanIcon, R.drawable.acq_scan_grey));
         setChangeModeIcon(a.getResourceId(R.styleable.EditCardView_changeModeIcon, R.drawable.acq_next_grey));
         a.recycle();
@@ -537,6 +543,7 @@ public class EditCardView extends ViewGroup {
             etCvc.setEnabled(true);
             etCvc.setFocusable(true);
             etCvc.setFocusableInTouchMode(true);
+            etCvc.setHint(cvcHint);
             setSavedCardState(true);
         }
     }
@@ -603,6 +610,18 @@ public class EditCardView extends ViewGroup {
         etDate.setText("");
         etCvc.setText("");
         dispatchFocus();
+    }
+
+    public String getCardNumberHint() {
+        return cardNumberHint;
+    }
+
+    public String getDateHint() {
+        return dateHint;
+    }
+
+    public String getCvcHint() {
+        return cvcHint;
     }
 
     private void clearPendingAnimations() {

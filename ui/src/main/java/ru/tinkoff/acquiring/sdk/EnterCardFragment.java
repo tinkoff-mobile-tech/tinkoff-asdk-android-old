@@ -252,7 +252,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             ecvCard.setEnabled(true);
             ecvCard.setFocusable(true);
             ecvCard.setFullCardNumberModeEnable(true);
-            ecvCard.setCardHint(getString(R.string.acq_card_number_hint));
+            ecvCard.setCardHint(ecvCard.getCardNumberHint());
         }
     }
 
@@ -508,6 +508,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         ecvCard.setRecurrentPaymentMode(false);
                         setRecurrentModeForCardView(false);
                         prepareEditableCardView(null, false, needClearCardView);
+                    } else {
+                        ecvCard.setRecurrentPaymentMode(false);
+                        setRecurrentModeForCardView(true);
+                        prepareEditableCardView(null, false, false);
                     }
                 } else {
                     prepareEditableCardView(sourceCard, hasCard, needClearCardView);
