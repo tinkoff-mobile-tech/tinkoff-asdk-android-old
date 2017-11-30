@@ -1,22 +1,23 @@
 apply plugin: 'com.android.library'
 
-def coreVersion = '3.0.13'
-
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'io.card:android-sdk:5.2.0'
-    compile 'com.github.devnied:bit-lib4j:1.4.10'
-    compile 'org.apache.commons:commons-lang3:3.4'
-    compile "ru.tinkoff.core:core-nfc:${coreVersion}"
-    compile "ru.tinkoff.core:core-log:${coreVersion}"
-    compile "ru.tinkoff.core:core-log-android:${coreVersion}"
+    compile "com.google.android.gms:play-services-wallet:10.2.6"
+    compile "com.android.support:support-v4:${rootProject.supportVersion}"
+    compile "com.android.support:appcompat-v7:${rootProject.supportVersion}"
+
+    compile "io.card:android-sdk:5.2.0"
+    compile "com.github.devnied:bit-lib4j:1.4.10"
+    compile "org.apache.commons:commons-lang3:3.4"
+    compile "ru.tinkoff.core:core-nfc:${rootProject.coreVersion}"
+    compile "ru.tinkoff.core:core-log:${rootProject.coreVersion}"
+    compile "ru.tinkoff.core:core-log-android:${rootProject.coreVersion}"
 
     compile project(':core')
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion rootProject.compileSdk
+    buildToolsVersion rootProject.buildToolsVersion
 
     lintOptions {
         disable 'InvalidPackage'
@@ -29,11 +30,12 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion rootProject.minSdk
+        targetSdkVersion rootProject.targetSdk
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
     }
+
     buildTypes {
         release {
             minifyEnabled false

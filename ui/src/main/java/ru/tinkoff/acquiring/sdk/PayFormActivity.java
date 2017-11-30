@@ -64,6 +64,7 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
     static final String EXTRA_CUSTOMER_KEY = "customer_key";
     static final String EXTRA_RECURENT_PAYMENT = "reccurent_payment";
     static final String EXTRA_PAYMENT_ID = "payment_id";
+    static final String EXTRA_ANDROID_PAY_PARAMS = "android_pay_params";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -156,8 +157,6 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
                 sourceCard = cards[idx];
             }
         }
-
-
     }
 
     @Override
@@ -186,6 +185,15 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         super.onStop();
         dialogsManager.dismissDialogs();
         handler.unregister(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -384,5 +392,11 @@ public final class PayFormActivity extends AppCompatActivity implements Fragment
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+    }
+
+    public void showAndroidPayError() {
+        String title = getString(R.string.acq_default_error_title);
+        String message = getString(R.string.acq_default_error_message);
+        dialogsManager.showErrorDialog(title, message);
     }
 }

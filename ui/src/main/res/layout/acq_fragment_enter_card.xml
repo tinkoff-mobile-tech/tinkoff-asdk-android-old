@@ -7,14 +7,14 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
 
         <LinearLayout
             style="?acqContentViewStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
@@ -96,13 +96,29 @@
                 android:hint="@string/acq_email_hint"
                 android:inputType="textEmailAddress" />
 
-            <Button
-                android:id="@+id/btn_pay"
-                style="?acqButtonStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginTop="?acqViewDivider"
-                android:text="@string/acq_pay" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_pay"
+                    style="?acqButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/acq_pay" />
+
+                <FrameLayout
+                    android:id="@+id/fl_android_pay_placeholder"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
 
             <Space
                 android:layout_width="match_parent"

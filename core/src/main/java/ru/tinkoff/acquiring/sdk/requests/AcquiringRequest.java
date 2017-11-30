@@ -43,6 +43,8 @@ public class AcquiringRequest {
     public static final String CARD_ID = "CardId";
     public static final String CVV = "CVV";
     public static final String PAY_TYPE = "PayType";
+    public static final String SOURCE = "Source";
+    public static final String ANDROID_PAY_TOKEN = "EncryptedPaymentData";
 
     public static final String DATA_KEY_EMAIL = "Email";
 

@@ -27,7 +27,6 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
         super(password, terminalKey);
     }
 
-
     public FinishAuthorizeRequestBuilder setPaymentId(final Long value) {
         request.setPaymentId(value);
         return this;
@@ -35,6 +34,12 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
 
     public FinishAuthorizeRequestBuilder setSendEmail(final boolean value) {
         request.setSendEmail(value);
+        return this;
+    }
+
+    public FinishAuthorizeRequestBuilder setAndroidPayToken(final String token) {
+        request.setAndroidPayToken(token);
+        request.setSource("AndroidPay");
         return this;
     }
 
@@ -51,7 +56,10 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
     @Override
     protected void validate() {
         validateZeroOrPositive(request.getPaymentId(), "Payment ID");
-        if (request.getCardId() == null) {
+        if (request.getAndroidPayToken() != null) {
+            validateNonEmpty(request.getAndroidPayToken(), AcquiringRequest.ANDROID_PAY_TOKEN);
+            validateNonEmpty(request.getSource(), AcquiringRequest.SOURCE);
+        } else if (request.getCardId() == null) {
             validateNonEmpty(request.getCardData(), "Card data");
         } else {
             validateNonEmpty(request.getCardId(), "CardId");

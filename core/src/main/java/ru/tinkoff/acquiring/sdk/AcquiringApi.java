@@ -51,7 +51,7 @@ import ru.tinkoff.acquiring.sdk.responses.RemoveCardResponse;
 public class AcquiringApi {
 
     private static final String API_URL_RELEASE = "https://securepay.tinkoff.ru/rest";
-    private static final String API_URL_DEBUG = "https://rest-api-test.tcsbank.ru/rest";
+    private static final String API_URL_DEBUG = "https://rest-api-test.tinkoff.ru/rest";
     private static final int STREAM_BUFFER_SIZE = 4096;
     public static final String API_REQUEST_METHOD = "POST";
 
