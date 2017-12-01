@@ -299,7 +299,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 .setBuyButtonText(androidPayParams.getBuyButtonText())
                 .setBuyButtonAppearance(androidPayParams.getBuyButtonAppearance())
                 .setBuyButtonHeight(WalletFragmentStyle.Dimension.MATCH_PARENT)
-                .setBuyButtonWidth(WalletFragmentStyle.Dimension.UNIT_PX, btnPay.getWidth());
+                .setBuyButtonWidth(WalletFragmentStyle.Dimension.MATCH_PARENT);
 
         WalletFragmentOptions walletFragmentOptions = WalletFragmentOptions.newBuilder()
                 .setEnvironment(androidPayParams.getEnvironment())

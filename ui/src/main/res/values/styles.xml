@@ -101,7 +101,27 @@
 
     <style name="AcquiringNfcDescriptionTextStyle">
         <item name="android:textColor">@drawable/acq_nfc_tint_color_pressable</item>
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AcquiringAndroidPayStyle" parent="WalletFragmentDefaultStyle">
+        <item name="maskedWalletDetailsTextAppearance">
+            @style/AcquiringDetailsTextAppearance
+        </item>
+        <item name="maskedWalletDetailsButtonTextAppearance">
+            @style/AcquiringButtonTextAppearance
+        </item>
+        <item name="maskedWalletDetailsHeaderTextAppearance">
+            @style/WalletFragmentDefaultDetailsHeaderTextAppearance
+        </item>
+    </style>
+
+    <style name="AcquiringDetailsTextAppearance" parent="WalletFragmentDefaultDetailsTextAppearance">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AcquiringButtonTextAppearance" parent="WalletFragmentDefaultButtonTextAppearance">
+        <item name="android:textSize">14sp</item>
     </style>
 
 </resources>
