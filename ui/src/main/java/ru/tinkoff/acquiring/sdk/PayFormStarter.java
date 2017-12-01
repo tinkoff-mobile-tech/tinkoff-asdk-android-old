@@ -67,6 +67,12 @@ public class PayFormStarter {
         return this;
     }
 
+    public PayFormStarter setAndroidPayParams(AndroidPayParams androidPayParams) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS, androidPayParams);
+        return this;
+    }
+
     public PayFormStarter setCustomerKey(String customerKey) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_CUSTOMER_KEY, customerKey);

@@ -12,6 +12,7 @@
         <activity
             android:name=".nfc.AsdkNfcScanActivity"
             android:theme="@style/AcquiringNfcTheme" />
+        <activity android:name="io.card.payment.DataEntryActivity" />
 
     </application>
 
