@@ -241,7 +241,9 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     @Override
     public void showProgressDialog() {
-        dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
+        if (!dialogsManager.isProgressShowing()) {
+            dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
+        }
     }
 
     @Override
@@ -347,6 +349,14 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         if (fragment != null && fragment instanceof IChargeRejectPerformer) {
             ((IChargeRejectPerformer) fragment).onChargeRequestRejected(paymentInfo);
         }
+    }
+
+    @Override
+    public void onAndroidPayError() {
+        hideProgressDialog();
+        String title = getString(R.string.acq_default_error_title);
+        String message = getString(R.string.acq_default_error_message);
+        dialogsManager.showErrorDialog(title, message);
     }
 
     public void selectCardById(String cardId) {

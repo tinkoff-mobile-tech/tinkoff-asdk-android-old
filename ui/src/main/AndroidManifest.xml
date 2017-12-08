@@ -12,7 +12,16 @@
         <activity
             android:name=".nfc.AsdkNfcScanActivity"
             android:theme="@style/AcquiringNfcTheme" />
-        <activity android:name="io.card.payment.DataEntryActivity" />
+
+        <!-- TODO автоматическое скрытие клавиатуры -->
+        <activity
+            android:name=".PayFormActivity"
+            android:theme="@style/AcquiringTheme"
+            android:windowSoftInputMode="stateHidden" />
+
+        <activity
+            android:name=".AttachCardFormActivity"
+            android:theme="@style/AcquiringTheme" />
 
     </application>
 

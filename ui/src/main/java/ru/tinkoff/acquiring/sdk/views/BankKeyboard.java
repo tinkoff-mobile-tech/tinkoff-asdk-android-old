@@ -152,9 +152,10 @@ public class BankKeyboard extends FrameLayout implements
             }
         });
 
-        if (edittext.hasFocus()) {
-            showFor(edittext);
-        }
+        //TODO автоматическое открытие клавиатуры
+        //if (edittext.hasFocus()) {
+        //    showFor(edittext);
+        //}
     }
 
     @Override

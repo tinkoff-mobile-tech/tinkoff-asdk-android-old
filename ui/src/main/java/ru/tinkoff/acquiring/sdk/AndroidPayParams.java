@@ -2,9 +2,13 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.IntDef;
 
 import com.google.android.gms.wallet.WalletConstants;
 import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * @author Alex Maksakov
@@ -22,6 +26,22 @@ final public class AndroidPayParams implements Parcelable {
             return new AndroidPayParams[size];
         }
     };
+
+    @IntDef({WalletConstants.ENVIRONMENT_SANDBOX, WalletConstants.ENVIRONMENT_PRODUCTION, WalletConstants.ENVIRONMENT_STRICT_SANDBOX, WalletConstants.ENVIRONMENT_TEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AndroidPayEnvironment {
+    }
+
+    @IntDef({WalletFragmentStyle.BuyButtonText.BUY_WITH, WalletFragmentStyle.BuyButtonText.DONATE_WITH, WalletFragmentStyle.BuyButtonText.LOGO_ONLY})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AndroidPayButtonText {
+    }
+
+    @IntDef({WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_CLASSIC, WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_GRAYSCALE, WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_MONOCHROME,
+            WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK, WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT, WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT_WITH_BORDER})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AndroidPayButtonAppearance {
+    }
 
     public static class Builder {
 
@@ -49,17 +69,17 @@ final public class AndroidPayParams implements Parcelable {
             return this;
         }
 
-        public Builder setEnvironment(int environment) {
+        public Builder setEnvironment(@AndroidPayEnvironment int environment) {
             this.environment = environment;
             return this;
         }
 
-        public Builder setBuyButtonText(int buyButtonText) {
+        public Builder setBuyButtonText(@AndroidPayButtonText int buyButtonText) {
             this.buyButtonText = buyButtonText;
             return this;
         }
 
-        public Builder setBuyButtonAppearance(int buyButtonAppearance) {
+        public Builder setBuyButtonAppearance(@AndroidPayButtonAppearance int buyButtonAppearance) {
             this.buyButtonAppearance = buyButtonAppearance;
             return this;
         }

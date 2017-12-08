@@ -4,6 +4,7 @@ def coreVersion = '3.1.7'
 
 dependencies {
     compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:transition:26.1.0'
     compile "ru.tinkoff.core:core-nfc:${coreVersion}"
     compile "com.google.android.gms:play-services-wallet:10.2.6"
 

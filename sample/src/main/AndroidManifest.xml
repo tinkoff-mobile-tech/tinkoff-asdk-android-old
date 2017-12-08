@@ -51,20 +51,12 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="ru.tinkoff.acquiring.sdk.PayFormActivity"
-            android:theme="@style/AcquiringTheme.Custom" />
-
-        <activity
-            android:name="ru.tinkoff.acquiring.sdk.AttachCardFormActivity"
-            android:theme="@style/AcquiringTheme.Custom" />
+            android:name=".camera.DemoCameraScanActivity"
+            android:label="Camera Scan" />
 
         <activity
             android:name="ru.tinkoff.acquiring.sdk.nfc.AsdkNfcScanActivity"
             android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".camera.DemoCameraScanActivity"
-            android:label="Camera Scan" />
 
     </application>
 

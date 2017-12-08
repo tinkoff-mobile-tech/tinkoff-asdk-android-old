@@ -23,15 +23,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
 import com.google.android.gms.wallet.WalletConstants;
+
+import java.util.HashMap;
 
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
-import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.AndroidPayParams;
+import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
@@ -135,7 +135,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
-                .setAndroidPayParams(androidPayParams)
+                .setAndroidPayParams(settings.isAndroidPayEnabled() ? androidPayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
