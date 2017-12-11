@@ -40,12 +40,12 @@
     </string-array>
 
     <string-array name="book_prices">
-        <item>2000</item>
-        <item>999.99</item>
-        <item>1500</item>
-        <item>2100.50</item>
-        <item>400</item>
-        <item>600</item>
+        <item>20</item>
+        <item>19</item>
+        <item>15</item>
+        <item>21</item>
+        <item>14</item>
+        <item>16</item>
     </string-array>
 
 </resources>
