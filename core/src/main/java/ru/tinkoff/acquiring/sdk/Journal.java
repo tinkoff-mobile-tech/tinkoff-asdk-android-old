@@ -21,7 +21,8 @@ package ru.tinkoff.acquiring.sdk;
  */
 public abstract class Journal {
     private static Logger logger = new JavaLogger();
-    private static boolean debug = true;
+    private static boolean debug = false;
+    private static boolean developerMode = false;
 
     /**
      * Позволяет использовать свой логгер
@@ -31,9 +32,7 @@ public abstract class Journal {
     }
 
     /**
-     * Позволяет переключать SDK с тестового режима и обратно. В тестовом режиме деньги с карты не
-     * списываются, при этом в лог пишется отладочная информация: запросы и ответы API, ошибки
-     * валидации и т.д. По умолчанию включено.
+     * Позволяет включить логирование. По умолчанию выключен
      */
     public static void setDebug(boolean debug) {
         Journal.debug = debug;
@@ -41,6 +40,18 @@ public abstract class Journal {
 
     public static boolean isDebug() {
         return Journal.debug;
+    }
+
+    /**
+     * Позволяет переключать SDK с тестового режима и обратно. В тестовом режиме деньги с карты не
+     * списываются. По умолчанию выключен.
+     */
+    public static void setDeveloperMode(boolean mode) {
+        Journal.developerMode = mode;
+    }
+
+    public static boolean isDeveloperMode() {
+        return Journal.developerMode;
     }
 
     public static void log(CharSequence message) {

@@ -302,7 +302,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         PayFormActivity activity = (PayFormActivity) getActivity();
         if (activity == null && androidPayParams != null) {
             initGoogleApiClient();
-            initAndroidPay(true);
+            initAndroidPay();
             return;
         }
 
@@ -312,12 +312,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
 
         if (androidPayParams != null) {
-            boolean androidPayInited = isAndroidPayInited();
-            if (androidPayInited) {
-                activity.showProgressDialog();
-            }
             initGoogleApiClient();
-            initAndroidPay(!androidPayInited);
+            initAndroidPay();
         } else {
             hideAndroidPayButton();
         }
@@ -342,18 +338,16 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         googleApiClient.connect();
     }
 
-    private void initAndroidPay(final boolean hideDialog) {
+    private void initAndroidPay() {
         IsReadyToPayRequest isReadyTpPayRequest = IsReadyToPayRequest.newBuilder()
                 .addAllowedCardNetwork(WalletConstants.CardNetwork.MASTERCARD)
                 .addAllowedCardNetwork(WalletConstants.CardNetwork.VISA)
                 .build();
 
-        setupProgressDialog(true);
         Wallet.Payments.isReadyToPay(googleApiClient, isReadyTpPayRequest).setResultCallback(
                 new ResultCallback<BooleanResult>() {
                     @Override
                     public void onResult(@NonNull BooleanResult booleanResult) {
-                        setupProgressDialog(!hideDialog);
                         if (booleanResult.getStatus().isSuccess() && booleanResult.getValue()) {
                             showAndroidPayButton();
                         } else {
@@ -615,6 +609,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         } else if (cardScanner.isNfcError(requestCode, resultCode)) {
             Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
         } else {
+            if (resultCode == Activity.RESULT_OK && (requestCode == REQUEST_MASKED_WALLET || requestCode == REQUEST_FULL_WALLET)) {
+                ((PayFormActivity) getActivity()).showProgressDialog();
+            }
+
             int androidPayErrorCode = -1;
             if (data != null) {
                 androidPayErrorCode = data.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, -1);

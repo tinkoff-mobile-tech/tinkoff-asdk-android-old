@@ -2,17 +2,20 @@ apply plugin: 'com.android.library'
 
 def coreVersion = '3.1.7'
 
+
 dependencies {
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:transition:26.1.0'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:transition:27.0.2'
     compile "ru.tinkoff.core:core-nfc:${coreVersion}"
-    compile "com.google.android.gms:play-services-wallet:10.2.6"
+    compile ("com.google.android.gms:play-services-wallet:11.6.2") {
+        exclude module: 'support-v4'
+    }
 
     compile project(':core')
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
 
     lintOptions {
@@ -27,7 +30,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
 

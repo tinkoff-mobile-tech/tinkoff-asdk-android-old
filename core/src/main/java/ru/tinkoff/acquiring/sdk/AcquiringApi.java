@@ -79,9 +79,9 @@ public class AcquiringApi {
 
     static String getUrl(String apiMethod) {
         if (useV2Api(apiMethod)) {
-            return Journal.isDebug() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
+            return Journal.isDeveloperMode() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
         } else {
-            return Journal.isDebug() ? API_URL_DEBUG : API_URL_RELEASE;
+            return Journal.isDeveloperMode() ? API_URL_DEBUG : API_URL_RELEASE;
         }
     }
 
