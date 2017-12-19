@@ -32,7 +32,6 @@
         <item>HOLD</item>
         <item>3DS</item>
         <item>3DSHOLD</item>
-        <item>AUTO</item>
     </string-array>
 
     <string name="acq_sp_camera_type_id" translatable="false">acq_sp_camera_type_id</string>

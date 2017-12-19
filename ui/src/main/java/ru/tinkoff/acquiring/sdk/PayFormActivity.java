@@ -78,7 +78,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     private static final String INSTANCE_KEY_CARDS = "cards";
     private static final String INSTANCE_KEY_CARD_INDEX = "card_idx";
 
-    private FragmentsCommunicator mFragmentsCommunicator;
+    private FragmentsCommunicator fragmentsCommunicator;
     private Long paymentId;
 
     public static PayFormStarter init(String terminalKey, String password, String publicKey) {
@@ -120,7 +120,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     public PayFormActivity() {
-        mFragmentsCommunicator = new FragmentsCommunicator();
+        fragmentsCommunicator = new FragmentsCommunicator();
     }
 
     @Override
@@ -133,7 +133,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
             setTheme(theme);
         }
 
-        mFragmentsCommunicator.onCreate(savedInstanceState);
+        fragmentsCommunicator.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.acq_activity);
@@ -175,7 +175,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mFragmentsCommunicator.onSavedInstanceState(outState);
+        fragmentsCommunicator.onSavedInstanceState(outState);
         outState.putBundle(INSTANCE_KEY_CARDS, new CardsArrayBundlePacker().pack(cards));
         if (sourceCard != null && cards != null) {
             for (int i = 0; i < cards.length; i++) {
@@ -381,7 +381,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     @Override
     public FragmentsCommunicator getFragmentsCommunicator() {
-        return mFragmentsCommunicator;
+        return fragmentsCommunicator;
     }
 
     protected ThreeDsFragment createThreeDsFragment(ThreeDsData data) {

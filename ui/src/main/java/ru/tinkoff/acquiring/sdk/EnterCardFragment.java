@@ -43,8 +43,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-
 import com.google.android.gms.common.api.BooleanResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -67,6 +65,7 @@ import com.google.android.gms.wallet.fragment.WalletFragmentOptions;
 import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -641,18 +640,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     }
 
     private void handleAndroidPayError(int errorCode) {
-        switch (errorCode) {
-            case WalletConstants.ERROR_CODE_INVALID_PARAMETERS:
-            case WalletConstants.ERROR_CODE_AUTHENTICATION_FAILURE:
-            case WalletConstants.ERROR_CODE_BUYER_ACCOUNT_ERROR:
-            case WalletConstants.ERROR_CODE_MERCHANT_ACCOUNT_ERROR:
-            case WalletConstants.ERROR_CODE_SERVICE_UNAVAILABLE:
-            case WalletConstants.ERROR_CODE_UNSUPPORTED_API_VERSION:
-            case WalletConstants.ERROR_CODE_UNKNOWN:
-            default:
-                PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.ANDROID_PAY_ERROR).sendToTarget();
-                break;
-        }
+        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.ANDROID_PAY_ERROR).sendToTarget();
     }
 
     private void startFullWalletRequest(Intent data) {

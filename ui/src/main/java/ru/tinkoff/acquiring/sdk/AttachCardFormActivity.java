@@ -66,8 +66,6 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
 
         if (savedInstanceState == null) {
             addAttachCardFragment();
-        } else {
-
         }
     }
 

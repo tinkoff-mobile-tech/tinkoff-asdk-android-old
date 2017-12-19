@@ -23,7 +23,7 @@ public class CameraCardIOScanner implements ICameraCardScanner {
         fragment.startActivityForResult(scanIntent, requestCode);
     }
     @Override
-    public boolean hasResult(Intent data) {
+    public boolean hasResult(@NonNull Intent data) {
         return data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT);
     }
 
