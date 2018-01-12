@@ -58,10 +58,6 @@ public class SettingsSdkManager {
         return preferences.getBoolean(context.getString(R.string.acq_sp_use_first_saved_card), true);
     }
 
-    public boolean isAndroidPayEnabled() {
-        return preferences.getBoolean(context.getString(R.string.acq_sp_android_pay), true);
-    }
-
     @StyleRes
     public int resolveStyle() {
         String defaultStyleName = context.getString(R.string.acq_sp_default_style_id);

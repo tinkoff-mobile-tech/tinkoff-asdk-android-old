@@ -12,6 +12,4 @@ public interface IPayFormActivity extends IBaseSdkActivity {
     void onPaymentInitCompleted(Long paymentId);
 
     void onChargeRequestRejected(PaymentInfo paymentInfo);
-
-    void onAndroidPayError();
 }

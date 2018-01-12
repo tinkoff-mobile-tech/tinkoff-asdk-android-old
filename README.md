@@ -129,43 +129,6 @@ SDK состоит из следующих модулей:
 * проходить 3DS подтверждение
 * управлять списком ранее сохраненных карт
 
-#### Android Pay
-
-[Документация](https://developers.google.com/android-pay/)
-
-Для включения Android Pay необходимо:
-
-Добавить мета информацию в манифест приложения
-
-```xml
-    <meta-data
-        android:name="com.google.android.gms.wallet.api.enabled"
-        android:value="true" />
-```
-
-Сконфигурировать необходимые параметры 
-
-```java
-    AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
-                    .setMerchantName(getString(R.string.merchant_name))
-                    .setAddressRequired(false)
-                    .setPhoneRequired(false)
-                    .setTheme(WalletConstants.THEME_LIGHT)
-                    .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-                    .build();
-```
-
-Передать параметры в PayFormActivity
-
-```java
-PayFormActivity
-        .init(TERMINAL_KEY, PASSWORD, PUBLIC_KEY) // данные продавца
-        .prepare()
-        .setAndroidPayParams(params)
-        .setCustomerKey(CUSTOMER_KEY)
-        .startActivityForResult(this, REQUEST_CODE_PAYMENT);
-```
-
 #### Card-IO
 Модуль для сканирование карты с помощью камеры с помощью библиотеки Card-IO.
 

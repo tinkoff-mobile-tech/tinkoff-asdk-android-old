@@ -71,7 +71,6 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
-    static final String EXTRA_ANDROID_PAY_PARAMS = "android_pay_params";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -351,14 +350,6 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         }
     }
 
-    @Override
-    public void onAndroidPayError() {
-        hideProgressDialog();
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_default_error_message);
-        dialogsManager.showErrorDialog(title, message);
-    }
-
     public void selectCardById(String cardId) {
         Card selectedCard = cardManager.getCardById(cardId);
         if (selectedCard != null) {
@@ -479,11 +470,5 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
             }
         }
         return list.toArray(new Card[list.size()]);
-    }
-
-    public void showAndroidPayError() {
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_default_error_message);
-        dialogsManager.showErrorDialog(title, message);
     }
 }
