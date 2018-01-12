@@ -107,10 +107,15 @@
                     android:layout_height="48dp"
                     android:layout_margin="4dp" />
 
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/fl_android_pay_placeholder"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp" />
+                    android:layout_height="56dp"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/gpay_button_short_no_shadow" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

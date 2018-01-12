@@ -43,28 +43,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.BooleanResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wallet.Cart;
-import com.google.android.gms.wallet.FullWallet;
-import com.google.android.gms.wallet.FullWalletRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wallet.AutoResolveHelper;
+import com.google.android.gms.wallet.CardRequirements;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
-import com.google.android.gms.wallet.LineItem;
-import com.google.android.gms.wallet.MaskedWallet;
-import com.google.android.gms.wallet.MaskedWalletRequest;
-import com.google.android.gms.wallet.PaymentMethodToken;
+import com.google.android.gms.wallet.PaymentData;
+import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentMethodTokenizationParameters;
-import com.google.android.gms.wallet.PaymentMethodTokenizationType;
+import com.google.android.gms.wallet.PaymentsClient;
+import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-import com.google.android.gms.wallet.fragment.SupportWalletFragment;
-import com.google.android.gms.wallet.fragment.WalletFragmentInitParams;
-import com.google.android.gms.wallet.fragment.WalletFragmentMode;
-import com.google.android.gms.wallet.fragment.WalletFragmentOptions;
-import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -82,8 +80,7 @@ import static android.widget.Toast.makeText;
  */
 public class EnterCardFragment extends Fragment implements ICardInterest, IChargeRejectPerformer, OnBackPressedListener {
 
-    public static final int REQUEST_MASKED_WALLET = 3;
-    public static final int REQUEST_FULL_WALLET = 4;
+    public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 5;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
@@ -103,7 +100,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private static final String RECURRING_TYPE_KEY = "recurringType";
     private static final String RECURRING_TYPE_VALUE = "12";
     private static final String FAIL_MAPI_SESSION_ID = "failMapiSessionId";
-    private static final String ANDROID_PAY_FRAGMENT_TAG = "android_pay_fragment_tag";
 
     private EditCardView ecvCard;
     private TextView tvTitle;
@@ -114,6 +110,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private EditText etEmail;
     private Button btnPay;
     private View srcCardChooser;
+    private View btnGooglePay;
 
     private GoogleApiClient googleApiClient;
 
@@ -132,6 +129,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private String payAmountFormat;
     private String moneyAmountFormat;
     private PaymentInfo rejectedPaymentInfo;
+
+    private PaymentsClient paymentsClient;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
@@ -165,6 +164,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         tvAmount = (TextView) view.findViewById(R.id.tv_amount);
         tvChooseCardButton = (TextView) view.findViewById(R.id.tv_src_card_choose_btn);
         btnPay = (Button) view.findViewById(R.id.btn_pay);
+        btnGooglePay = view.findViewById(R.id.rl_google_play_button);
+        btnGooglePay.setEnabled(false);
         srcCardChooser = view.findViewById(R.id.ll_src_card_chooser);
 
         etEmail = (EditText) view.findViewById(R.id.et_email);
@@ -274,6 +275,16 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 initPayment(sdk, requestBuilder, cardData, null, enteredEmail, chargeMode);
             }
         });
+
+        btnGooglePay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PaymentDataRequest request = createPaymentDataRequest();
+                if (request != null) {
+                    AutoResolveHelper.resolveTask(paymentsClient.loadPaymentData(request), getActivity(), LOAD_PAYMENT_DATA_REQUEST_CODE);
+                }
+            }
+        });
     }
 
     @Override
@@ -339,21 +350,37 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private void initAndroidPay() {
         IsReadyToPayRequest isReadyTpPayRequest = IsReadyToPayRequest.newBuilder()
-                .addAllowedCardNetwork(WalletConstants.CardNetwork.MASTERCARD)
-                .addAllowedCardNetwork(WalletConstants.CardNetwork.VISA)
+                .addAllowedCardNetwork(WalletConstants.CARD_NETWORK_VISA)
+                .addAllowedCardNetwork(WalletConstants.CARD_NETWORK_MASTERCARD)
+                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
+                .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
                 .build();
 
-        Wallet.Payments.isReadyToPay(googleApiClient, isReadyTpPayRequest).setResultCallback(
-                new ResultCallback<BooleanResult>() {
-                    @Override
-                    public void onResult(@NonNull BooleanResult booleanResult) {
-                        if (booleanResult.getStatus().isSuccess() && booleanResult.getValue()) {
-                            showAndroidPayButton();
-                        } else {
-                            hideAndroidPayButton();
-                        }
+
+        Wallet.WalletOptions options = new Wallet.WalletOptions.Builder()
+                .setEnvironment(androidPayParams.getEnvironment())
+                .build();
+
+        paymentsClient = Wallet.getPaymentsClient(getActivity(), options);
+        paymentsClient.isReadyToPay(isReadyTpPayRequest).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                try {
+                    boolean result = task.getResult(ApiException.class);
+                    if (result) {
+                        showAndroidPayButton();
+                    } else {
+                        hideAndroidPayButton();
                     }
-                });
+                } catch (ApiException e) {
+                    hideAndroidPayButton();
+                }
+            }
+        });
+    }
+
+    private void showAndroidPayButton() {
+        btnGooglePay.setEnabled(true);
     }
 
     private void hideAndroidPayButton() {
@@ -365,67 +392,43 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
     }
 
-    private SupportWalletFragment initWalletFragment() {
-        WalletFragmentStyle walletFragmentStyle = new WalletFragmentStyle()
-                .setBuyButtonText(androidPayParams.getBuyButtonText())
-                .setBuyButtonAppearance(androidPayParams.getBuyButtonAppearance())
-                .setBuyButtonHeight(WalletFragmentStyle.Dimension.MATCH_PARENT)
-                .setBuyButtonWidth(WalletFragmentStyle.Dimension.MATCH_PARENT);
-
-        WalletFragmentOptions walletFragmentOptions = WalletFragmentOptions.newBuilder()
-                .setEnvironment(androidPayParams.getEnvironment())
-                .setFragmentStyle(walletFragmentStyle)
-                .setTheme(androidPayParams.getTheme())
-                .setMode(WalletFragmentMode.BUY_BUTTON)
-                .build();
-
-        return SupportWalletFragment.newInstance(walletFragmentOptions);
-    }
-
-    private void showAndroidPayButton() {
-        if (!isAndroidPayInited()) {
-            MaskedWalletRequest maskedWalletRequest = buildMaskedWalledRequest();
-
-            WalletFragmentInitParams.Builder startParamsBuilder =
-                    WalletFragmentInitParams.newBuilder()
-                            .setMaskedWalletRequest(maskedWalletRequest)
-                            .setMaskedWalletRequestCode(REQUEST_MASKED_WALLET);
-            SupportWalletFragment walletFragment = initWalletFragment();
-            walletFragment.initialize(startParamsBuilder.build());
-
-            TransitionManager.beginDelayedTransition((ViewGroup) getView().findViewById(R.id.pay_buttons_layout));
-            getView().findViewById(R.id.fl_android_pay_placeholder).setVisibility(View.VISIBLE);
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.fl_android_pay_placeholder, walletFragment, ANDROID_PAY_FRAGMENT_TAG)
-                    .commit();
-        }
-    }
-
-    private boolean isAndroidPayInited() {
-        return getChildFragmentManager().findFragmentByTag(ANDROID_PAY_FRAGMENT_TAG) != null;
-    }
-
-    private MaskedWalletRequest buildMaskedWalledRequest() {
+    private PaymentDataRequest createPaymentDataRequest() {
         Intent intent = getActivity().getIntent();
-
-        PaymentMethodTokenizationParameters parameters =
-                PaymentMethodTokenizationParameters.newBuilder()
-                        .setPaymentMethodTokenizationType(PaymentMethodTokenizationType.NETWORK_TOKEN)
-                        .addParameter("publicKey", AndroidPayParams.PUBLIC_KEY)
-                        .build();
 
         String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
         String price = getFormattedPrice();
-        return MaskedWalletRequest.newBuilder()
-                .setMerchantName(androidPayParams.getMerchantName())
-                .setPhoneNumberRequired(androidPayParams.isPhoneRequired())
-                .setShippingAddressRequired(androidPayParams.isAddressRequired())
-                .setCountryCode(androidPayParams.getCountryCode())
+
+        TransactionInfo transactionInfo = TransactionInfo.newBuilder()
+                .setTotalPriceStatus(WalletConstants.TOTAL_PRICE_STATUS_FINAL)
+                .setTotalPrice(price)
                 .setCurrencyCode(AndroidPayParams.CURRENCY_CODE)
-                .setEstimatedTotalPrice(price)
-                .setCart(getAndroidPayCart(description, price))
-                .setPaymentMethodTokenizationParameters(parameters)
                 .build();
+
+        CardRequirements cardRequirements = CardRequirements.newBuilder()
+                .addAllowedCardNetworks(
+                        Arrays.asList(
+                                WalletConstants.CARD_NETWORK_AMEX,
+                                WalletConstants.CARD_NETWORK_DISCOVER,
+                                WalletConstants.CARD_NETWORK_VISA,
+                                WalletConstants.CARD_NETWORK_MASTERCARD))
+                .build();
+
+        PaymentMethodTokenizationParameters params =
+                PaymentMethodTokenizationParameters.newBuilder()
+                        .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_DIRECT)
+                        .addParameter("publicKey", AndroidPayParams.PUBLIC_KEY)
+                        .build();
+
+        PaymentDataRequest.Builder request =
+                PaymentDataRequest.newBuilder()
+                        .setTransactionInfo(transactionInfo)
+                        .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
+                        .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
+                        .setPhoneNumberRequired(androidPayParams.isPhoneRequired())
+                        .setShippingAddressRequired(androidPayParams.isAddressRequired())
+                        .setCardRequirements(cardRequirements)
+                        .setPaymentMethodTokenizationParameters(params);
+        return request.build();
     }
 
     private String getFormattedPrice() {
@@ -434,18 +437,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         BigDecimal bigDecimal = new BigDecimal(money.getCoins());
         bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return bigDecimal.toString();
-    }
-
-    private void setupProgressDialog(boolean isEnabled) {
-        PayFormActivity activity = (PayFormActivity) getActivity();
-        if (activity == null) {
-            return;
-        }
-        if (isEnabled) {
-            activity.showProgressDialog();
-        } else {
-            activity.hideProgressDialog();
-        }
     }
 
     private void setRecurrentModeForCardView(boolean recurrentMode) {
@@ -608,7 +599,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         } else if (cardScanner.isNfcError(requestCode, resultCode)) {
             Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
         } else {
-            if (resultCode == Activity.RESULT_OK && (requestCode == REQUEST_MASKED_WALLET || requestCode == REQUEST_FULL_WALLET)) {
+            if (resultCode == Activity.RESULT_OK && (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE)) {
                 ((PayFormActivity) getActivity()).showProgressDialog();
             }
 
@@ -617,15 +608,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 androidPayErrorCode = data.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, -1);
             }
 
-            if (requestCode == REQUEST_MASKED_WALLET && resultCode == Activity.RESULT_OK) {
-                startFullWalletRequest(data);
-            } else if (requestCode == REQUEST_MASKED_WALLET && resultCode != Activity.RESULT_CANCELED) {
-                handleAndroidPayError(androidPayErrorCode);
-            }
-
-            if (requestCode == REQUEST_FULL_WALLET && resultCode == Activity.RESULT_OK) {
-                initAndroidPayPayment(data);
-            } else if (requestCode == REQUEST_FULL_WALLET && resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                initAndroidPayRequest(data);
+            } else if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE && resultCode != Activity.RESULT_CANCELED) {
                 handleAndroidPayError(androidPayErrorCode);
             }
 
@@ -634,44 +619,20 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
     }
 
-    private void setCreditCardData(ICreditCard card) {
-        ecvCard.setCardNumber(card.getCardNumber());
-        ecvCard.setExpireDate(card.getExpireDate());
-    }
+    private void initAndroidPayRequest(Intent data) {
+        String token = PaymentData.getFromIntent(data).getPaymentMethodToken().getToken();
+        try {
+            token = new JSONObject(new JSONObject(token).getString("signedMessage")).toString();
+        } catch (JSONException e) {
+            // ignored
+        }
+        String androidPayToken = Base64.encodeToString(token.getBytes(), Base64.DEFAULT).trim();
 
-    private void handleAndroidPayError(int errorCode) {
-        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.ANDROID_PAY_ERROR).sendToTarget();
-    }
-
-    private void startFullWalletRequest(Intent data) {
-        final PayFormActivity activity = (PayFormActivity) getActivity();
-        activity.showProgressDialog();
-        MaskedWallet maskedWallet = data.getParcelableExtra(WalletConstants.EXTRA_MASKED_WALLET);
-
-        Intent intent = getActivity().getIntent();
-        String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
-
-        String price = getFormattedPrice();
-
-        FullWalletRequest request = FullWalletRequest.newBuilder()
-                .setGoogleTransactionId(maskedWallet.getGoogleTransactionId())
-                .setCart(getAndroidPayCart(description, price))
-                .build();
-
-        Wallet.Payments.loadFullWallet(googleApiClient, request, REQUEST_FULL_WALLET);
-    }
-
-    private void initAndroidPayPayment(Intent data) {
         final String enteredEmail = getEmail();
         if (!isEmailValid(enteredEmail)) {
             makeText(getActivity(), R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
             return;
         }
-
-        FullWallet fullWallet = data.getParcelableExtra(WalletConstants.EXTRA_FULL_WALLET);
-        PaymentMethodToken token = fullWallet.getPaymentMethodToken();
-        String tokenJson = token.getToken();
-        String androidPayToken = Base64.encodeToString(tokenJson.getBytes(), Base64.DEFAULT).trim();
 
         final PayFormActivity activity = (PayFormActivity) getActivity();
         activity.showProgressDialog();
@@ -679,16 +640,18 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         initPayment(sdk, requestBuilder, null, androidPayToken, enteredEmail, chargeMode);
     }
 
-    private Cart getAndroidPayCart(String description, String price) {
-        return Cart.newBuilder()
-                .setTotalPrice(price)
-                .setCurrencyCode(AndroidPayParams.CURRENCY_CODE)
-                .addLineItem(LineItem.newBuilder()
-                        .setDescription(description)
-                        .setTotalPrice(price)
-                        .setCurrencyCode(AndroidPayParams.CURRENCY_CODE)
-                        .build())
-                .build();
+    private void setCreditCardData(ICreditCard card) {
+        chargeMode = false;
+        ecvCard.setRecurrentPaymentMode(false);
+        setRecurrentModeForCardView(false);
+        prepareEditableCardView(null, false, true);
+
+        ecvCard.setCardNumber(card.getCardNumber());
+        ecvCard.setExpireDate(card.getExpireDate());
+    }
+
+    private void handleAndroidPayError(int errorCode) {
+        PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.ANDROID_PAY_ERROR).sendToTarget();
     }
 
     private static void initPayment(final AcquiringSdk sdk,

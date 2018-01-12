@@ -190,7 +190,7 @@ public class EditCardView extends ViewGroup {
                 if (!isCorrect && check(FLAG_CHANGE_MODE_BUTTON)) {
                     hideChangeModeButton();
                 }
-                if (isCorrect && !cardFormatter.isLimited() && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE)) {
+                if (isCorrect && !cardFormatter.isLimited() && isCardNumberFocused() && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE)) {
                     showChangeModeButton();
                 }
                 etCardNumber.setTextColor(cardFormatter.isNeedToCheck(etCardNumber.length()) && !isCorrect ? Color.RED : textColor);
@@ -982,6 +982,10 @@ public class EditCardView extends ViewGroup {
                 et.setSelection(et.length());
             }
         });
+    }
+
+    private boolean isCardNumberFocused() {
+        return etCardNumber.isFocused() && !etDate.isFocused() && !etCvc.isFocused();
     }
 
     public void setCardHint(String cardHint) {
