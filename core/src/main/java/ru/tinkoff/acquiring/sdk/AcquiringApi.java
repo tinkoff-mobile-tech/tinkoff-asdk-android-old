@@ -71,22 +71,22 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard", "AddCard", "AttachCard", "GetAddCardState", "SubmitRandomAmount"};
-    private static final List<String> newMethodsList = Arrays.asList(newMethods);
+    private static final String[] oldMethods = {"Submit3DSAuthorization"};
+    private static final List<String> oldMethodsList = Arrays.asList(oldMethods);
 
     private static final String[] performedErrorCodes = {"0", "104"};
     private static final List<String> performedErrorCodesList = Arrays.asList(performedErrorCodes);
 
     static String getUrl(String apiMethod) {
-        if (useV2Api(apiMethod)) {
-            return Journal.isDeveloperMode() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
-        } else {
+        if (useV1Api(apiMethod)) {
             return Journal.isDeveloperMode() ? API_URL_DEBUG : API_URL_RELEASE;
+        } else {
+            return Journal.isDeveloperMode() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
         }
     }
 
-    static boolean useV2Api(String apiMethod) {
-        return newMethodsList.contains(apiMethod);
+    static boolean useV1Api(String apiMethod) {
+        return oldMethodsList.contains(apiMethod);
     }
 
     private final Gson gson;
@@ -152,7 +152,7 @@ public class AcquiringApi {
                 Journal.log(String.format("===== Parameters: %s", requestBody));
                 byte[] requestBodyBytes = requestBody.getBytes();
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-type", useV2Api(request.getApiMethod()) ? JSON : FORM_URL_ENCODED);
+                connection.setRequestProperty("Content-type", useV1Api(request.getApiMethod()) ? FORM_URL_ENCODED : JSON);
                 connection.setRequestProperty("Content-length", String.valueOf(requestBodyBytes.length));
                 requestContentStream = connection.getOutputStream();
                 requestContentStream.write(requestBodyBytes);
@@ -208,10 +208,10 @@ public class AcquiringApi {
         if (params == null || params.isEmpty()) {
             return "";
         }
-        if (useV2Api(apiMethod)) {
-            return jsonRequestBody(params);
-        } else {
+        if (useV1Api(apiMethod)) {
             return encodeRequestBody(params);
+        } else {
+            return jsonRequestBody(params);
         }
     }
 

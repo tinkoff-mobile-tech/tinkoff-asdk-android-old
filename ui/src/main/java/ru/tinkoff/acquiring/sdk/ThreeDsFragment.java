@@ -38,7 +38,7 @@ public class ThreeDsFragment extends Fragment {
     public static final String EXTRA_3DS = "extra_3ds";
 
     private static final String CANCEL_ACTION = "cancel.do";
-    private static final String SUBMIT_3DS_AUTHORIZATION = "/Submit3DSAuthorization";
+    private static final String SUBMIT_3DS_AUTHORIZATION = "Submit3DSAuthorization";
 
     private WebView wvThreeDs;
     private ThreeDsData data;
@@ -71,7 +71,7 @@ public class ThreeDsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         sdk = ((IBaseSdkActivity) getActivity()).getSdk();
         String url = data.getAcsUrl();
-        termUrl = sdk.getUrl(SUBMIT_3DS_AUTHORIZATION) + SUBMIT_3DS_AUTHORIZATION;
+        termUrl = sdk.getUrl(SUBMIT_3DS_AUTHORIZATION) + "/" + SUBMIT_3DS_AUTHORIZATION;
         try {
             String params = new StringBuilder()
                     .append("PaReq=").append(URLEncoder.encode(data.getPaReq(), "UTF-8"))
