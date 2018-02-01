@@ -77,13 +77,16 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private static final String RECURRING_TYPE_VALUE = "12";
     private static final String FAIL_MAPI_SESSION_ID = "failMapiSessionId";
 
-    private EditCardView ecvCard;
+    @Nullable
     private TextView tvTitle;
+    @Nullable
     private TextView tvDescription;
+    @Nullable
+    private EditText etEmail;
+    private EditCardView ecvCard;
     private TextView tvAmount;
     private TextView tvSrcCardLabel;
     private TextView tvChooseCardButton;
-    private EditText etEmail;
     private Button btnPay;
     private View srcCardChooser;
 
@@ -179,7 +182,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
 
         if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {
-            view.findViewById(R.id.ll_price_layout).setVisibility(View.GONE);
+            View amountLayout = view.findViewById(R.id.ll_price_layout);
+            if (amountLayout != null) {
+                amountLayout.setVisibility(View.GONE);
+            }
         }
 
         resolveButtonAndIconsPosition(view);
@@ -195,22 +201,26 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         final Intent intent = getActivity().getIntent();
 
         final String email = intent.getStringExtra(PayFormActivity.EXTRA_E_MAIL);
-        if (email != null) {
+        if (email != null && etEmail != null) {
             etEmail.setText(email);
         }
 
         final String title = intent.getStringExtra(PayFormActivity.EXTRA_TITLE);
-        tvTitle.setText(title);
+        if (tvTitle != null) {
+            tvTitle.setText(title);
+        }
 
         String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
-        tvDescription.setText(description);
+        if (tvDescription != null) {
+            tvDescription.setText(description);
+        }
 
         final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
 
         String amountTextWithRubbles = amount != null ? amount.toHumanReadableString() : "";
         String amountText = amount != null ? amount.toString() : "";
 
-        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS) {
+        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS && tvAmount != null) {
             if (TextUtils.isEmpty(moneyAmountFormat)) {
                 tvAmount.setText(amountTextWithRubbles);
             } else {
@@ -303,22 +313,34 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
+                removeSpace(containerLayout, space);
                 containerLayout.removeView(buttons);
                 containerLayout.addView(secureIcons);
-                containerLayout.addView(space);
+                addSpace(containerLayout, space);
                 containerLayout.addView(buttons);
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
+                removeSpace(containerLayout, space);
                 containerLayout.removeView(buttons);
                 containerLayout.addView(secureIcons);
                 containerLayout.addView(buttons);
                 break;
             case BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM:
-                containerLayout.removeView(space);
+                removeSpace(containerLayout, space);
                 break;
+        }
+    }
+
+    private void addSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.addView(space);
+        }
+    }
+
+    private void removeSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.removeView(space);
         }
     }
 
@@ -415,6 +437,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     }
 
     private String getEmail() {
+        if (etEmail == null) {
+            return null;
+        }
         String input = etEmail.getText().toString().trim();
         return input.isEmpty() ? null : input;
     }
