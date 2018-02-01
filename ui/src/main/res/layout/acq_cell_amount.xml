@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_price_layout"
+    style="?acqPriceLayoutStyle"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_amount_label"
+        style="?acqTextViewStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/acq_money_label" />
+
+    <TextView
+        android:id="@+id/tv_amount"
+        style="?acqTitleTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

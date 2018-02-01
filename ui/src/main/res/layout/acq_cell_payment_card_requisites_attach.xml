@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.tinkoff.acquiring.sdk.views.EditCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ecv_card"
+    style="?acqCardViewTextStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="?acqContentBlockDivider" />

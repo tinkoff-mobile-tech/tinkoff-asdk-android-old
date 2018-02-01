@@ -6,6 +6,9 @@ import android.support.annotation.StyleRes;
 
 import java.util.HashMap;
 
+import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType;
+
 /**
  * @author Vitaliy Markus
  */
@@ -32,11 +35,13 @@ public class AttachCardFormStarter {
         intent.putExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
         intent.putExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE, checkType);
         intent.putExtra(AttachCardFormActivity.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
-        intent.putExtra(AttachCardFormActivity.EXTRA_E_MAIL, email);
+        intent.putExtra(AttachCardFormActivity.EXTRA_EMAIL, email);
 
         intent.putExtra(AttachCardFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(AttachCardFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(AttachCardFormActivity.EXTRA_PUBLIC_KEY, publicKey);
+
+        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, AttachCellInflater.DEFAULT_CELL_TYPES);
         return this;
     }
 
@@ -55,6 +60,12 @@ public class AttachCardFormStarter {
     public AttachCardFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
         checkIntent();
         intent.putExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        return this;
+    }
+
+    public AttachCardFormStarter setDesignConfiguration(AttachCellType... types) {
+        checkIntent();
+        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, types);
         return this;
     }
 
