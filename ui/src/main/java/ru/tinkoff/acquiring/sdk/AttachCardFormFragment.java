@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -40,13 +41,13 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
     private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
 
-    private LinearLayout container;
-    private TextView titleLabel;
-    private TextView descriptionLabel;
+    @NonNull
     private EditCardView editCardView;
+    @NonNull
+    private Button attachButton;
+    @Nullable
     private EditText emailView;
-    private Button attachButtton;
-    private ImageView secureIcons;
+
     private BankKeyboard customKeyboard;
 
     private FullCardScanner cardScanner;
@@ -93,7 +94,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
         resolveButtonAndIconsPosition(root);
 
-        attachButtton.setOnClickListener(new View.OnClickListener() {
+        attachButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (customKeyboard != null) {
@@ -193,17 +194,13 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     }
 
     private void initViews(View root) {
-        container = (LinearLayout) root.findViewById(R.id.ll_container_layout);
-        titleLabel = (TextView) root.findViewById(R.id.tv_title);
-        descriptionLabel = (TextView) root.findViewById(R.id.tv_description);
-        editCardView = (EditCardView) root.findViewById(R.id.ecv_card);
-        emailView = (EditText) root.findViewById(R.id.et_email);
-        attachButtton = (Button) root.findViewById(R.id.btn_attach);
-        secureIcons = (ImageView) root.findViewById(R.id.iv_secure_icons);
-        customKeyboard = (BankKeyboard) root.findViewById(R.id.acq_keyboard);
+        editCardView = root.findViewById(R.id.ecv_card);
+        emailView = root.findViewById(R.id.et_email);
+        attachButton = root.findViewById(R.id.btn_attach);
+        customKeyboard = root.findViewById(R.id.acq_keyboard);
 
         final String email = getActivity().getIntent().getStringExtra(AttachCardFormActivity.EXTRA_EMAIL);
-        if (email != null) {
+        if (email != null && emailView != null) {
             emailView.setText(email);
         }
     }
@@ -214,34 +211,46 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     }
 
     private void resolveButtonAndIconsPosition(View root) {
-        LinearLayout containerLayout = (LinearLayout) root.findViewById(R.id.ll_container_layout);
+        LinearLayout containerLayout = root.findViewById(R.id.ll_container_layout);
         View space = root.findViewById(R.id.space);
         View secureIcons = root.findViewById(R.id.iv_secure_icons);
         switch (buttonAndIconsPositionMode) {
             case BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM:
                 break;
             case ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS:
-                containerLayout.removeView(attachButtton);
-                containerLayout.addView(attachButtton);
+                containerLayout.removeView(attachButton);
+                containerLayout.addView(attachButton);
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
-                containerLayout.removeView(attachButtton);
+                removeSpace(containerLayout, space);
+                containerLayout.removeView(attachButton);
                 containerLayout.addView(secureIcons);
-                containerLayout.addView(space);
-                containerLayout.addView(attachButtton);
+                addSpace(containerLayout, space);
+                containerLayout.addView(attachButton);
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
-                containerLayout.removeView(attachButtton);
+                removeSpace(containerLayout, space);
+                containerLayout.removeView(attachButton);
                 containerLayout.addView(secureIcons);
-                containerLayout.addView(attachButtton);
+                containerLayout.addView(attachButton);
                 break;
             case BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM:
-                containerLayout.removeView(space);
+                removeSpace(containerLayout, space);
                 break;
+        }
+    }
+
+    private void addSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.addView(space);
+        }
+    }
+
+    private void removeSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.removeView(space);
         }
     }
 
@@ -254,6 +263,9 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     }
 
     private String getEmail() {
+        if (emailView == null) {
+            return null;
+        }
         String input = emailView.getText().toString().trim();
         return input.isEmpty() ? null : input;
     }
