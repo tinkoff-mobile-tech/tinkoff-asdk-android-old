@@ -35,6 +35,7 @@ import ru.tinkoff.acquiring.sdk.PayFormActivity;
 import ru.tinkoff.acquiring.sdk.Receipt;
 import ru.tinkoff.acquiring.sdk.Tax;
 import ru.tinkoff.acquiring.sdk.Taxation;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
 
 /**
  * @author Mikhail Artemyev
@@ -129,6 +130,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
+                .setDesignConfiguration(PayCellType.SECURE_LOGOS, PayCellType.PAY_BUTTON, PayCellType.PAYMENT_CARD_REQUISITES)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
