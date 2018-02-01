@@ -17,9 +17,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -51,6 +49,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     private BankKeyboard customKeyboard;
 
     private FullCardScanner cardScanner;
+    private CardManager cardManager;
 
     private int buttonAndIconsPositionMode;
 
@@ -75,6 +74,9 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         AttachCellType[] cellTypes = (AttachCellType[]) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION);
         View root = AttachCellInflater.from(inflater, cellTypes).inflate(container);
         initViews(root);
+
+        AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
+        cardManager = new CardManager(activity.getSdk());
 
         cardScanner = new FullCardScanner(this, (ICameraCardScanner) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER));
         editCardView.setCardSystemIconsHolder(new ThemeCardLogoCache(getActivity()));
@@ -109,7 +111,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
                 activity.showProgressDialog();
                 CardData cardData = new CardData(editCardView.getCardNumber(), editCardView.getExpireDate(), editCardView.getCvc());
-                attachCard(activity.getSdk(), activity.getIntent(), cardData, email);
+                attachCard(cardManager, activity.getIntent(), cardData, email);
             }
         });
 
@@ -159,17 +161,16 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         }
     }
 
-    private static void attachCard(final AcquiringSdk sdk, final Intent intent, final CardData cardData, final String email) {
+    private static void attachCard(final CardManager cardManager, final Intent intent, final CardData cardData, final String email) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     String customerKey = intent.getStringExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY);
                     String checkType = intent.getStringExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE);
-                    String requestKey = sdk.addCard(customerKey, checkType);
-
                     Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_DATA);
-                    AttachCardResponse response = sdk.attachCard(requestKey, cardData, email, data);
+
+                    AttachCardResponse response = cardManager.attachCard(customerKey, checkType, cardData, email, data);
 
                     PaymentStatus status = response.getStatus();
                     if (status == null) {
@@ -179,7 +180,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                         ThreeDsData threeDsData = response.getThreeDsData();
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
                     } else if (status == PaymentStatus.LOOP_CHECKING) {
-                        AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.SHOW_LOOP_CONFIRMATIONS, requestKey).sendToTarget();
+                        AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.SHOW_LOOP_CONFIRMATIONS, response.getRequestKey()).sendToTarget();
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
