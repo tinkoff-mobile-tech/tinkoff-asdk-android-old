@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
+
 /**
  * @author a.shishkin1
  */
@@ -52,6 +54,12 @@ public class CardManager {
             }
         }
         return null;
+    }
+
+    public AttachCardResponse attachCard(String customerKey, String checkType, CardData cardData, String email, Map<String, String> data) {
+        String requestKey = sdk.addCard(customerKey, checkType);
+        AttachCardResponse response = sdk.attachCard(requestKey, cardData, email, data);
+        return response;
     }
 
     public void clear(String customerKey) {
