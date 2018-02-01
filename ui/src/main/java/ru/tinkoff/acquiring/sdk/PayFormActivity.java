@@ -71,6 +71,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
+    static final String EXTRA_DESIGN_CONFIGURATION = "design_configuration";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 

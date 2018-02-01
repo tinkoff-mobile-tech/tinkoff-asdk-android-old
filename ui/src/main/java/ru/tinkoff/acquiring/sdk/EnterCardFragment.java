@@ -45,6 +45,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -121,8 +123,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        PayCellType[] cellTypes = (PayCellType[]) getActivity().getIntent().getSerializableExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        View view = PayCellInflater.from(inflater, cellTypes).inflate(container);
 
-        View view = inflater.inflate(R.layout.acq_fragment_enter_card, container, false);
         ecvCard = (EditCardView) view.findViewById(R.id.ecv_card);
 
         tvSrcCardLabel = (TextView) view.findViewById(R.id.tv_src_card_label);

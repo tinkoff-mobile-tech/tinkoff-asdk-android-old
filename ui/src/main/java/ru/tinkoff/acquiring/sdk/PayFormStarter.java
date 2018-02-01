@@ -22,6 +22,9 @@ import android.support.annotation.StyleRes;
 
 import java.util.HashMap;
 
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
+
 /**
  * Вспомогательный класс для запуска экрана оплаты PayFormActivity
  *
@@ -53,6 +56,7 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellInflater.DEFAULT_CELL_TYPES);
         return this;
     }
 
@@ -64,6 +68,7 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellInflater.DEFAULT_CELL_TYPES);
         return this;
     }
 
@@ -106,6 +111,12 @@ public class PayFormStarter {
     public PayFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        return this;
+    }
+
+    public PayFormStarter setDesignConfiguration(PayCellType... types) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, types);
         return this;
     }
 

@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -69,7 +71,8 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.acq_fragment_attach_card, container, false);
+        AttachCellType[] cellTypes = (AttachCellType[]) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        View root = AttachCellInflater.from(inflater, cellTypes).inflate(container);
         initViews(root);
 
         cardScanner = new FullCardScanner(this, (ICameraCardScanner) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER));
@@ -199,7 +202,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         secureIcons = (ImageView) root.findViewById(R.id.iv_secure_icons);
         customKeyboard = (BankKeyboard) root.findViewById(R.id.acq_keyboard);
 
-        final String email = getActivity().getIntent().getStringExtra(AttachCardFormActivity.EXTRA_E_MAIL);
+        final String email = getActivity().getIntent().getStringExtra(AttachCardFormActivity.EXTRA_EMAIL);
         if (email != null) {
             emailView.setText(email);
         }
