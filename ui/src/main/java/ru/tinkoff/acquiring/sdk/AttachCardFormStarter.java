@@ -41,7 +41,7 @@ public class AttachCardFormStarter {
         intent.putExtra(AttachCardFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(AttachCardFormActivity.EXTRA_PUBLIC_KEY, publicKey);
 
-        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, AttachCellInflater.DEFAULT_CELL_TYPES);
+        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, AttachCellType.toIntArray(AttachCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
@@ -65,7 +65,7 @@ public class AttachCardFormStarter {
 
     public AttachCardFormStarter setDesignConfiguration(AttachCellType... types) {
         checkIntent();
-        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, types);
+        intent.putExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION, AttachCellType.toIntArray(types));
         return this;
     }
 
