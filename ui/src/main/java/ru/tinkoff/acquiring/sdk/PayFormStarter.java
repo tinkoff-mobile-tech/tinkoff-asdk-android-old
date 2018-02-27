@@ -56,7 +56,7 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellInflater.DEFAULT_CELL_TYPES);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
@@ -68,7 +68,7 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellInflater.DEFAULT_CELL_TYPES);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
@@ -102,7 +102,7 @@ public class PayFormStarter {
         return this;
     }
 
-    public PayFormStarter useFirstAttachedCard(boolean use){
+    public PayFormStarter useFirstAttachedCard(boolean use) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_USE_FIRST_ATTACHED_CARD, use);
         return this;
@@ -122,7 +122,7 @@ public class PayFormStarter {
 
     public PayFormStarter setDesignConfiguration(PayCellType... types) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, types);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(types));
         return this;
     }
 

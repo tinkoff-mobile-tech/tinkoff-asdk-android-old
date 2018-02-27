@@ -71,7 +71,8 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        AttachCellType[] cellTypes = (AttachCellType[]) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        int[] intTypes = getActivity().getIntent().getIntArrayExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        AttachCellType[] cellTypes = AttachCellType.toPayCellTypeArray(intTypes);
         View root = AttachCellInflater.from(inflater, cellTypes).inflate(container);
         initViews(root);
 

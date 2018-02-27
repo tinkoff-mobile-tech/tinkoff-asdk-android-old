@@ -159,7 +159,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        PayCellType[] cellTypes = (PayCellType[]) getActivity().getIntent().getSerializableExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        int[] intTypes = getActivity().getIntent().getIntArrayExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        PayCellType[] cellTypes = PayCellType.toPayCellTypeArray(intTypes);
         View view = PayCellInflater.from(inflater, cellTypes).inflate(container);
 
         ecvCard = (EditCardView) view.findViewById(R.id.ecv_card);
