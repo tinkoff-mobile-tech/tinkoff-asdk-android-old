@@ -71,8 +71,10 @@ public class AttachCellInflater {
                     inflater.inflate(R.layout.acq_cell_flexible_space, container, true);
                     break;
                 case EMPTY_16DP:
+                    inflater.inflate(R.layout.acq_cell_empty_16, container, true);
                     break;
                 case EMPTY_8DP:
+                    inflater.inflate(R.layout.acq_cell_empty_8, container, true);
                     break;
             }
         }
