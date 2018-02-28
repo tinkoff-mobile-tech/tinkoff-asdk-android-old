@@ -172,7 +172,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         tvChooseCardButton = (TextView) view.findViewById(R.id.tv_src_card_choose_btn);
         btnPay = (Button) view.findViewById(R.id.btn_pay);
         btnGooglePay = view.findViewById(R.id.rl_google_play_button);
-        btnGooglePay.setEnabled(false);
+        if (btnGooglePay != null) {
+            btnGooglePay.setEnabled(false);
+        }
         srcCardChooser = view.findViewById(R.id.ll_src_card_chooser);
 
         etEmail = (EditText) view.findViewById(R.id.et_email);
@@ -290,15 +292,17 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             }
         });
 
-        btnGooglePay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PaymentDataRequest request = createPaymentDataRequest();
-                if (request != null) {
-                    AutoResolveHelper.resolveTask(paymentsClient.loadPaymentData(request), getActivity(), LOAD_PAYMENT_DATA_REQUEST_CODE);
+        if (btnGooglePay != null) {
+            btnGooglePay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PaymentDataRequest request = createPaymentDataRequest();
+                    if (request != null) {
+                        AutoResolveHelper.resolveTask(paymentsClient.loadPaymentData(request), getActivity(), LOAD_PAYMENT_DATA_REQUEST_CODE);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -394,7 +398,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     }
 
     private void showAndroidPayButton() {
-        btnGooglePay.setEnabled(true);
+        if (btnGooglePay != null) {
+            btnGooglePay.setEnabled(true);
+        }
     }
 
     private void hideAndroidPayButton() {
