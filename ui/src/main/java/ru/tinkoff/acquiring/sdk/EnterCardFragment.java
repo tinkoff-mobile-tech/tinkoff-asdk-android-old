@@ -656,11 +656,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private void initAndroidPayRequest(Intent data) {
         String token = PaymentData.getFromIntent(data).getPaymentMethodToken().getToken();
-        try {
-            token = new JSONObject(new JSONObject(token).getString("signedMessage")).toString();
-        } catch (JSONException e) {
-            // ignored
-        }
+        AcquiringSdk.log("GPay token: " + token);
         String androidPayToken = Base64.encodeToString(token.getBytes(), Base64.DEFAULT).trim();
 
         final String enteredEmail = getEmail();
