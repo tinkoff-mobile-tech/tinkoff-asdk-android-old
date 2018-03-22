@@ -67,7 +67,7 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
      */
     public FinishAuthorizeRequestBuilder setAndroidPayToken(final String token) {
         request.setAndroidPayToken(token);
-        request.setSource("AndroidPay");
+        request.setSource("GooglePay");
         return this;
     }
 

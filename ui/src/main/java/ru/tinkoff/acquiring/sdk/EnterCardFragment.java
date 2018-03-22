@@ -339,7 +339,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             onCardReady();
         }
 
-        if (androidPayParams != null) {
+        if (androidPayParams != null && androidPayParams.getPublicKey() != null) {
             initGoogleApiClient();
             initAndroidPay();
         } else {
@@ -436,7 +436,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         PaymentMethodTokenizationParameters params =
                 PaymentMethodTokenizationParameters.newBuilder()
                         .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_DIRECT)
-                        .addParameter("publicKey", AndroidPayParams.PUBLIC_KEY)
+                        .addParameter("publicKey", androidPayParams.getPublicKey())
                         .build();
 
         PaymentDataRequest.Builder request =
