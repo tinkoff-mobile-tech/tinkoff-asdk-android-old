@@ -2,4 +2,6 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="acq_default_card_logo_margin">2dp</dimen>
+    <dimen name="acq_default_card_text_margin">4dp</dimen>
 </resources>

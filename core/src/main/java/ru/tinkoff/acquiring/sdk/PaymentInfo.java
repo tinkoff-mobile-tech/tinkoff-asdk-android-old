@@ -21,14 +21,21 @@ package ru.tinkoff.acquiring.sdk;
  */
 public class PaymentInfo {
 
+    public static final String CHARGE_SUCCESS = "0";
+    public static final String CHARGE_REJECTED_ERROR = "104";
+
     private final String orderId;
     private final Long paymentId;
     private final Long amount;
+    private final String cardId;
+    private final String errorCode;
 
-    public PaymentInfo(String orderId, Long paymentId, Long amount) {
+    public PaymentInfo(String orderId, Long paymentId, Long amount, String cardId, String errorCode) {
         this.orderId = orderId;
         this.paymentId = paymentId;
         this.amount = amount;
+        this.cardId = cardId;
+        this.errorCode = errorCode;
     }
 
     public String getOrderId() {
@@ -41,5 +48,21 @@ public class PaymentInfo {
 
     public Long getAmount() {
         return amount;
+    }
+
+    public String getCardId() {
+        return cardId;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public boolean isSuccess() {
+        return CHARGE_SUCCESS.equals(errorCode);
+    }
+
+    public boolean isRejected() {
+        return CHARGE_REJECTED_ERROR.equals(errorCode);
     }
 }

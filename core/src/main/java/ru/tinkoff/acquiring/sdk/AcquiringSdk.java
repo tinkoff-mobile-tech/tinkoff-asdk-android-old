@@ -17,11 +17,18 @@
 package ru.tinkoff.acquiring.sdk;
 
 import java.security.PublicKey;
+import java.util.Map;
 
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
@@ -30,7 +37,13 @@ import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequest;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequestBuilder;
+import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
+import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
 
 /**
  * <p>
@@ -103,7 +116,7 @@ public class AcquiringSdk extends Journal {
     /**
      * Инициирует платежную сессию
      *
-     * @param builder       Билдер связанный с запросом Init
+     * @param builder Билдер связанный с запросом Init
      * @return уникальный идентификатор транзакции в системе Банка
      */
     public Long init(InitRequestBuilder builder) {
@@ -220,6 +233,103 @@ public class AcquiringSdk extends Journal {
 
         try {
             return api.removeCard(request).isSuccess();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
+     * Метод подготовки для привязки карты, необходимо вызвать {@link AcquiringSdk#addCard(String, CheckType)} перед методом {@link AcquiringSdk#attachCard(String, CardData, String, Map)}
+     *
+     * @param customerKey идентификатор покупателя в системе Продавца
+     * @param checkType   тип привязки {@link CheckType}
+     * @return возвращет ключ запроса (RequestKey)
+     */
+    public String addCard(final String customerKey, final CheckType checkType) {
+        return addCard(customerKey, checkType.toString());
+    }
+
+    /**
+     * Метод подготовки для привязки карты, необходимо вызвать {@link AcquiringSdk#addCard(String, CheckType)} перед методом {@link AcquiringSdk#attachCard(String, CardData, String, Map)}
+     *
+     * @param customerKey идентификатор покупателя в системе Продавца
+     * @param checkType   тип привязки {@link CheckType}
+     * @return возвращет ключ запроса (RequestKey)
+     */
+    public String addCard(final String customerKey, final String checkType) {
+        final AddCardRequest request = new AddCardRequestBuilder(password, terminalKey)
+                .setCustomerKey(customerKey)
+                .setCheckType(checkType)
+                .build();
+
+        try {
+            AddCardResponse response = api.addCard(request);
+            return response.getRequestKey();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
+     * Метод привязки карты, вызывается после {@link AcquiringSdk#addCard(String, CheckType)}
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @param cardData   данные привязанной карты
+     * @param email      email
+     * @param data       дополнительные параметры в виде ключ, значение
+     * @return возвращает результат запроса
+     */
+    public AttachCardResponse attachCard(final String requestKey, final CardData cardData, final String email, final Map<String, String> data) {
+        final AttachCardRequest request = new AttachCardRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .setCardData(cardData.encode(publicKey))
+                .setEmail(email)
+                .setData(data)
+                .build();
+
+        try {
+            AttachCardResponse response = api.attachCard(request);
+            return response;
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
+     * Метод проверки состояния привязки карты после 3DS
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @return возвращает результат запроса
+     */
+    public GetAddCardStateResponse getAddCardState(final String requestKey) {
+        final GetAddCardStateRequest request = new GetAddCardStateRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .build();
+
+        try {
+            GetAddCardStateResponse response = api.getAddCardState(request);
+            return response;
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
+     * Метод подтверждения при {@link CheckType#THREE_DS_HOLD} привязки
+     *
+     * @param requestKey ключ запроса, полученный в качестве ответа на {@link AcquiringSdk#addCard(String, CheckType)}
+     * @param amount     забронированная сумма в копейках
+     * @return возвращает идентификатор привязанной карты (CardId)
+     */
+    public String submitRandomAmount(final String requestKey, final Long amount) {
+        final SubmitRandomAmountRequest request = new SubmitRandomAmountRequestBuilder(password, terminalKey)
+                .setRequestKey(requestKey)
+                .setAmount(amount)
+                .build();
+
+        try {
+            SubmitRandomAmountResponse response = api.submitRandomAmount(request);
+            return response.getCardId();
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }

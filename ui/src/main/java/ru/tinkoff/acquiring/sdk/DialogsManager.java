@@ -69,7 +69,7 @@ class DialogsManager {
     }
 
     void hideProgressDialog() {
-        if(progressDialog != null){
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
@@ -82,6 +82,10 @@ class DialogsManager {
         if (messageDialog != null) {
             messageDialog.dismiss();
         }
+    }
+
+    boolean isProgressShowing() {
+        return progressDialog != null && progressDialog.isShowing();
     }
 
 }

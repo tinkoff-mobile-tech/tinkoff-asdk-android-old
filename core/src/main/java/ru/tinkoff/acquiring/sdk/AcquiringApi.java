@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,19 +34,27 @@ import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.requests.AcquiringRequest;
+import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
+import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.InitRequest;
 import ru.tinkoff.acquiring.sdk.requests.RemoveCardRequest;
+import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequest;
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
+import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.ChargeResponse;
 import ru.tinkoff.acquiring.sdk.responses.FinishAuthorizeResponse;
+import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.InitResponse;
 import ru.tinkoff.acquiring.sdk.responses.RemoveCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
 
 /**
  * @author Mikhail Artemyev
@@ -62,19 +71,22 @@ public class AcquiringApi {
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
-    private static final String[] newMethods = {"Charge", "FinishAuthorize", "GetCardList", "GetState", "Init", "RemoveCard"};
-    private static final List<String> newMethodsList = Arrays.asList(newMethods);
+    private static final String[] oldMethods = {"Submit3DSAuthorization"};
+    private static final List<String> oldMethodsList = Arrays.asList(oldMethods);
+
+    private static final String[] performedErrorCodes = {"0", "104"};
+    private static final List<String> performedErrorCodesList = Arrays.asList(performedErrorCodes);
 
     static String getUrl(String apiMethod) {
-        if (useV2Api(apiMethod)) {
-            return Journal.isDebug() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
+        if (useV1Api(apiMethod)) {
+            return Journal.isDeveloperMode() ? API_URL_DEBUG : API_URL_RELEASE;
         } else {
-            return Journal.isDebug() ? API_URL_DEBUG : API_URL_RELEASE;
+            return Journal.isDeveloperMode() ? API_URL_DEBUG_V2 : API_URL_RELEASE_V2;
         }
     }
 
-    static boolean useV2Api(String apiMethod) {
-        return newMethodsList.contains(apiMethod);
+    static boolean useV1Api(String apiMethod) {
+        return oldMethodsList.contains(apiMethod);
     }
 
     private final Gson gson;
@@ -107,6 +119,22 @@ public class AcquiringApi {
         return performRequest(request, RemoveCardResponse.class);
     }
 
+    AddCardResponse addCard(final AddCardRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, AddCardResponse.class);
+    }
+
+    AttachCardResponse attachCard(final AttachCardRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, AttachCardResponse.class);
+    }
+
+    GetAddCardStateResponse getAddCardState(final GetAddCardStateRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, GetAddCardStateResponse.class);
+    }
+
+    SubmitRandomAmountResponse submitRandomAmount(final SubmitRandomAmountRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, SubmitRandomAmountResponse.class);
+    }
+
     private <R extends AcquiringResponse> R performRequest(final AcquiringRequest request,
                                                            final Class<R> responseClass) throws NetworkException, AcquiringApiException {
 
@@ -124,7 +152,7 @@ public class AcquiringApi {
                 Journal.log(String.format("===== Parameters: %s", requestBody));
                 byte[] requestBodyBytes = requestBody.getBytes();
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-type", useV2Api(request.getApiMethod()) ? JSON : FORM_URL_ENCODED);
+                connection.setRequestProperty("Content-type", useV1Api(request.getApiMethod()) ? FORM_URL_ENCODED : JSON);
                 connection.setRequestProperty("Content-length", String.valueOf(requestBodyBytes.length));
                 requestContentStream = connection.getOutputStream();
                 requestContentStream.write(requestBodyBytes);
@@ -141,6 +169,10 @@ public class AcquiringApi {
         } finally {
             closeQuietly(requestContentStream);
             closeQuietly(responseReader);
+        }
+
+        if (performedErrorCodesList.contains(result.getErrorCode())) {
+            return result;
         }
 
         if (!result.isSuccess()) {
@@ -176,10 +208,10 @@ public class AcquiringApi {
         if (params == null || params.isEmpty()) {
             return "";
         }
-        if (useV2Api(apiMethod)) {
-            return jsonRequestBody(params);
-        } else {
+        if (useV1Api(apiMethod)) {
             return encodeRequestBody(params);
+        } else {
+            return jsonRequestBody(params);
         }
     }
 
@@ -213,6 +245,7 @@ public class AcquiringApi {
 
     private Gson createGson() {
         return new GsonBuilder()
+                .excludeFieldsWithModifiers(Modifier.TRANSIENT)
                 .registerTypeAdapter(CardStatus.class, new CardStatusSerializer())
                 .registerTypeAdapter(PaymentStatus.class, new PaymentStatusSerializer())
                 .registerTypeAdapter(GetCardListResponse.class, new CardsListDeserializer())

@@ -23,7 +23,7 @@ import ru.tinkoff.acquiring.sdk.Card;
  */
 final public class GetCardListResponse extends AcquiringResponse {
 
-    private Card[] card;
+    private transient Card[] card;
 
     public GetCardListResponse() {
     }
@@ -37,6 +37,4 @@ final public class GetCardListResponse extends AcquiringResponse {
     public Card[] getCard() {
         return card;
     }
-
-
 }

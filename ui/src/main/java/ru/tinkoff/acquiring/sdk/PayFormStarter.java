@@ -18,8 +18,12 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.StyleRes;
 
 import java.util.HashMap;
+
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
 
 /**
  * Вспомогательный класс для запуска экрана оплаты PayFormActivity
@@ -52,6 +56,7 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
@@ -63,37 +68,72 @@ public class PayFormStarter {
         intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
         intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
         intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
     public PayFormStarter setCustomerKey(String customerKey) {
-        if (intent == null) {
-            throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) before setCustomerKey");
-        }
+        checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
         return this;
     }
 
     public PayFormStarter setReceipt(Receipt receipt) {
+        checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_RECEIPT_VALUE, receipt);
         return this;
     }
 
     public PayFormStarter setData(HashMap<String, String> data) {
+        checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_DATA_VALUE, data);
         return this;
     }
 
-    public PayFormStarter setChargeMode(boolean mode){
+    public PayFormStarter setChargeMode(boolean mode) {
+        checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_CHARGE_MODE, mode);
         return this;
     }
 
+    public PayFormStarter useFirstAttachedCard(boolean use) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_USE_FIRST_ATTACHED_CARD, use);
+        return this;
+    }
+
+    public PayFormStarter setTheme(@StyleRes int theme) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_THEME, theme);
+        return this;
+    }
+
+    public PayFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        return this;
+    }
+
+    public PayFormStarter setDesignConfiguration(PayCellType... types) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(types));
+        return this;
+    }
+
+    public Intent getIntent() {
+        checkIntent();
+        return intent;
+    }
+
     public void startActivityForResult(Activity context, int requestCode) {
-        if (intent == null) {
-            throw new IllegalStateException("paymentId and amount for PayFormActivity not set, use prepare(String paymentId, Long amount) after initialization");
-        }
+        checkIntent();
         intent.setClass(context, PayFormActivity.class);
         context.startActivityForResult(intent, requestCode);
+    }
+
+    private void checkIntent() {
+        if (intent == null) {
+            throw new IllegalStateException("Use prepare() method for initialization");
+        }
     }
 }

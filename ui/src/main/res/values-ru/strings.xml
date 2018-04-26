@@ -11,7 +11,9 @@
     <string name="acq_cvc_hint">CVC</string>
     <string name="acq_email_hint">E-mail для квитанции</string>
     <string name="acq_pay">Оплатить</string>
-    <string name="acq_pay_with_amount">Оплатить %s</string>
+    <string name="acq_check">Проверить</string>
+    <string name="acq_pay_with_amount">Оплатить %s Р</string>
+    <string name="acq_money_amount_format">%s Р</string>
     <string name="acq_screen_title">Оплата</string>
     <string name="acq_enter_new_card_label">Ввести данные новой карты</string>
     <string name="acq_delete_label">Удалить</string>
@@ -22,11 +24,19 @@
     <string name="acq_network_error_message">Вероятно, соединение с интернетом прервано, попробуйте позже</string>
     <string name="acq_cant_delete_card_message">Не удалось удалить карту, попробуйте позже</string>
     <string name="acq_nfc_description">Поднесите карту\nк задней крышке телефона</string>
+    <string name="acq_nfc_is_disable">NFC выключен</string>
     <string name="acq_nfc_need_enable">Для сканирования карты необходимо включить NFC</string>
     <string name="acq_nfc_scan_failed">Не удалось распознать карту</string>
     <string name="acq_progress_dialog_text">Оплата…</string>
+    <string name="acq_progress_dialog_attach_card_text">Привязка карты…</string>
     <string name="acq_invalid_email">Введен некорректный e-mail</string>
     <string name="acq_invalid_card">Введены некорректные данные карты</string>
+    <string name="acq_attaching_card_loop_title">Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ₽)\nПожалуйста, укажите ее с точностью до копеек</string>
+    <string name="acq_attaching_card_loop_parse_error">Введите корректную сумму в копейках</string>
+    <string name="acq_attaching_card_loop_amount_hint">Заблокированная сумма</string>
+    <string name="acq_no_scan_providers">Отсутвуют провайдеры для сканирования</string>
+    <string name="acq_complete_payment">Для совершения платежа, введите CVC</string>
+    <string name="acq_complete_payment_ok">ОК</string>
 
     <string-array name="acq_scan_types">
         <item>Сканировать камерой</item>

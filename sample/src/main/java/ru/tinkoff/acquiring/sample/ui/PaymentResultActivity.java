@@ -36,10 +36,17 @@ import ru.tinkoff.acquiring.sdk.Money;
 public class PaymentResultActivity extends AppCompatActivity {
 
     private static final String EXTRA_PRICE = "price";
+    private static final String EXTRA_CARD_ID = "card_id";
 
     public static void start(final Context context, final Money price) {
         final Intent intent = new Intent(context, PaymentResultActivity.class);
         intent.putExtra(EXTRA_PRICE, price);
+        context.startActivity(intent);
+    }
+
+    public static void start(final Context context, final String cardId) {
+        final Intent intent = new Intent(context, PaymentResultActivity.class);
+        intent.putExtra(EXTRA_CARD_ID, cardId);
         context.startActivity(intent);
     }
 
@@ -49,22 +56,26 @@ public class PaymentResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment_result);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final Money price = (Money) getIntent().getSerializableExtra(EXTRA_PRICE);
-        if (price == null) {
-            throw new IllegalArgumentException("Use start() method to start AboutActivity");
-        }
-
-        final SpannableString coloredPrice = new SpannableString(price.toString());
-        coloredPrice.setSpan(
-                new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorPrimary)),
-                0,
-                coloredPrice.length(),
-                SpannedString.SPAN_INCLUSIVE_INCLUSIVE
-        );
-
-        final String text = getString(R.string.payment_result_success, coloredPrice);
         final TextView textView = (TextView) findViewById(R.id.tv_confirm);
-        textView.setText(text);
+        Intent intent = getIntent();
+        if (intent.hasExtra(EXTRA_PRICE)) {
+            final Money price = (Money) intent.getSerializableExtra(EXTRA_PRICE);
+
+            final SpannableString coloredPrice = new SpannableString(price.toString());
+            coloredPrice.setSpan(
+                    new ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorPrimary)),
+                    0,
+                    coloredPrice.length(),
+                    SpannedString.SPAN_INCLUSIVE_INCLUSIVE
+            );
+
+            final String text = getString(R.string.payment_result_success, coloredPrice);
+            textView.setText(text);
+        } else {
+            String cardId = intent.getStringExtra(EXTRA_CARD_ID);
+            final String text = getString(R.string.attachment_result_success, cardId);
+            textView.setText(text);
+        }
     }
 
     @Override

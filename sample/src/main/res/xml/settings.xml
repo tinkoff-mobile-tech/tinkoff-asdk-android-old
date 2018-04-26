@@ -9,11 +9,37 @@
         android:key="@string/acq_sp_recurrent_payment"
         android:title="@string/settings_title_recurrent_payment" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/acq_sp_use_first_saved_card"
+        android:title="@string/settings_title_use_first_saved_card" />
+
     <ListPreference
         android:defaultValue="@string/acq_sp_default_value_terminal_id"
         android:entries="@array/acq_sp_terminal_keys"
         android:entryValues="@array/acq_sp_terminal_keys"
         android:key="@string/acq_sp_terminal_id"
         android:title="@string/settings_title_terminal_id" />
+
+    <ListPreference
+        android:defaultValue="@string/acq_sp_default_style_id"
+        android:entries="@array/acq_sp_styles_keys"
+        android:entryValues="@array/acq_sp_styles_keys"
+        android:key="@string/acq_sp_style_id"
+        android:title="@string/settings_title_style_id" />
+
+    <ListPreference
+        android:defaultValue="@string/acq_sp_check_type_no"
+        android:entries="@array/acq_sp_check_type_keys"
+        android:entryValues="@array/acq_sp_check_type_keys"
+        android:key="@string/acq_sp_check_type_id"
+        android:title="@string/settings_title_check_type_id" />
+
+    <ListPreference
+        android:defaultValue="@string/acq_sp_camera_type_card_io"
+        android:entries="@array/acq_sp_camera_type_keys"
+        android:entryValues="@array/acq_sp_camera_type_keys"
+        android:key="@string/acq_sp_camera_type_id"
+        android:title="@string/settings_title_camera" />
 
 </PreferenceScreen>

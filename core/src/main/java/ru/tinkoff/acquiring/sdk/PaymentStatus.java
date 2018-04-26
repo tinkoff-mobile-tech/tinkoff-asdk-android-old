@@ -35,7 +35,9 @@ public enum PaymentStatus {
     REFUNDING,
     REFUNDED,
     REJECTED,
-    UNKNOWN;
+    UNKNOWN,
+    LOOP_CHECKING,
+    COMPLETED;
 
     private static final String TDS_CHECKING_STRING = "3DS_CHECKING";
     private static final String TDS_CHECKED_STRING = "3DS_CHECKED";

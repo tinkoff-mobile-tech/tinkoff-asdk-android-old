@@ -16,8 +16,11 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 
 /**
  * @author a.shishkin1
@@ -32,19 +35,19 @@ public class CardManager {
         this.sdk = sdk;
     }
 
-
-    public Card[] getCards(String customerKey) {
+    public Card[] getActiveCards(String customerKey) {
         Card[] result = cards.get(customerKey);
         if (result == null) {
-            result = sdk.getCardList(customerKey);
+            Card[] apiCards = sdk.getCardList(customerKey);
+            result = chooseActiveCards(apiCards);
             cards.put(customerKey, result);
         }
         return result;
     }
 
     public Card getCardById(String cardId) {
-        for (Card[] cardArr : cards.values()) {
-            for (Card card : cardArr) {
+        for (Card[] cardList : cards.values()) {
+            for (Card card : cardList) {
                 if (cardId.equals(card.getCardId())) {
                     return card;
                 }
@@ -53,7 +56,24 @@ public class CardManager {
         return null;
     }
 
+    public AttachCardResponse attachCard(String customerKey, String checkType, CardData cardData, String email, Map<String, String> data) {
+        String requestKey = sdk.addCard(customerKey, checkType);
+        AttachCardResponse response = sdk.attachCard(requestKey, cardData, email, data);
+        return response;
+    }
+
     public void clear(String customerKey) {
         cards.remove(customerKey);
     }
+
+    private Card[] chooseActiveCards(Card[] cards) {
+        ArrayList<Card> list = new ArrayList<>();
+        for (Card card : cards) {
+            if (card.getStatus() == CardStatus.ACTIVE) {
+                list.add(card);
+            }
+        }
+        return list.toArray(new Card[list.size()]);
+    }
+
 }

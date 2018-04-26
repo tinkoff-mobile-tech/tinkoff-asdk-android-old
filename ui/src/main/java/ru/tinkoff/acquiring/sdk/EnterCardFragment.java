@@ -16,14 +16,11 @@
 
 package ru.tinkoff.acquiring.sdk;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -43,13 +40,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import io.card.payment.CardIOActivity;
-import io.card.payment.CreditCard;
-import ru.tinkoff.acquiring.sdk.nfc.NfcCardScanActivity;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
+import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -59,18 +56,14 @@ import static android.widget.Toast.makeText;
 /**
  * @author a.shishkin1
  */
-public class EnterCardFragment extends Fragment implements EditCardView.Actions,
-        ICardInterest,
-        OnBackPressedListener {
-
-    public static final int REQUEST_CARD_IO = 1;
-    public static final int REQUEST_CARD_NFC = 2;
+public class EnterCardFragment extends Fragment implements ICardInterest, IChargeRejectPerformer, OnBackPressedListener {
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
     private static final int AMOUNT_POSITION_INDEX = 0;
     private static final int BUTTON_POSITION_INDEX = 1;
     private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
+    private static final int MONEY_AMOUNT_FORMAT_INDEX = 3;
 
     private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
 
@@ -80,18 +73,25 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
     private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
 
+    private static final String RECURRING_TYPE_KEY = "recurringType";
+    private static final String RECURRING_TYPE_VALUE = "12";
+    private static final String FAIL_MAPI_SESSION_ID = "failMapiSessionId";
 
-    private EditCardView ecvCard;
+    @Nullable
     private TextView tvTitle;
+    @Nullable
     private TextView tvDescription;
+    @Nullable
+    private EditText etEmail;
+    private EditCardView ecvCard;
     private TextView tvAmount;
     private TextView tvSrcCardLabel;
     private TextView tvChooseCardButton;
-    private EditText etEmail;
     private Button btnPay;
     private View srcCardChooser;
 
     private AcquiringSdk sdk;
+    private FullCardScanner cardScanner;
 
     private Pattern emailPattern = Patterns.EMAIL_ADDRESS;
 
@@ -101,6 +101,8 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     private int amountPositionMode;
     private int buttonAndIconsPositionMode;
     private String payAmountFormat;
+    private String moneyAmountFormat;
+    private PaymentInfo rejectedPaymentInfo;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
@@ -113,18 +115,21 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat});
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat, R.attr.acqMoneyAmountFormat});
         amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
         buttonAndIconsPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM);
         payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
+        moneyAmountFormat = typedArray.getString(MONEY_AMOUNT_FORMAT_INDEX);
         typedArray.recycle();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        int[] intTypes = getActivity().getIntent().getIntArrayExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        PayCellType[] cellTypes = PayCellType.toPayCellTypeArray(intTypes);
+        View view = PayCellInflater.from(inflater, cellTypes).inflate(container);
 
-        View view = inflater.inflate(R.layout.acq_fragment_enter_card, container, false);
         ecvCard = (EditCardView) view.findViewById(R.id.ecv_card);
 
         tvSrcCardLabel = (TextView) view.findViewById(R.id.tv_src_card_label);
@@ -138,8 +143,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         etEmail = (EditText) view.findViewById(R.id.et_email);
 
         final FragmentActivity activity = getActivity();
-        ecvCard.setCardSystemIconsHolder(new CardSystemIconsHolderImpl(activity));
-        ecvCard.setActions(this);
+        cardScanner = new FullCardScanner(this, (ICameraCardScanner) activity.getIntent().getSerializableExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER));
+        ecvCard.setCardSystemIconsHolder(new ThemeCardLogoCache(activity));
+        ecvCard.setActions(cardScanner);
+        if (!cardScanner.isScanEnable()) {
+            ecvCard.setBtnScanIcon(View.NO_ID);
+        }
 
         customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
 
@@ -169,15 +178,15 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
         chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
         if (chargeMode) {
-            ecvCard.setEnabled(false);
-            ecvCard.setFocusable(false);
-            ecvCard.clearFocus();
-            ecvCard.setFullCardNumberModeEnable(false);
-            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+            setRecurrentModeForCardView(true);
+            ecvCard.setRecurrentPaymentMode(true);
         }
 
         if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {
-            view.findViewById(R.id.ll_price_layout).setVisibility(View.GONE);
+            View amountLayout = view.findViewById(R.id.ll_price_layout);
+            if (amountLayout != null) {
+                amountLayout.setVisibility(View.GONE);
+            }
         }
 
         resolveButtonAndIconsPosition(view);
@@ -193,23 +202,34 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         final Intent intent = getActivity().getIntent();
 
         final String email = intent.getStringExtra(PayFormActivity.EXTRA_E_MAIL);
-        if (email != null) {
+        if (email != null && etEmail != null) {
             etEmail.setText(email);
         }
 
         final String title = intent.getStringExtra(PayFormActivity.EXTRA_TITLE);
-        tvTitle.setText(title);
+        if (tvTitle != null) {
+            tvTitle.setText(title);
+        }
 
         String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
-        tvDescription.setText(description);
+        if (tvDescription != null) {
+            tvDescription.setText(description);
+        }
 
         final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
-        String amountText = amount != null ? amount.toHumanReadableString() : "";
-        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS) {
-            tvAmount.setText(amountText);
+
+        String amountTextWithRubbles = amount != null ? amount.toHumanReadableString() : "";
+        String amountText = amount != null ? amount.toString() : "";
+
+        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS && tvAmount != null) {
+            if (TextUtils.isEmpty(moneyAmountFormat)) {
+                tvAmount.setText(amountTextWithRubbles);
+            } else {
+                tvAmount.setText(String.format(moneyAmountFormat, amountText));
+            }
         } else if (TextUtils.isEmpty(payAmountFormat)) {
             String text = btnPay.getText().toString();
-            btnPay.setText(text + " " + amountText);
+            btnPay.setText(text + " " + amountTextWithRubbles);
         } else {
             btnPay.setText(String.format(payAmountFormat, amountText));
         }
@@ -222,7 +242,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 }
 
                 final String enteredEmail = getEmail();
-                if (!validateInput(enteredEmail)) {
+                if (!validateInput(ecvCard, enteredEmail)) {
                     return;
                 }
                 final PayFormActivity activity = (PayFormActivity) getActivity();
@@ -230,40 +250,98 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 activity.showProgressDialog();
 
                 InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
-                initPayment(sdk, requestBuilder, cardData, enteredEmail);
+                initPayment(sdk, requestBuilder, cardData, enteredEmail, chargeMode);
             }
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
+        if (customKeyboard != null && isUsingCustomKeyboard) {
+            customKeyboard.attachToView(ecvCard);
+
+            Window window = getActivity().getWindow();
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideSoftKeyboard();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        PayFormActivity activity = (PayFormActivity) getActivity();
+
+        Card[] cards = activity.getCards();
+        if (cards != null) {
+            onCardReady();
+        }
+    }
+
+    private void setRecurrentModeForCardView(boolean recurrentMode) {
+        if (recurrentMode) {
+            ecvCard.setEnabled(false);
+            ecvCard.setFocusable(false);
+            ecvCard.clearFocus();
+            ecvCard.setFullCardNumberModeEnable(false);
+            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+        } else {
+            ecvCard.setEnabled(true);
+            ecvCard.setFocusable(true);
+            ecvCard.setFullCardNumberModeEnable(true);
+            ecvCard.setCardHint(ecvCard.getCardNumberHint());
+        }
+    }
+
     private void resolveButtonAndIconsPosition(View root) {
         LinearLayout containerLayout = (LinearLayout) root.findViewById(R.id.ll_container_layout);
+        View buttons = root.findViewById(R.id.pay_buttons_layout);
         View space = root.findViewById(R.id.space);
         View secureIcons = root.findViewById(R.id.iv_secure_icons);
         switch (buttonAndIconsPositionMode) {
             case BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM:
                 break;
             case ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS:
-                containerLayout.removeView(btnPay);
-                containerLayout.addView(btnPay);
+                containerLayout.removeView(buttons);
+                containerLayout.addView(buttons);
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
-                containerLayout.removeView(btnPay);
+                removeSpace(containerLayout, space);
+                containerLayout.removeView(buttons);
                 containerLayout.addView(secureIcons);
-                containerLayout.addView(space);
-                containerLayout.addView(btnPay);
+                addSpace(containerLayout, space);
+                containerLayout.addView(buttons);
                 break;
             case ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS:
                 containerLayout.removeView(secureIcons);
-                containerLayout.removeView(space);
-                containerLayout.removeView(btnPay);
+                removeSpace(containerLayout, space);
+                containerLayout.removeView(buttons);
                 containerLayout.addView(secureIcons);
-                containerLayout.addView(btnPay);
+                containerLayout.addView(buttons);
                 break;
             case BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM:
-                containerLayout.removeView(space);
+                removeSpace(containerLayout, space);
                 break;
+        }
+    }
+
+    private void addSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.addView(space);
+        }
+    }
+
+    private void removeSpace(ViewGroup container, View space) {
+        if (space != null) {
+            container.removeView(space);
         }
     }
 
@@ -278,11 +356,11 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
     }
 
-    private boolean validateInput(String enteredEmail) {
+    private boolean validateInput(EditCardView cardView, String enteredEmail) {
         int errorMessage = 0;
-        if (!ecvCard.isFilledAndCorrect()) {
+        if (!cardView.isFilledAndCorrect()) {
             errorMessage = R.string.acq_invalid_card;
-        } else if (!TextUtils.isEmpty(enteredEmail) && !emailPattern.matcher(enteredEmail).matches()) {
+        } else if (!isEmailValid(enteredEmail)) {
             errorMessage = R.string.acq_invalid_email;
         }
 
@@ -292,6 +370,10 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
 
         return true;
+    }
+
+    private boolean isEmailValid(String email) {
+        return TextUtils.isEmpty(email) || emailPattern.matcher(email).matches();
     }
 
     private InitRequestBuilder createInitRequestBuilder(Intent intent) {
@@ -330,6 +412,14 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             builder.setData(dataValue);
         }
 
+        if (rejectedPaymentInfo != null) { // rejected recurrent payment
+            HashMap<String, String> map = new HashMap<>();
+            map.put(RECURRING_TYPE_KEY, RECURRING_TYPE_VALUE);
+            map.put(FAIL_MAPI_SESSION_ID, Long.toString(rejectedPaymentInfo.getPaymentId()));
+            builder.addData(map);
+            rejectedPaymentInfo = null;
+        }
+
         return builder;
     }
 
@@ -347,75 +437,12 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        boolean isUsingCustomKeyboard = ((PayFormActivity) getActivity()).shouldUseCustomKeyboard();
-        if (customKeyboard != null && isUsingCustomKeyboard) {
-            customKeyboard.attachToView(ecvCard);
-
-            Window window = getActivity().getWindow();
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
-        }
-    }
-
     private String getEmail() {
+        if (etEmail == null) {
+            return null;
+        }
         String input = etEmail.getText().toString().trim();
         return input.isEmpty() ? null : input;
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    @Override
-    public void onPressScanCard(EditCardView editCardView) {
-        //noinspection ConstantConditions,ConstantConditions
-        if (isNfcEnable()) {
-            AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-            CharSequence items[] = getResources().getStringArray(R.array.acq_scan_types);
-            adb.setItems(items, new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int i) {
-                    if (i == 0) {
-                        startCardIo();
-                    } else if (i == 1) {
-                        startNfcScan();
-                    }
-                    dialog.dismiss();
-                }
-
-            });
-            adb.show();
-        } else {
-            startCardIo();
-        }
-    }
-
-    @Override
-    public void onUpdate(EditCardView editCardView) {
-    }
-
-    private boolean isNfcEnable() {
-        return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        hideSoftKeyboard();
-    }
-
-    private void startCardIo() {
-        Intent scanIntent = new Intent(getActivity(), CardIOActivity.class);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
-        startActivityForResult(scanIntent, REQUEST_CARD_IO);
-    }
-
-    private void startNfcScan() {
-        Intent cardFromNfcIntent = new Intent(getActivity(), NfcCardScanActivity.class);
-        startActivityForResult(cardFromNfcIntent, REQUEST_CARD_NFC);
     }
 
     private void startChooseCard() {
@@ -423,43 +450,35 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        onCardReady();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CARD_IO && data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
-            CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
-            ecvCard.setCardNumber(scanResult.getFormattedCardNumber());
-            if (scanResult.expiryMonth != 0 && scanResult.expiryYear != 0) {
-                Locale locale = Locale.getDefault();
-                int expiryYear = scanResult.expiryYear % 100;
-                String format = String.format(locale, "%02d%02d", scanResult.expiryMonth, expiryYear);
-                ecvCard.setExpireDate(format);
-            }
-            return;
+        if (cardScanner.hasCameraResult(requestCode, data)) {
+            ICreditCard card = cardScanner.parseCameraData(data);
+            setCreditCardData(card);
+        } else if (cardScanner.hasNfcResult(requestCode, resultCode)) {
+            ICreditCard card = cardScanner.parseNfcData(data);
+            setCreditCardData(card);
+        } else if (cardScanner.isNfcError(requestCode, resultCode)) {
+            Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-
-        if (requestCode == REQUEST_CARD_NFC && resultCode == Activity.RESULT_OK) {
-            ru.tinkoff.core.nfc.model.Card card = (ru.tinkoff.core.nfc.model.Card) data.getSerializableExtra(NfcCardScanActivity.EXTRA_CARD);
-            ecvCard.setCardNumber(card.getNumber());
-            ecvCard.setExpireDate(card.getExpirationDate());
-            return;
-        } else if (requestCode == REQUEST_CARD_NFC && resultCode == NfcCardScanActivity.RESULT_ERROR) {
-            Toast t = Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT);
-            t.show();
-            return;
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void initPayment(final AcquiringSdk sdk,
-                             final InitRequestBuilder requestBuilder,
-                             final CardData cardData,
-                             final String email) {
+    private void setCreditCardData(ICreditCard card) {
+        chargeMode = false;
+        ecvCard.setRecurrentPaymentMode(false);
+        setRecurrentModeForCardView(false);
+        prepareEditableCardView(null, false, true);
+
+        ecvCard.setCardNumber(card.getCardNumber());
+        ecvCard.setExpireDate(card.getExpireDate());
+    }
+
+    private static void initPayment(final AcquiringSdk sdk,
+                                    final InitRequestBuilder requestBuilder,
+                                    final CardData cardData,
+                                    final String email,
+                                    final boolean chargeMode) {
 
         new Thread(new Runnable() {
             @Override
@@ -467,26 +486,31 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 try {
                     requestBuilder.setChargeFlag(chargeMode);
                     final Long paymentId = sdk.init(requestBuilder);
-                    PayFormActivity.handler.obtainMessage(SdkHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
+                    PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.PAYMENT_INIT_COMPLETED, paymentId).sendToTarget();
 
                     if (!chargeMode) {
-                        final ThreeDsData threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
+                        final ThreeDsData threeDsData;
+                        threeDsData = sdk.finishAuthorize(paymentId, cardData, email);
                         if (threeDsData.isThreeDsNeed()) {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.START_3DS, threeDsData).sendToTarget();
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
                         } else {
-                            PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
                         }
                     } else {
                         PaymentInfo paymentInfo = sdk.charge(paymentId, cardData.getRebillId());
-                        PayFormActivity.handler.obtainMessage(SdkHandler.SUCCESS).sendToTarget();
+                        if (paymentInfo.isSuccess()) {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.SUCCESS).sendToTarget();
+                        } else {
+                            PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget();
+                        }
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;
                     if (cause != null && cause instanceof NetworkException) {
-                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.NO_NETWORK);
+                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK);
                     } else {
-                        msg = PayFormActivity.handler.obtainMessage(SdkHandler.EXCEPTION, e);
+                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);
                     }
                     msg.sendToTarget();
                 }
@@ -497,8 +521,7 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
 
     @Override
     public void onCardReady() {
-
-        PayFormActivity.handler.post(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 PayFormActivity activity = (PayFormActivity) getActivity();
@@ -508,33 +531,86 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
                 Card[] cards = activity.getCards();
                 Card sourceCard = activity.getSourceCard();
                 boolean hasCard = sourceCard != null;
+                boolean needClearCardView = needClearCardView(activity);
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
-                tvSrcCardLabel.setText(hasCard ? R.string.acq_saved_card_label : R.string.acq_new_card_label);
+                tvSrcCardLabel.setText(getLabel(chargeMode, hasCard));
                 if (chargeMode) {
                     if (hasCard) {
                         ecvCard.setRecurrentPaymentMode(true);
                         ecvCard.setCardNumber(sourceCard.getPan());
-                    }
-                    hideSoftKeyboard();
-                    if (customKeyboard != null) {
-                        customKeyboard.hide();
+                        hideSoftKeyboard();
+                        if (customKeyboard != null) {
+                            customKeyboard.hide();
+                        }
+                    } else if (cards == null || cards.length == 0 || needClearCardView) {
+                        chargeMode = false;
+                        ecvCard.setRecurrentPaymentMode(false);
+                        setRecurrentModeForCardView(false);
+                        prepareEditableCardView(null, false, needClearCardView);
+                    } else {
+                        ecvCard.setRecurrentPaymentMode(false);
+                        setRecurrentModeForCardView(true);
+                        prepareEditableCardView(null, false, false);
                     }
                 } else {
-                    ecvCard.setSavedCardState(hasCard);
-                    if (hasCard) {
-                        ecvCard.setCardNumber(sourceCard.getPan());
-                    } else {
-                        Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
-                        if (bundle != null) {
-                            ecvCard.clear();
-                        } else {
-                            ecvCard.dispatchFocus();
-                        }
-                    }
+                    prepareEditableCardView(sourceCard, hasCard, needClearCardView);
                 }
             }
         });
+    }
 
+    @Override
+    public void onChargeRequestRejected(PaymentInfo paymentInfo) {
+        chargeMode = false;
+        rejectedPaymentInfo = paymentInfo;
+        final PayFormActivity activity = (PayFormActivity) getActivity();
+        if (!TextUtils.isEmpty(paymentInfo.getCardId())) {
+            activity.selectCardById(paymentInfo.getCardId());
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.acq_complete_payment)
+                .setPositiveButton(R.string.acq_complete_payment_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Card selectedCard = activity.getSourceCard();
+                        srcCardChooser.setVisibility(View.INVISIBLE);
+                        srcCardChooser.setEnabled(false);
+                        ecvCard.setRecurrentPaymentMode(false);
+                        ecvCard.setCardNumber(selectedCard.getPan());
+                        ecvCard.dispatchFocus();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void prepareEditableCardView(Card sourceCard, boolean hasCard, boolean needClearCardView) {
+        ecvCard.setSavedCardState(hasCard);
+        if (hasCard && sourceCard != null) {
+            ecvCard.setCardNumber(sourceCard.getPan());
+        } else {
+            if (needClearCardView) {
+                ecvCard.clear();
+            } else {
+                ecvCard.dispatchFocus();
+            }
+        }
+    }
+
+    private boolean needClearCardView(PayFormActivity activity) {
+        Bundle bundle = activity.getFragmentsCommunicator().getResult(PayFormActivity.RESULT_CODE_CLEAR_CARD);
+        return bundle != null;
+    }
+
+    private String getLabel(boolean chargeMode, boolean hasCard) {
+        if (hasCard) {
+            return getString(R.string.acq_saved_card_label);
+        } else if (chargeMode) {
+            return "";
+        } else {
+            return getString(R.string.acq_new_card_label);
+        }
     }
 
     private void hideSoftKeyboard() {
@@ -554,20 +630,4 @@ public class EnterCardFragment extends Fragment implements EditCardView.Actions,
             return false;
         }
     }
-
-    private static class CardSystemIconsHolderImpl extends ThemeCardLogoCache implements EditCardView.CardSystemIconsHolder {
-
-        private Context context;
-
-        public CardSystemIconsHolderImpl(Context context) {
-            super(context);
-            this.context = context;
-        }
-
-        @Override
-        public Bitmap getCardSystemBitmap(String cardNumber) {
-            return getLogoByNumber(context, cardNumber);
-        }
-    }
-
 }

@@ -7,6 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="MyAcqTheme" parent="AcquiringTheme">
+        <item name="acqTitleTextViewStyle">@style/MyAcquiringTitleStyle</item>
+    </style>
+
     <style name="ButtonWithBackground">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -101,6 +105,11 @@
 
     <style name="PriceBlueTextView" parent="PriceWhiteTextView">
         <item name="android:textColor">?colorPrimary</item>
+    </style>
+
+    <style name="MyAcquiringTitleStyle">
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

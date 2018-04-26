@@ -24,13 +24,11 @@ import android.os.Bundle;
 class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
     private static final String PAYMENT_ID = "paymentId";
-    private static final String ORDER_ID = "orderId";
-    private static final String AMOUNT = "amount";
+    private static final String REQUEST_KEY = "requestKey";
     private static final String ASC_URL = "ascUrl";
     private static final String MD = "md";
-    private static final String PAREQ = "paReq";
+    private static final String PA_REQ = "paReq";
     private static final String IS_NEED = "isThreeDsNeed";
-
 
     @Override
     public ThreeDsData unpack(Bundle bundle) {
@@ -39,14 +37,16 @@ class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
         }
         boolean isThreeDsNeed = bundle.getBoolean(IS_NEED);
         if (isThreeDsNeed) {
-            Long paymentId = bundle.getLong(PAYMENT_ID);
-            String orderId = bundle.getString(ORDER_ID);
-            Long amount = bundle.getLong(AMOUNT);
             String ascUrl = bundle.getString(ASC_URL);
             String md = bundle.getString(MD);
-            String paReq = bundle.getString(PAREQ);
-
-            return new ThreeDsData(paymentId, orderId, amount, ascUrl, md, paReq);
+            String paReq = bundle.getString(PA_REQ);
+            if (bundle.containsKey(PAYMENT_ID)) {
+                Long paymentId = bundle.getLong(PAYMENT_ID);
+                return new ThreeDsData(paymentId, ascUrl, md, paReq);
+            } else {
+                String requestKey = bundle.getString(REQUEST_KEY);
+                return new ThreeDsData(requestKey, ascUrl, md, paReq);
+            }
         }
         return ThreeDsData.EMPTY_THREE_DS_DATA;
     }
@@ -57,12 +57,15 @@ class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
             return null;
         }
         Bundle result = new Bundle();
-        result.putLong(PAYMENT_ID, entity.getPaymentId());
-        result.putString(ORDER_ID, entity.getOrderId());
-        result.putLong(AMOUNT, entity.getAmount());
+        Long paymentId = entity.getPaymentId();
+        if (paymentId != null) {
+            result.putLong(PAYMENT_ID, paymentId);
+        } else {
+            result.putString(REQUEST_KEY, entity.getRequestKey());
+        }
         result.putString(ASC_URL, entity.getAcsUrl());
         result.putString(MD, entity.getMd());
-        result.putString(PAREQ, entity.getPaReq());
+        result.putString(PA_REQ, entity.getPaReq());
         result.putBoolean(IS_NEED, entity.isThreeDsNeed());
         return result;
     }

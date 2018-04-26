@@ -3,6 +3,7 @@
 
     <string name="activity_title_details">Book</string>
     <string name="activity_title_cart">Cart</string>
+    <string name="activity_title_attach_card">Attach card</string>
     <string name="activity_title_about">About</string>
     <string name="activity_title_settings">Settings</string>
     <string name="activity_title_payment_result">Confirmation</string>
@@ -20,7 +21,8 @@
     <string name="added_to_cart">Book added to cart</string>
     <string name="clear_cart">Clear all items</string>
     <string name="delete">Delete</string>
-    <string name="payment_result_success">Total payment for %1$s\nhas been succesfull</string>
+    <string name="payment_result_success">Total payment for %1$s\nhas been successful</string>
+    <string name="attachment_result_success">Attachment card with ID=%1$s\nhas been successful</string>
     <string name="close">Close</string>
     <string name="version">Tinkoff Acquiring SDK v%1$s(%2$d)</string>
 
@@ -36,5 +38,25 @@
 
     <string name="settings_title_use_system_keyboard">Use system keyboard</string>
     <string name="settings_title_recurrent_payment">Recurrent payment</string>
+    <string name="settings_title_use_first_saved_card">Use attached card</string>
     <string name="settings_title_terminal_id">Terminal</string>
+    <string name="settings_title_style_id">Style</string>
+    <string name="settings_title_check_type_id">CheckType</string>
+    <string name="settings_title_camera">Camera module</string>
+
+    <string name="acq_pay_replenish">Replenish</string>
+    <string name="acq_pay_with_amount_custom">Replenish %s $</string>
+    <string name="acq_money_amount_format_custom">%s $</string>
+    <string name="acq_screen_title_custom">Replenishment</string>
+
+    <string name="attachment_failed">Attachment failed. Try later.</string>
+    <string name="attachment_succeeded">Attachment successful</string>
+    <string name="attachment_cancelled">Attachment canceled</string>
+    <string name="attachment_loading">Waiting</string>
+
+    <string name="attachment_toolbar_title">Attaching Card</string>
+    <string name="attachment_title">Attachment Title</string>
+    <string name="attachment_description">Attachment Descriptions</string>
+    <string name="attachment_button">Attach Card</string>
+    <string name="attachment_button_ex">"Attach Card ¯\\_(ツ)_/¯"</string>
 </resources>

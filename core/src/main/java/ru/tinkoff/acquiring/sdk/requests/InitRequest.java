@@ -136,8 +136,17 @@ final public class InitRequest extends AcquiringRequest {
         return data;
     }
 
-    void setData(Map<String, String> dataValue) {
-        this.data = dataValue;
+    void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
+    void addData(Map<String, String> data) {
+        if (data != null) {
+            if (this.data == null) {
+                this.data = new HashMap<>();
+            }
+            this.data.putAll(data);
+        }
     }
 
     public boolean isChargeFlag() {

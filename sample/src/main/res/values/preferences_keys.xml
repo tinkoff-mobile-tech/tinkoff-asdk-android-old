@@ -4,6 +4,7 @@
     <string name="acq_sp_use_system_keyboard" translatable="false">acq_sp_use_system_keyboard</string>
     <string name="acq_sp_recurrent_payment" translatable="false">acq_sp_recurrent_payment</string>
     <string name="acq_sp_terminal_id" translatable="false">acq_sp_terminal_id</string>
+    <string name="acq_sp_use_first_saved_card" translatable="false">acq_sp_use_first_saved_card</string>
 
     <string name="acq_sp_default_value_terminal_id" translatable="false">sdk3DS</string>
     <string name="acq_sp_test_sdk_terminal_id" translatable="false">TestSDK</string>
@@ -13,6 +14,30 @@
         <item>@string/acq_sp_default_value_terminal_id</item>
         <item>@string/acq_sp_test_sdk_terminal_id</item>
         <item>@string/acq_sp_sdk_non_3ds_terminal_id</item>
+    </string-array>
+
+    <string name="acq_sp_style_id" translatable="false">acq_sp_style_id</string>
+    <string name="acq_sp_default_style_id" translatable="false">Default</string>
+    <string name="acq_sp_custom_style_id" translatable="false">Custom</string>
+    <string-array name="acq_sp_styles_keys">
+        <item>@string/acq_sp_default_style_id</item>
+        <item>@string/acq_sp_custom_style_id</item>
+    </string-array>
+
+    <string name="acq_sp_check_type_id" translatable="false">acq_sp_check_type_id</string>
+    <string name="acq_sp_check_type_no" translatable="false">NO</string>
+    <string-array name="acq_sp_check_type_keys" translatable="false">
+        <item>@string/acq_sp_check_type_no</item>
+        <item>HOLD</item>
+        <item>3DS</item>
+        <item>3DSHOLD</item>
+    </string-array>
+
+    <string name="acq_sp_camera_type_id" translatable="false">acq_sp_camera_type_id</string>
+    <string name="acq_sp_camera_type_card_io" translatable="false">Card.IO</string>
+    <string-array name="acq_sp_camera_type_keys" translatable="false">
+        <item>@string/acq_sp_camera_type_card_io</item>
+        <item>TEST-DEMO</item>
     </string-array>
 
 </resources>

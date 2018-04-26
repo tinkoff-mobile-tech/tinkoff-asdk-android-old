@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -41,7 +42,9 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
-import android.util.TypedValue;
+import android.util.FloatProperty;
+import android.util.IntProperty;
+import android.util.Property;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -77,8 +80,9 @@ public class EditCardView extends ViewGroup {
     private static final String DATE_MASK = "\u2022\u2022/\u2022\u2022";
 
     private int textColor;
-
-    private String cardHint = null;
+    private String cardNumberHint;
+    private String dateHint;
+    private String cvcHint;
 
     private CardValidator cardValidator;
 
@@ -89,7 +93,8 @@ public class EditCardView extends ViewGroup {
     private Paint cardSystemLogoPaint;
     private Paint paint;
 
-    private int additionalPadding;
+    private int cardLogoMargin;
+    private int cardTextMargin;
 
     private SimpleButton btnChangeMode;
     private SimpleButton btnScanCard;
@@ -140,21 +145,20 @@ public class EditCardView extends ViewGroup {
             return true;
         }
         if (check(FLAG_SAVED_CARD_STATE)) {
-            return cardValidator.validateSecurityCode(etCvc.getText().toString());
+            return CardValidator.validateSecurityCode(etCvc.getText().toString());
         }
 
-        boolean cardNumberReady = cardValidator.validateNumber(getCardNumber());
+        boolean cardNumberReady = CardValidator.validateNumber(getCardNumber());
         if (!cardNumberReady)
             return false;
         return check(FLAG_ONLY_NUMBER_STATE) ||
-                (cardValidator.validateExpirationDate(etDate.getText().toString()) && cardValidator.validateSecurityCode(etCvc.getText().toString()));
+                (CardValidator.validateExpirationDate(etDate.getText().toString()) && CardValidator.validateSecurityCode(etCvc.getText().toString()));
     }
 
     private void init(AttributeSet attributeSet) {
 
         setAddStatesFromChildren(true);
 
-        additionalPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
         btnChangeMode = new SimpleButton(null);
         btnScanCard = new SimpleButton(null);
 
@@ -182,16 +186,16 @@ public class EditCardView extends ViewGroup {
             @Override
             public void run() {
                 String number = etCardNumber.getText().toString();
-                boolean isCorrect = cardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE);
+                boolean isCorrect = CardValidator.validateNumber(cardFormatter.getNormalizedNumber(number, " ")) || check(FLAG_SAVED_CARD_STATE) || check(FLAG_RECURRENT_MODE);
                 if (!isCorrect && check(FLAG_CHANGE_MODE_BUTTON)) {
                     hideChangeModeButton();
                 }
-                if (isCorrect && !cardFormatter.isLimited() && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE)) {
+                if (isCorrect && !cardFormatter.isLimited() && isCardNumberFocused() && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE)) {
                     showChangeModeButton();
                 }
                 etCardNumber.setTextColor(cardFormatter.isNeedToCheck(etCardNumber.length()) && !isCorrect ? Color.RED : textColor);
-                etDate.setTextColor(etDate.length() == 5 && !cardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE) ? Color.RED : textColor);
-                etCvc.setTextColor(etCvc.length() == 3 && !cardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
+                etDate.setTextColor(etDate.length() == 5 && !CardValidator.validateExpirationDate(etDate.getText().toString()) && !check(FLAG_SAVED_CARD_STATE) && !check(FLAG_RECURRENT_MODE) ? Color.RED : textColor);
+                etCvc.setTextColor(etCvc.length() == 3 && !CardValidator.validateSecurityCode(etCvc.getText().toString()) ? Color.RED : textColor);
                 actions.onUpdate(EditCardView.this);
             }
         };
@@ -401,23 +405,18 @@ public class EditCardView extends ViewGroup {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         cardFormatter = new CardFormatter();
 
-        setBtnScanIcon(R.drawable.acq_scan_grey);
-        setChangeModeIcon(R.drawable.acq_next_grey);
-
-        if (attributeSet != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(
-                    attributeSet,
-                    R.styleable.EditCardView,
-                    0, 0);
-
-            try {
-                etCardNumber.setHint(a.getString(R.styleable.EditCardView_numberHint));
-                etDate.setHint(a.getString(R.styleable.EditCardView_dateHint));
-                etCvc.setHint(a.getString(R.styleable.EditCardView_cvcHint));
-            } finally {
-                a.recycle();
-            }
-        }
+        TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.EditCardView, 0, 0);
+        cardLogoMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardLogoMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_logo_margin));
+        cardTextMargin = a.getDimensionPixelSize(R.styleable.EditCardView_cardTextMargin, getResources().getDimensionPixelSize(R.dimen.acq_default_card_text_margin));
+        cardNumberHint = a.getString(R.styleable.EditCardView_numberHint);
+        dateHint = a.getString(R.styleable.EditCardView_dateHint);
+        cvcHint = a.getString(R.styleable.EditCardView_cvcHint);
+        etCardNumber.setHint(cardNumberHint);
+        etDate.setHint(dateHint);
+        etCvc.setHint(cvcHint);
+        setBtnScanIcon(a.getResourceId(R.styleable.EditCardView_scanIcon, R.drawable.acq_scan_grey));
+        setChangeModeIcon(a.getResourceId(R.styleable.EditCardView_changeModeIcon, R.drawable.acq_next_grey));
+        a.recycle();
     }
 
     @Override
@@ -439,9 +438,13 @@ public class EditCardView extends ViewGroup {
     @Override
     public void setFocusable(boolean focusable) {
         super.setFocusable(focusable);
+        setFocusableInTouchMode(focusable);
         etCardNumber.setFocusable(focusable);
+        etCardNumber.setFocusableInTouchMode(focusable);
         etDate.setFocusable(focusable);
+        etDate.setFocusableInTouchMode(focusable);
         etCvc.setFocusable(focusable);
+        etCvc.setFocusableInTouchMode(focusable);
     }
 
     @Override
@@ -537,10 +540,15 @@ public class EditCardView extends ViewGroup {
             requestLayout();
         } else {
             flags &= ~FLAG_RECURRENT_MODE;
+            etCvc.setEnabled(true);
+            etCvc.setFocusable(true);
+            etCvc.setFocusableInTouchMode(true);
+            etCvc.setHint(cvcHint);
             setSavedCardState(true);
         }
     }
 
+    @SuppressWarnings("ResourceType")
     protected void applyBehaviour(EditText... fields) {
         int id = 1;
         for (EditText et : fields) {
@@ -604,6 +612,18 @@ public class EditCardView extends ViewGroup {
         dispatchFocus();
     }
 
+    public String getCardNumberHint() {
+        return cardNumberHint;
+    }
+
+    public String getDateHint() {
+        return dateHint;
+    }
+
+    public String getCvcHint() {
+        return cvcHint;
+    }
+
     private void clearPendingAnimations() {
         pendingAnimation.removeAllListeners();
         pendingAnimation.end();
@@ -614,7 +634,7 @@ public class EditCardView extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        if (cardSystemIconsHolder != null && cardSystemLogo == null && check(FLAG_CARD_SYSTEM_LOGO)) {
+        if (cardSystemIconsHolder != null && check(FLAG_CARD_SYSTEM_LOGO)) {
             cardSystemLogo = cardSystemIconsHolder.getCardSystemBitmap(etCardNumber.getText().toString());
         }
 
@@ -635,7 +655,7 @@ public class EditCardView extends ViewGroup {
             additionalRightSpace += calculateChangeModeWidth();
         }
 
-        int accessWidth = widthSize - logoWidth - additionalRightSpace - (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0) - (getPaddingRight() + getPaddingLeft());
+        int accessWidth = widthSize - logoWidth - additionalRightSpace - getRealCardLogoTextMargin() - (getPaddingRight() + getPaddingLeft());
 
         int contentsWidth = accessWidth / 3;
 
@@ -689,7 +709,7 @@ public class EditCardView extends ViewGroup {
         int logoWidth = check(FLAG_CARD_SYSTEM_LOGO) ? calculateCardLogoWidth() : 0;
         int t;
         int l = getPaddingLeft();
-        int startLabels = logoWidth + l + (check(FLAG_CARD_SYSTEM_LOGO) ? additionalPadding : 0);
+        int startLabels = logoWidth + l + getRealCardLogoTextMargin();
         int w = getWidth() - getPaddingRight() - getPaddingLeft();
         int hh = (getHeight() - getPaddingTop() - getPaddingBottom()) >> 1;
 
@@ -723,8 +743,7 @@ public class EditCardView extends ViewGroup {
     protected void dispatchDraw(Canvas canvas) {
         if (check(FLAG_CARD_SYSTEM_LOGO) && cardSystemLogo != null) {
             int yOffset = (getHeight() - cardSystemLogo.getHeight()) >> 1;
-            int xOffset = additionalPadding >> 1;
-            canvas.drawBitmap(cardSystemLogo, xOffset, yOffset, cardSystemLogoPaint);
+            canvas.drawBitmap(cardSystemLogo, cardLogoMargin, yOffset, cardSystemLogoPaint);
         }
         if (check(FLAG_CHANGE_MODE_BUTTON)) {
             btnChangeMode.drawWithPaint(canvas, paint);
@@ -753,7 +772,6 @@ public class EditCardView extends ViewGroup {
         return super.onTouchEvent(event);
     }
 
-
     public void setMode(boolean isFullNumber) {
         if (isFullNumber) {
             flags |= FLAG_FULL_CARD_NUMBER;
@@ -761,6 +779,10 @@ public class EditCardView extends ViewGroup {
             flags &= ~FLAG_FULL_CARD_NUMBER;
         }
         normalizeMode();
+    }
+
+    private int getRealCardLogoTextMargin() {
+        return check(FLAG_CARD_SYSTEM_LOGO) && cardSystemLogo != null ? cardTextMargin : 0;
     }
 
     private void normalizeMode() {
@@ -780,7 +802,7 @@ public class EditCardView extends ViewGroup {
         flags |= FLAG_CARD_SYSTEM_LOGO;
         cardSystemLogoPaint.setAlpha(0);
 
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, "alpha", 0, 255);
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, PAINT_ALPHA, 0, 255);
         animatorAlpha.setDuration(150);
         animatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -788,7 +810,7 @@ public class EditCardView extends ViewGroup {
                 invalidate();
             }
         });
-        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, "cardSystemLogoAnimationFactor", 0f, 1f);
+        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, CARD_SYSTEM_LOGO_ANIMATION_FACTOR, 0f, 1f);
         animatorEditField.setDuration(150);
         animatorEditField.setInterpolator(new OvershootInterpolator());
         AnimatorSet set = new AnimatorSet();
@@ -804,7 +826,7 @@ public class EditCardView extends ViewGroup {
     }
 
     private void hideCardSystemLogo() {
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, "alpha", 255, 0);
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofInt(cardSystemLogoPaint, PAINT_ALPHA, 255, 0);
         animatorAlpha.setDuration(150);
         animatorAlpha.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -812,7 +834,7 @@ public class EditCardView extends ViewGroup {
                 invalidate();
             }
         });
-        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, "cardSystemLogoAnimationFactor", 1f, 0f);
+        ObjectAnimator animatorEditField = ObjectAnimator.ofFloat(this, CARD_SYSTEM_LOGO_ANIMATION_FACTOR, 1f, 0f);
         animatorEditField.setDuration(150);
         animatorEditField.setInterpolator(new OvershootInterpolator());
         AnimatorSet set = new AnimatorSet();
@@ -831,10 +853,10 @@ public class EditCardView extends ViewGroup {
 
     private void showCvcAndDate() {
         hideChangeModeButton();
-        final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
+        final MutableColorSpan span = new MutableColorSpan(textColor);
 
         etCardNumber.getText().setSpan(span, 0, Math.max(etCardNumber.length() - 4, 0), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, "alpha", 255, 0);
+        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 255, 0);
         animatorText.setDuration(200);
         animatorText.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -844,7 +866,7 @@ public class EditCardView extends ViewGroup {
                 }
             }
         });
-        ObjectAnimator toLeftAnimator = ObjectAnimator.ofFloat(etCardNumber, "animationFactor", 0f, 1f);
+        ObjectAnimator toLeftAnimator = ObjectAnimator.ofFloat(etCardNumber, CardNumberEditText.ANIMATION_FACTOR, 0f, 1f);
         toLeftAnimator.setStartDelay(140);
         toLeftAnimator.setDuration(210);
         toLeftAnimator.addListener(new AnimatorListenerAdapter() {
@@ -856,13 +878,13 @@ public class EditCardView extends ViewGroup {
 
         etDate.setVisibility(VISIBLE);
         etDate.setAlpha(0f);
-        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, "alpha", 0f, 1f);
+        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, View.ALPHA, 0f, 1f);
         animatorDate.setDuration(200);
         animatorDate.setStartDelay(200);
 
         etCvc.setVisibility(VISIBLE);
         etCvc.setAlpha(0f);
-        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, "alpha", 0f, 1f);
+        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, View.ALPHA, 0f, 1f);
         animatorCvc.setDuration(200);
         animatorCvc.setStartDelay(280);
 
@@ -882,9 +904,9 @@ public class EditCardView extends ViewGroup {
     }
 
     private void hideCvcAndDate() {
-        final MutableColorSpan span = new MutableColorSpan(etCardNumber.getPaint().getColor());
+        final MutableColorSpan span = new MutableColorSpan(textColor);
         span.setAlpha(0);
-        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, "alpha", 0, 255);
+        ObjectAnimator animatorText = ObjectAnimator.ofInt(span, MutableColorSpan.ALPHA, 0, 255);
         animatorText.setDuration(250);
         animatorText.setInterpolator(new AccelerateInterpolator());
         animatorText.setStartDelay(200);
@@ -897,10 +919,10 @@ public class EditCardView extends ViewGroup {
 
             }
         });
-        ObjectAnimator toRightAnimator = ObjectAnimator.ofFloat(etCardNumber, "animationFactor", 1f, 0f);
+        ObjectAnimator toRightAnimator = ObjectAnimator.ofFloat(etCardNumber, CardNumberEditText.ANIMATION_FACTOR, 1f, 0f);
         toRightAnimator.setDuration(200);
 
-        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, "alpha", 1f, 0f);
+        ObjectAnimator animatorDate = ObjectAnimator.ofFloat(etDate, View.ALPHA, 1f, 0f);
         animatorDate.setDuration(150);
         animatorDate.setStartDelay(80);
         animatorDate.addListener(new AnimatorListenerAdapter() {
@@ -913,7 +935,7 @@ public class EditCardView extends ViewGroup {
             }
         });
 
-        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, "alpha", 1f, 0f);
+        ObjectAnimator animatorCvc = ObjectAnimator.ofFloat(etCvc, View.ALPHA, 1f, 0f);
         animatorCvc.setDuration(150);
 
         AnimatorSet set = new AnimatorSet();
@@ -962,8 +984,11 @@ public class EditCardView extends ViewGroup {
         });
     }
 
+    private boolean isCardNumberFocused() {
+        return etCardNumber.isFocused() && !etDate.isFocused() && !etCvc.isFocused();
+    }
+
     public void setCardHint(String cardHint) {
-        this.cardHint = cardHint;
         etCardNumber.setHint(cardHint);
     }
 
@@ -1178,9 +1203,8 @@ public class EditCardView extends ViewGroup {
         }
     }
 
-
+    @SuppressLint("AppCompatCustomView")
     public static class CardNumberEditText extends EditText {
-
 
         public static final int FULL_MODE = 0;
         public static final int SHORT_MODE = 1;
@@ -1211,6 +1235,7 @@ public class EditCardView extends ViewGroup {
             String text = getText().toString();
             int l = text.length();
             Paint p = getPaint();
+            p.setColor(getCurrentTextColor());
             float dist = p.measureText(text.substring(0, Math.max(0, l - charsCount)));
             if (mode == FULL_MODE) {
                 canvas.save();
@@ -1230,6 +1255,10 @@ public class EditCardView extends ViewGroup {
         public void setAnimationFactor(float animationFactor) {
             this.animationFactor = animationFactor;
             invalidate();
+        }
+
+        public float getAnimationFactor() {
+            return animationFactor;
         }
 
         public int getMode() {
@@ -1258,10 +1287,22 @@ public class EditCardView extends ViewGroup {
         public void setCustomOnFocusChangedListener(OnFocusChangeListener customOnFocusChangedListener) {
             this.customOnFocusChangedListener = customOnFocusChangedListener;
         }
+
+        public static final Property<CardNumberEditText, Float> ANIMATION_FACTOR = new FloatProperty<CardNumberEditText>("card_number_animation_factor") {
+
+            @Override
+            public Float get(CardNumberEditText object) {
+                return object.getAnimationFactor();
+            }
+
+            @Override
+            public void setValue(CardNumberEditText object, float value) {
+                object.setAnimationFactor(value);
+            }
+        };
     }
 
     private static class MutableColorSpan extends CharacterStyle implements UpdateAppearance {
-
 
         private int color;
 
@@ -1275,11 +1316,27 @@ public class EditCardView extends ViewGroup {
             color = (color & 0x00FFFFFF) | (alpha << 24);
         }
 
+        public int getAlpha() {
+            return color >>> 24;
+        }
 
         @Override
         public void updateDrawState(TextPaint tp) {
             tp.setColor(color);
         }
+
+        public static final Property<MutableColorSpan, Integer> ALPHA = new IntProperty<MutableColorSpan>("span_alpha") {
+
+            @Override
+            public Integer get(MutableColorSpan object) {
+                return object.getAlpha();
+            }
+
+            @Override
+            public void setValue(MutableColorSpan object, int value) {
+                object.setAlpha(value);
+            }
+        };
     }
 
 
@@ -1390,5 +1447,31 @@ public class EditCardView extends ViewGroup {
 
         }
     }
+
+    public static final Property<EditCardView, Float> CARD_SYSTEM_LOGO_ANIMATION_FACTOR = new FloatProperty<EditCardView>("card_view_logo_animation_factor") {
+
+        @Override
+        public Float get(EditCardView object) {
+            return object.getCardSystemLogoAnimationFactor();
+        }
+
+        @Override
+        public void setValue(EditCardView object, float value) {
+            object.setCardSystemLogoAnimationFactor(value);
+        }
+    };
+
+    public static final Property<Paint, Integer> PAINT_ALPHA = new IntProperty<Paint>("paint_alpha") {
+
+        @Override
+        public Integer get(Paint object) {
+            return object.getAlpha();
+        }
+
+        @Override
+        public void setValue(Paint object, int value) {
+            object.setAlpha(value);
+        }
+    };
 }
 

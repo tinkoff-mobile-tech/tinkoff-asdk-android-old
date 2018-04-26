@@ -16,21 +16,31 @@
 
 package ru.tinkoff.acquiring.sample.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.BooksRegistry;
+import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
+import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
+import ru.tinkoff.acquiring.sdk.AttachCardFormActivity;
+import ru.tinkoff.acquiring.sdk.OnAttachCardListener;
+import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType;
 
 public class MainActivity extends AppCompatActivity implements
-        BooksListAdapter.BookDetailsClickListener {
+        BooksListAdapter.BookDetailsClickListener, OnAttachCardListener {
+
+    private static final int ATTACH_CARD_REQUEST_CODE = 11;
 
     private ListView listViewBooks;
     private BooksListAdapter adapter;
@@ -64,6 +74,17 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_action_cart:
                 CartActivity.start(this);
                 return true;
+            case R.id.menu_action_attach_card:
+                SettingsSdkManager settings = new SettingsSdkManager(this);
+                String terminalId = settings.getTerminalId();
+                AttachCardFormActivity
+                        .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                        .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
+                        .setTheme(settings.resolveAttachCardStyle())
+                        .setCameraCardScanner(settings.getCameraScanner())
+                        .setDesignConfiguration(AttachCellType.ATTACH_BUTTON, AttachCellType.SECURE_LOGOS, AttachCellType.PAYMENT_CARD_REQUISITES)
+                        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
+                return true;
             case R.id.menu_action_about:
                 AboutActivity.start(this);
                 return true;
@@ -73,6 +94,29 @@ public class MainActivity extends AppCompatActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        AttachCardFormActivity.dispatchResult(resultCode, data, this);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onSuccess(String cardId) {
+        PaymentResultActivity.start(this, cardId);
+    }
+
+    @Override
+    public void onCancelled() {
+        Toast.makeText(this, R.string.attachment_cancelled, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onError(Exception e) {
+        Toast.makeText(this, R.string.attachment_failed, Toast.LENGTH_SHORT).show();
+        Log.e("SAMPLE", e.getMessage(), e);
+    }
+
 
     @Override
     public void onBookDetailsClicked(Book book) {

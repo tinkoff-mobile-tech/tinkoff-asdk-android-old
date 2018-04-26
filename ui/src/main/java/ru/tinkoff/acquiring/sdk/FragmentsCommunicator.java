@@ -59,9 +59,6 @@ class FragmentsCommunicator  {
         return result;
     }
 
-
-
-
     interface IFragmentManagerExtender {
         FragmentsCommunicator getFragmentsCommunicator();
     }

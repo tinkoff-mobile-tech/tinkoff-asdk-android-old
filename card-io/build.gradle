@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+dependencies {
+    compile 'io.card:android-sdk:5.4.1'
+    compile project(':ui')
+}
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
+
+    lintOptions {
+        disable 'InvalidPackage'
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
+
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+apply from: '../gradle/publish-lib.gradle'

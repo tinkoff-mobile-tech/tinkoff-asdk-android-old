@@ -13,6 +13,7 @@ Acquiring SDK позволяет интегрировать [Интернет-Э
 - Получение информации о клиенте и сохраненных картах
 - Управление сохраненными картами
 - Поддержка английского
+- Поддержка Android Pay
 
 ### Требования
 Для работы Tinkoff Acquiring SDK необходим Android версии 4.0 и выше (API level 14).
@@ -22,6 +23,11 @@ Acquiring SDK позволяет интегрировать [Интернет-Э
 ```groovy
 compile 'ru.tinkoff.acquiring:ui:$latestVersion'
 ```
+Если вы хотите внедрить сканирование с помощью библиотеки Card-IO, то необходимо добавить в [_build.gradle_][build-config]
+```groovy
+compile 'ru.tinkoff.acquiring:card-io:$latestVersion'
+```
+
 
 ### Подготовка к работе
 Для начала работы с SDK вам понадобятся:
@@ -29,7 +35,7 @@ compile 'ru.tinkoff.acquiring:ui:$latestVersion'
 * Пароль
 * Public key
 
-которые выдаются после подключения к [Интернет-Эквайрингу][acquiring].
+Которые выдаются после подключения к [Интернет-Эквайрингу][acquiring].
 
 ### Пример работы
 Для проведения оплаты необходимо запустить _**PayFormActivity**_. Активити должна быть настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо вызвать цепочку из методов **PayFormActivity**#_init_, **PayFormStarter**#_prepare_ и **PayFormStarter**#_setCustomerKey_:
@@ -52,7 +58,8 @@ PayFormActivity
 
 ```
 
-Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_:
+Можно передать данные чека на форму, указав парметр [**Receipt**][receipt-javadoc] в метод **PayFormStarter**#_setReceipt_ и кастомизировать форму передав мапу с параметрами в метод **PayFormStarter**#_setData_.
+Так же можно указать тему и запустить форму для оплаты уже с привязанных карт (реккурентынй платеж), а также указать модуль для сканирования (свой или **CameraCardIOScanner**)
 
 ```java
 PayFormActivity
@@ -61,6 +68,9 @@ PayFormActivity
         .setCustomerKey("CUSTOMER_KEY")     // уникальный ID пользователя для сохранения данных его карты
         .setReceipt(receipt)
         .setData(dataMap)
+        .setTheme(themeId)
+        .setChargeMode(chargeMode)
+        .setCameraCardScanner(new CameraCardIOScanner()))
         .startActivityForResult(this, REQUEST_CODE_PAYMENT);
 
 ```
@@ -70,6 +80,37 @@ PayFormActivity
 [1] _Рекуррентный платеж_ может производиться для дальнейшего списания средств с сохраненной карты, без ввода ее реквизитов. Эта возможность, например, может использоваться для осуществления платежей по подписке.
 
 [2] _Безопасная клавиатура_ используется вместо системной и обеспечивает дополнительную безопасность ввода, т.к. сторонние клавиатуры на устройстве клиента могут перехватывать данные и отправлять их злоумышленнику.
+
+### Экран привязки карт
+Для запуска привязки карт необходимо запустить _**AttachCardFormActivity**_.  Активити должна быть настроена на обработку конкретного платежа, поэтому для получения интента для ее запуска необходимо вызвать цепочку из методов AttachCardFormActivity#init, AttachCardFormActivity#prepare:
+```java
+AttachCardFormActivity
+        .init("TERMINAL_KEY", "PASSWORD", "PUBLIC_KEY") // данные продавца
+        .prepare(
+                "CUSTOMER_KEY",                         // уникальный ID пользователя для сохранения данных его карты                             
+                CheckType.THREE_DS,                     // тип привязки карты
+                true,                                   // флаг использования безопасной клавиатуры
+                "E-MAIL")                               // e-mail клиента
+        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
+```
+
+По аналогии с _**PayFormActivity**_, форму привязки карты можно кастомизировать
+
+```java
+AttachCardFormActivity
+        .init("TERMINAL_KEY", "PASSWORD", "PUBLIC_KEY") // данные продавца
+        .prepare("CUSTOMER_KEY", CheckType.THREE_DS, true, "E-MAIL")   
+        .setData(data)
+        .setTheme(themeId)
+        .setCameraCardScanner(new CameraCardIOScanner()))
+        .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
+```
+
+### Темы
+для более подробного раздела прочитайте соответвующую тему на wiki страничке.
+В приложении есть базовая тема **AcquiringTheme**. Если вы хотите что-то изменить, то отнаследуйтесь от нее и переопределите нужные аттрибуты.
+
+На обоих активити используется одна и та же тема, просто на **AttachCardFormActivity** не используются некоторые аттрибуты.
 
 ### Структура
 SDK состоит из следующих модулей:
@@ -88,23 +129,25 @@ SDK состоит из следующих модулей:
 * проходить 3DS подтверждение
 * управлять списком ранее сохраненных карт
 
+#### Card-IO
+Модуль для сканирование карты с помощью камеры с помощью библиотеки Card-IO.
+
 #### Proguard
 ```
--dontwarn org.apache.log4j.**
--dontwarn org.threeten.bp.**
+-keep class ru.tinkoff.acquiring.sdk.views.** { *; }
 ```
 
 #### Sample
-Содержит пример интеграции Tinkoff Acquiring SDK в мобильное приложение по продаже книг.
+Содержит пример интеграции Tinkoff Acquiring SDK и модуля сканирования Card-IO в мобильное приложение по продаже книг.
 
 ### Поддержка
-- Просьба, по возникающим вопросам обращаться на [card_acquiring@tinkoff.ru][support-email]
+- Просьба, по возникающим вопросам обращаться на [oplata@tinkoff.ru][support-email]
 - Баги и feature-реквесты можно направлять в раздел [issues][issues]
 - [JavaDoc][javadoc]
 
 [search.maven]: http://search.maven.org/#search|ga|1|ru.tinkoff.acquiring.ui
 [build-config]: https://developer.android.com/studio/build/index.html
-[support-email]: mailto:card_acquiring@tinkoff.ru
+[support-email]: mailto:oplata@tinkoff.ru
 [issues]: https://github.com/TinkoffCreditSystems/tinkoff-asdk-android/issues
 [acquiring]: https://t.tinkoff.ru/
 [payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html

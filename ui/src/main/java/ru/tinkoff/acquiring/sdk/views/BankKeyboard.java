@@ -144,14 +144,13 @@ public class BankKeyboard extends FrameLayout implements
         edittext.setTextIsSelectable(false);
         edittext.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                showFor((EditText) v);
+            public void onClick(View view) {
+                EditText editText = (EditText) view;
+                if (editText.isEnabled() && editText.isFocusable()) {
+                    showFor(editText);
+                }
             }
         });
-
-        if (edittext.hasFocus()) {
-            showFor(edittext);
-        }
     }
 
     @Override
