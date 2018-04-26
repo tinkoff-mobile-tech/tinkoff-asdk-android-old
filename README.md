@@ -141,13 +141,13 @@ SDK состоит из следующих модулей:
 Содержит пример интеграции Tinkoff Acquiring SDK и модуля сканирования Card-IO в мобильное приложение по продаже книг.
 
 ### Поддержка
-- Просьба, по возникающим вопросам обращаться на [card_acquiring@tinkoff.ru][support-email]
+- Просьба, по возникающим вопросам обращаться на [oplata@tinkoff.ru][support-email]
 - Баги и feature-реквесты можно направлять в раздел [issues][issues]
 - [JavaDoc][javadoc]
 
 [search.maven]: http://search.maven.org/#search|ga|1|ru.tinkoff.acquiring.ui
 [build-config]: https://developer.android.com/studio/build/index.html
-[support-email]: mailto:card_acquiring@tinkoff.ru
+[support-email]: mailto:oplata@tinkoff.ru
 [issues]: https://github.com/TinkoffCreditSystems/tinkoff-asdk-android/issues
 [acquiring]: https://t.tinkoff.ru/
 [payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
