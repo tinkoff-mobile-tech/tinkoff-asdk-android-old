@@ -150,6 +150,31 @@ public class AcquiringSdk extends Journal {
     }
 
     /**
+     * Подтверждает инициированный платеж передачей токена Android Pay
+     *
+     * @param paymentId уникальный идентификатор транзакции в системе Банка
+     * @param token  токен полученный от Android Pay
+     * @param infoEmail email, на который будет отправлена квитанция об оплате
+     * @return Объект ThreeDsData если терминал требует прохождения 3DS, иначе null
+     */
+    public ThreeDsData finishAuthorize(final long paymentId,
+                                       final String token,
+                                       final String infoEmail) {
+        final FinishAuthorizeRequest request = new FinishAuthorizeRequestBuilder(password, terminalKey)
+                .setPaymentId(paymentId)
+                .setAndroidPayToken(token)
+                .setSendEmail(infoEmail != null)
+                .setEmail(infoEmail)
+                .build();
+
+        try {
+            return api.finishAuthorize(request).getThreeDsData();
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
+    /**
      * Возвращает список привязанных карт
      *
      * @param customerKey идентификатор покупателя в системе Продавца

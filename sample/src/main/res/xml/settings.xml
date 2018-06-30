@@ -14,6 +14,11 @@
         android:key="@string/acq_sp_use_first_saved_card"
         android:title="@string/settings_title_use_first_saved_card" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="@string/acq_sp_android_pay"
+        android:title="@string/settings_title_android_pay" />
+
     <ListPreference
         android:defaultValue="@string/acq_sp_default_value_terminal_id"
         android:entries="@array/acq_sp_terminal_keys"

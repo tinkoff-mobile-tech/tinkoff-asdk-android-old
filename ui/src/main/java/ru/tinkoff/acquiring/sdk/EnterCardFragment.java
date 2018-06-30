@@ -658,15 +658,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         AcquiringSdk.log("GPay token: " + token);
         String androidPayToken = Base64.encodeToString(token.getBytes(), Base64.DEFAULT).trim();
 
-//        String token = PaymentData.getFromIntent(data).getPaymentMethodToken().getToken();
-//        try {
-//            token = new JSONObject(new JSONObject(token).getString("signedMessage")).toString();
-//        } catch (JSONException e) {
-//            // ignored
-//        }
-//        String androidPayToken = Base64.encodeToString(token.getBytes(), Base64.DEFAULT).trim();
-
-
         final String enteredEmail = getEmail();
         if (!isEmailValid(enteredEmail)) {
             makeText(getActivity(), R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
@@ -696,6 +687,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private static void initPayment(final AcquiringSdk sdk,
                                     final InitRequestBuilder requestBuilder,
                                     final CardData cardData,
+                                    final String androidPayToken,
                                     final String email,
                                     final boolean chargeMode) {
 
