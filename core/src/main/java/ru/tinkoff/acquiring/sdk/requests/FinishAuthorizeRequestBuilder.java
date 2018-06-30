@@ -63,6 +63,15 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
     }
 
     /**
+     * @param token Токен для оплаты с помощью Android Pay
+     */
+    public FinishAuthorizeRequestBuilder setAndroidPayToken(final String token) {
+        request.setAndroidPayToken(token);
+        request.setSource("GooglePay");
+        return this;
+    }
+
+    /**
      * @param email Email для отправки
      */
     public FinishAuthorizeRequestBuilder setEmail(final String email) {
@@ -73,7 +82,10 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
     @Override
     protected void validate() {
         validateZeroOrPositive(request.getPaymentId(), "Payment ID");
-        if (request.getCardId() == null) {
+        if (request.getAndroidPayToken() != null) {
+            validateNonEmpty(request.getAndroidPayToken(), AcquiringRequest.ANDROID_PAY_TOKEN);
+            validateNonEmpty(request.getSource(), AcquiringRequest.SOURCE);
+        } else if (request.getCardId() == null) {
             validateNonEmpty(request.getCardData(), "Card data");
         } else {
             validateNonEmpty(request.getCardId(), "CardId");

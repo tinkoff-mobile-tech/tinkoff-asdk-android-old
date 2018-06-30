@@ -23,11 +23,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.wallet.WalletConstants;
+
 import java.util.HashMap;
 
 import ru.tinkoff.acquiring.sample.MerchantParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
+import ru.tinkoff.acquiring.sdk.AndroidPayParams;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
@@ -112,6 +115,10 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentDescription = description;
         boolean isCustomKeyboardEnabled = settings.isCustomKeyboardEnabled();
         String terminalId = settings.getTerminalId();
+        AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
+                .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+                .setPublicKey(settings.getAndroidPayPublicKey(terminalId))
+                .build();
         PayFormActivity
                 .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
                 .prepare(orderId,
@@ -131,6 +138,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
                 .setDesignConfiguration(PayCellType.SECURE_LOGOS, PayCellType.PAY_BUTTON, PayCellType.PAYMENT_CARD_REQUISITES)
+                .setAndroidPayParams(settings.isAndroidPayEnabled() ? androidPayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
