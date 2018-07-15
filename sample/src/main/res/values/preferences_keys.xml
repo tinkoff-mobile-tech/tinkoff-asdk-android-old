@@ -5,7 +5,6 @@
     <string name="acq_sp_recurrent_payment" translatable="false">acq_sp_recurrent_payment</string>
     <string name="acq_sp_terminal_id" translatable="false">acq_sp_terminal_id</string>
     <string name="acq_sp_use_first_saved_card" translatable="false">acq_sp_use_first_saved_card</string>
-    <string name="acq_sp_android_pay" translatable="false">acq_sp_android_pay</string>
 
     <string name="acq_sp_default_value_terminal_id" translatable="false">sdk3DS</string>
     <string name="acq_sp_test_sdk_terminal_id" translatable="false">TestSDK</string>
