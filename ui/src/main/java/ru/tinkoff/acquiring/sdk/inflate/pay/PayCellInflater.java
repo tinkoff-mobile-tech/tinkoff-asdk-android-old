@@ -44,7 +44,7 @@ public class PayCellInflater {
     }
 
     public View inflate(ViewGroup container) {
-        validate(PAYMENT_CARD_REQUISITES, PAY_BUTTON, SECURE_LOGOS);
+        validate(PAYMENT_CARD_REQUISITES, PAY_BUTTON);
 
         View root = inflater.inflate(R.layout.acq_fragment_enter_card_base, container, false);
         container = root.findViewById(R.id.ll_container_layout);

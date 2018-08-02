@@ -43,7 +43,7 @@ public class AttachCellInflater {
     }
 
     public View inflate(ViewGroup container) {
-        validate(PAYMENT_CARD_REQUISITES, ATTACH_BUTTON, SECURE_LOGOS);
+        validate(PAYMENT_CARD_REQUISITES, ATTACH_BUTTON);
 
         View root = inflater.inflate(R.layout.acq_fragment_attach_card_base, container, false);
         container = root.findViewById(R.id.ll_container_layout);
