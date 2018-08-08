@@ -426,17 +426,15 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         CardRequirements cardRequirements = CardRequirements.newBuilder()
                 .addAllowedCardNetworks(
-                        Arrays.asList(
-                                WalletConstants.CARD_NETWORK_AMEX,
-                                WalletConstants.CARD_NETWORK_DISCOVER,
-                                WalletConstants.CARD_NETWORK_VISA,
+                        Arrays.asList(WalletConstants.CARD_NETWORK_VISA,
                                 WalletConstants.CARD_NETWORK_MASTERCARD))
                 .build();
 
         PaymentMethodTokenizationParameters params =
                 PaymentMethodTokenizationParameters.newBuilder()
-                        .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_DIRECT)
+                        .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
                         .addParameter("publicKey", androidPayParams.getPublicKey())
+                        .addParameter("gateway", "tinkoff")
                         .build();
 
         PaymentDataRequest.Builder request =
