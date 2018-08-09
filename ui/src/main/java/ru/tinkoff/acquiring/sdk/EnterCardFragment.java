@@ -433,7 +433,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         PaymentMethodTokenizationParameters params =
                 PaymentMethodTokenizationParameters.newBuilder()
                         .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
-                        .addParameter("publicKey", androidPayParams.getPublicKey())
                         .addParameter("gateway", "tinkoff")
                         .build();
 
