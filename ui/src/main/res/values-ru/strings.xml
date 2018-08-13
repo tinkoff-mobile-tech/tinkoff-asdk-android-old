@@ -37,6 +37,7 @@
     <string name="acq_no_scan_providers">Отсутвуют провайдеры для сканирования</string>
     <string name="acq_complete_payment">Для совершения платежа, введите CVC</string>
     <string name="acq_complete_payment_ok">ОК</string>
+    <string name="acq_attach_card">Привязать карту</string>
 
     <string-array name="acq_scan_types">
         <item>Сканировать камерой</item>

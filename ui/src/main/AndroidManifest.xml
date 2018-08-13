@@ -21,7 +21,7 @@
 
         <activity
             android:name=".AttachCardFormActivity"
-            android:theme="@style/AcquiringTheme" />
+            android:theme="@style/AcquiringAttachCardTheme" />
 
     </application>
 

@@ -35,7 +35,10 @@
         <item name="acqPayButtonAndIconPosition">buttonUnderFieldsIconsOnBottom</item>
         <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount</item>
         <item name="acqMoneyAmountFormat">@string/acq_money_amount_format</item>
+    </style>
 
+    <style name="AcquiringAttachCardTheme" parent="AcquiringTheme">
+        <item name="acqButtonStyle">@style/AcquiringAttachButtonStyle</item>
     </style>
 
     <style name="AcquiringNfcTheme" parent="AcquiringTheme">
@@ -164,6 +167,10 @@
 
     <style name="AcquiringPaySecureIconStyle">
         <item name="android:src">@drawable/acq_logos_bottom</item>
+    </style>
+
+    <style name="AcquiringAttachButtonStyle" parent="AcquiringButtonStyle">
+        <item name="android:text">@string/acq_attach_card</item>
     </style>
 
 </resources>

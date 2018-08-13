@@ -36,6 +36,7 @@
     <string name="acq_no_scan_providers">There aren\'t any providers</string>
     <string name="acq_complete_payment">To complete payment, enter CVC</string>
     <string name="acq_complete_payment_ok">OK</string>
+    <string name="acq_attach_card">Attach card</string>
 
     <string-array name="acq_scan_types">
         <item>Scan with camera</item>
