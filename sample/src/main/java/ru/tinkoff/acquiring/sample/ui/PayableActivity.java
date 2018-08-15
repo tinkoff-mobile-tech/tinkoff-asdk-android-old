@@ -117,7 +117,6 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         String terminalId = settings.getTerminalId();
         AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
                 .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
-                .setPublicKey(settings.getAndroidPayPublicKey(terminalId))
                 .build();
         PayFormActivity
                 .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)

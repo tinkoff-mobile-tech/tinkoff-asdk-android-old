@@ -46,7 +46,6 @@ final public class AndroidPayParams implements Parcelable {
     public static class Builder {
 
         private String merchantName = "";
-        private String publicKey;
         private String countryCode = "RU";
         private boolean isPhoneRequired = false;
         private boolean isAddressRequired = false;
@@ -95,15 +94,9 @@ final public class AndroidPayParams implements Parcelable {
             return this;
         }
 
-        public Builder setPublicKey(String publicKey) {
-            this.publicKey = publicKey;
-            return this;
-        }
-
         public AndroidPayParams build() {
             AndroidPayParams params = new AndroidPayParams();
             params.merchantName = this.merchantName;
-            params.publicKey = this.publicKey;
             params.countryCode = this.countryCode;
             params.isPhoneRequired = this.isPhoneRequired;
             params.isAddressRequired = this.isAddressRequired;
@@ -118,7 +111,6 @@ final public class AndroidPayParams implements Parcelable {
     public static final String CURRENCY_CODE = "RUB";
 
     private String merchantName;
-    private String publicKey;
     private String countryCode;
     private boolean isPhoneRequired;
     private boolean isAddressRequired;
@@ -133,7 +125,6 @@ final public class AndroidPayParams implements Parcelable {
 
     private AndroidPayParams(Parcel in) {
         merchantName = in.readString();
-        publicKey = in.readString();
         countryCode = in.readString();
         isPhoneRequired = in.readByte() != 0;
         isAddressRequired = in.readByte() != 0;
@@ -146,7 +137,6 @@ final public class AndroidPayParams implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(merchantName);
-        dest.writeString(publicKey);
         dest.writeString(countryCode);
         dest.writeByte((byte) (isPhoneRequired ? 1 : 0));
         dest.writeByte((byte) (isAddressRequired ? 1 : 0));
@@ -163,10 +153,6 @@ final public class AndroidPayParams implements Parcelable {
 
     public String getMerchantName() {
         return merchantName;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
     }
 
     public String getCountryCode() {
@@ -196,6 +182,4 @@ final public class AndroidPayParams implements Parcelable {
     public int getTheme() {
         return theme;
     }
-
-
 }

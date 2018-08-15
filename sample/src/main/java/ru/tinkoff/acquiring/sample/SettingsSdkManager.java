@@ -5,9 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StyleRes;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ru.tinkoff.acquiring.sample.camera.DemoCameraScanner;
 import ru.tinkoff.acquiring.sdk.ICameraCardScanner;
 import ru.tinkoff.acquiring.sdk.card.io.CameraCardIOScanner;
@@ -21,15 +18,9 @@ public class SettingsSdkManager {
     private final Context context;
     private final SharedPreferences preferences;
 
-    private final Map<String, String> keys = new HashMap<>();
-
     public SettingsSdkManager(Context context) {
         this.context = context;
         this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        keys.put(context.getString(R.string.acq_sp_default_value_terminal_id), "BHpsDK6YMP9Ps1drHv5yiTunqgCNTZM5rPIxToLDWKgLvCFHVSuqccxN/aHxeAXDbb61B8s3plQadugtL2Ln9pc=");
-        keys.put(context.getString(R.string.acq_sp_test_sdk_terminal_id), "BGbkgMjU6/bQyKzDkO4Vz5Qs9Qw5tHWZq3puUwMcqKCDUNMYcrxOgaHjFWdB3khRzQhe8mgxaQoEKxnUDmxsKD8=");
-        keys.put(context.getString(R.string.acq_sp_sdk_non_3ds_terminal_id), null);
     }
 
     public boolean isCustomKeyboardEnabled() {
@@ -106,9 +97,5 @@ public class SettingsSdkManager {
             return new CameraCardIOScanner();
         }
         return new DemoCameraScanner();
-    }
-
-    public String getAndroidPayPublicKey(String terminal) {
-        return keys.get(terminal);
     }
 }
