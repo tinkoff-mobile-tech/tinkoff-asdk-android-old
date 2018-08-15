@@ -339,7 +339,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             onCardReady();
         }
 
-        if (androidPayParams != null && androidPayParams.getPublicKey() != null) {
+        if (androidPayParams != null) {
             initGoogleApiClient();
             initAndroidPay();
         } else {
@@ -433,6 +433,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         PaymentMethodTokenizationParameters params =
                 PaymentMethodTokenizationParameters.newBuilder()
                         .setPaymentMethodTokenizationType(WalletConstants.PAYMENT_METHOD_TOKENIZATION_TYPE_PAYMENT_GATEWAY)
+                        .addParameter("gatewayMerchantId", sdk.getTerminalKey())
                         .addParameter("gateway", "tinkoff")
                         .build();
 
