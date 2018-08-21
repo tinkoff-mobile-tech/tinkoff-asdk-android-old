@@ -21,7 +21,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,9 +59,6 @@ import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,11 +83,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 5;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
-
-    private static final int AMOUNT_POSITION_INDEX = 0;
-    private static final int BUTTON_POSITION_INDEX = 1;
-    private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
-    private static final int MONEY_AMOUNT_FORMAT_INDEX = 3;
 
     private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
 
@@ -148,12 +141,19 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat, R.attr.acqMoneyAmountFormat});
-        amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
-        buttonAndIconsPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM);
-        payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
-        moneyAmountFormat = typedArray.getString(MONEY_AMOUNT_FORMAT_INDEX);
-        typedArray.recycle();
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.acqPayAmountPosition, typedValue, true);
+        amountPositionMode = typedValue.data;
+
+        theme.resolveAttribute(R.attr.acqPayWithAmountFormat, typedValue, true);
+        payAmountFormat = typedValue.string == null ? "" : typedValue.string.toString();
+
+        theme.resolveAttribute(R.attr.acqPayButtonAndIconPosition, typedValue, true);
+        buttonAndIconsPositionMode = typedValue.data;
+
+        theme.resolveAttribute(R.attr.acqMoneyAmountFormat, typedValue, true);
+        moneyAmountFormat = typedValue.string == null ? "" : typedValue.string.toString();
     }
 
     @Nullable
