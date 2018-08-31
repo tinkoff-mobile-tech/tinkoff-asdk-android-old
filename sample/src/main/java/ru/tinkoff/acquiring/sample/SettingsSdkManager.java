@@ -30,24 +30,24 @@ public class SettingsSdkManager {
 
     public String getTerminalId() {
         String key = context.getString(R.string.acq_sp_terminal_id);
-        String fallback = context.getString(R.string.acq_sp_default_value_terminal_id);
+        String fallback = SessionParams.DEFAULT_TERMINAL_ID;
         return preferences.getString(key, fallback);
     }
 
     public String resolveCustomerKey(String terminalId) {
-        String testSdkTerminalId = context.getString(R.string.acq_sp_test_sdk_terminal_id);
+        String testSdkTerminalId = SessionParams.SDK_TERMINAL_ID;
         if (testSdkTerminalId.equals(terminalId)) {
-            return SessionInfo.TEST_SDK_CUSTOMER_KEY;
+            return SessionParams.TEST_SDK_CUSTOMER_KEY;
         }
-        return SessionInfo.DEFAULT_CUSTOMER_KEY;
+        return SessionParams.DEFAULT_CUSTOMER_KEY;
     }
 
     public String resolveCustomerEmail(String terminalId) {
-        String testSdkTerminalId = context.getString(R.string.acq_sp_test_sdk_terminal_id);
+        String testSdkTerminalId = SessionParams.SDK_TERMINAL_ID;
         if (testSdkTerminalId.equals(terminalId)) {
-            return SessionInfo.TEST_SDK_CUSTOMER_EMAIL;
+            return SessionParams.TEST_SDK_CUSTOMER_EMAIL;
         }
-        return SessionInfo.DEFAULT_CUSTOMER_EMAIL;
+        return SessionParams.DEFAULT_CUSTOMER_EMAIL;
     }
 
     public boolean isRecurrentPayment() {

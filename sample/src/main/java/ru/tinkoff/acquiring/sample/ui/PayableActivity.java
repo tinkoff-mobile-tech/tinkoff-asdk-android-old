@@ -27,7 +27,7 @@ import com.google.android.gms.wallet.WalletConstants;
 
 import java.util.HashMap;
 
-import ru.tinkoff.acquiring.sample.MerchantParams;
+import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sdk.AndroidPayParams;
@@ -119,7 +119,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                 .build();
         PayFormActivity
-                .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                .init(terminalId, SessionParams.PASSWORD, SessionParams.PUBLIC_KEY)
                 .prepare(orderId,
                         amount,
                         paymentTitle,

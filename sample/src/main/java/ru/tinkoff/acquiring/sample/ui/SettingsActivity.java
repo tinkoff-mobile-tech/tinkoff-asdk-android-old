@@ -20,10 +20,12 @@ package ru.tinkoff.acquiring.sample.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -57,6 +59,11 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
+            ListPreference terminalPreference = (ListPreference) findPreference(getString(R.string.acq_sp_terminal_id));
+            CharSequence[] entries = { SessionParams.DEFAULT_TERMINAL_ID, SessionParams.SDK_TERMINAL_ID, SessionParams.NON_3DS_TERMINAL_ID };
+            terminalPreference.setDefaultValue(SessionParams.DEFAULT_TERMINAL_ID);
+            terminalPreference.setEntries(entries);
+            terminalPreference.setEntryValues(entries);
         }
     }
 }

@@ -7,16 +7,6 @@
     <string name="acq_sp_use_first_saved_card" translatable="false">acq_sp_use_first_saved_card</string>
     <string name="acq_sp_android_pay" translatable="false">acq_sp_android_pay</string>
 
-    <string name="acq_sp_default_value_terminal_id" translatable="false">sdk3DS</string>
-    <string name="acq_sp_test_sdk_terminal_id" translatable="false">TestSDK</string>
-    <string name="acq_sp_sdk_non_3ds_terminal_id" translatable="false">sdkNon3DS</string>
-
-    <string-array name="acq_sp_terminal_keys" translatable="false">
-        <item>@string/acq_sp_default_value_terminal_id</item>
-        <item>@string/acq_sp_test_sdk_terminal_id</item>
-        <item>@string/acq_sp_sdk_non_3ds_terminal_id</item>
-    </string-array>
-
     <string name="acq_sp_style_id" translatable="false">acq_sp_style_id</string>
     <string name="acq_sp_default_style_id" translatable="false">Default</string>
     <string name="acq_sp_custom_style_id" translatable="false">Custom</string>

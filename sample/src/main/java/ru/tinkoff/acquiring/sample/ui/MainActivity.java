@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 import ru.tinkoff.acquiring.sample.Book;
 import ru.tinkoff.acquiring.sample.BooksRegistry;
-import ru.tinkoff.acquiring.sample.MerchantParams;
+import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sample.adapters.BooksListAdapter;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements
                 SettingsSdkManager settings = new SettingsSdkManager(this);
                 String terminalId = settings.getTerminalId();
                 AttachCardFormActivity
-                        .init(terminalId, MerchantParams.PASSWORD, MerchantParams.PUBLIC_KEY)
+                        .init(terminalId, SessionParams.PASSWORD, SessionParams.PUBLIC_KEY)
                         .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
                         .setTheme(settings.resolveAttachCardStyle())
                         .setCameraCardScanner(settings.getCameraScanner())
