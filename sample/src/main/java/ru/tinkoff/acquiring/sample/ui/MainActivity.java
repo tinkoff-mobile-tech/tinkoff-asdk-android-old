@@ -77,9 +77,10 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.menu_action_attach_card:
                 SettingsSdkManager settings = new SettingsSdkManager(this);
                 String terminalId = settings.getTerminalId();
+                SessionParams params = SessionParams.get(terminalId);
                 AttachCardFormActivity
-                        .init(terminalId, SessionParams.PASSWORD, SessionParams.PUBLIC_KEY)
-                        .prepare(settings.resolveCustomerKey(terminalId), settings.getCheckType(), settings.isCustomKeyboardEnabled(), settings.resolveCustomerEmail(terminalId))
+                        .init(params.terminalId, params.secret, params.publicKey)
+                        .prepare(params.customerKey, settings.getCheckType(), settings.isCustomKeyboardEnabled(), params.customerEmail)
                         .setTheme(settings.resolveAttachCardStyle())
                         .setCameraCardScanner(settings.getCameraScanner())
                         .setDesignConfiguration(AttachCellType.ATTACH_BUTTON, AttachCellType.SECURE_LOGOS, AttachCellType.PAYMENT_CARD_REQUISITES)

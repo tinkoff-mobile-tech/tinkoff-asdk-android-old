@@ -60,8 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
             ListPreference terminalPreference = (ListPreference) findPreference(getString(R.string.acq_sp_terminal_id));
-            CharSequence[] entries = { SessionParams.DEFAULT_TERMINAL_ID, SessionParams.SDK_TERMINAL_ID, SessionParams.NON_3DS_TERMINAL_ID };
-            terminalPreference.setDefaultValue(SessionParams.DEFAULT_TERMINAL_ID);
+            CharSequence[] entries = { SessionParams.TEST_SDK.terminalId, SessionParams.NON_3DS.terminalId };
+            terminalPreference.setDefaultValue(SessionParams.TEST_SDK.terminalId);
             terminalPreference.setEntries(entries);
             terminalPreference.setEntryValues(entries);
         }

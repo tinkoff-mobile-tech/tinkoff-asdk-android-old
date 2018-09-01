@@ -16,6 +16,9 @@
 
 package ru.tinkoff.acquiring.sample;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -26,15 +29,50 @@ public class SessionParams {
     public static final String TEST_SDK_CUSTOMER_KEY = "testCustomerKey1@gmail.com";
     public static final String TEST_SDK_CUSTOMER_EMAIL = "testCustomerKey1@gmail.com";
 
-    public static final String DEFAULT_TERMINAL_ID = "dk3DS";
-    public static final String SDK_TERMINAL_ID = "TestSDK";
-    public static final String NON_3DS_TERMINAL_ID = "sdkNon3DS";
+    private static final String DEFAULT_TERMINAL_ID = "dk3DS";
+    private static final String SDK_TERMINAL_ID = "TestSDK";
+    private static final String NON_3DS_TERMINAL_ID = "sdkNon3DS";
 
-    public static final String PASSWORD = "12345678";
-    public static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqBiorLS9OrFPezixO5lSsF+HiZPFQWDO\n" +
+    private static final String PASSWORD = "12345678";
+    private static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqBiorLS9OrFPezixO5lSsF+HiZPFQWDO\n" +
             "7x8gBJp4m86Wwz7ePNE8ZV4sUAZBqphdqSpXkybM4CJwxdj5R5q9+RHsb1dbMjThTXniwPpJdw4W\n" +
             "KqG5/cLDrPGJY9NnPifBhA/MthASzoB+60+jCwkFmf8xEE9rZdoJUc2p9FL4wxKQPOuxCqL2iWOx\n" +
             "AO8pxJBAxFojioVu422RWaQvoOMuZzhqUEpxA9T62lN8t3jj9QfHXaL4Ht8kRaa2JlaURtPJB5iB\n" +
             "M+4pBDnqObNS5NFcXOxloZX4+M8zXaFh70jqWfiCzjyhaFg3rTPE2ClseOdS7DLwfB2kNP3K0GuP\n" +
             "uLzsMwIDAQAB";
+
+    public static final SessionParams TEST_SDK = new SessionParams(
+            SDK_TERMINAL_ID, PASSWORD, PUBLIC_KEY, DEFAULT_CUSTOMER_KEY, TEST_SDK_CUSTOMER_EMAIL
+    );
+
+    public static final SessionParams NON_3DS = new SessionParams(
+            NON_3DS_TERMINAL_ID, PASSWORD, PUBLIC_KEY, DEFAULT_CUSTOMER_KEY, TEST_SDK_CUSTOMER_EMAIL
+    );
+
+    public static final SessionParams DEFAULT = TEST_SDK;
+
+    private static Map<String, SessionParams> map = new HashMap<String, SessionParams>() {
+        {
+            put(TEST_SDK.terminalId, TEST_SDK);
+            put(NON_3DS.terminalId, NON_3DS);
+        }
+    };
+
+    public static SessionParams get(String terminalId) {
+        return map.get(terminalId);
+    }
+
+    public final String terminalId;
+    public final String secret;
+    public final String publicKey;
+    public final String customerKey;
+    public final String customerEmail;
+
+    public SessionParams(String terminalId, String secret, String publicKey, String customerKey, String customerEmail) {
+        this.terminalId = terminalId;
+        this.secret = secret;
+        this.publicKey = publicKey;
+        this.customerKey = customerKey;
+        this.customerEmail = customerEmail;
+    }
 }

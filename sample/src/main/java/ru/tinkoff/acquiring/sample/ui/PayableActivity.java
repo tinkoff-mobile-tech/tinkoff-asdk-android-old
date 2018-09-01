@@ -118,25 +118,26 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
                 .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                 .build();
+        SessionParams sessionParams = SessionParams.get(terminalId);
         PayFormActivity
-                .init(terminalId, SessionParams.PASSWORD, SessionParams.PUBLIC_KEY)
+                .init(sessionParams.terminalId, sessionParams.secret, sessionParams.publicKey)
                 .prepare(orderId,
                         amount,
                         paymentTitle,
                         paymentDescription,
                         null,
-                        settings.resolveCustomerEmail(terminalId),
+                        sessionParams.customerEmail,
                         true,
                         isCustomKeyboardEnabled
                 )
-                .setCustomerKey(settings.resolveCustomerKey(terminalId))
+                .setCustomerKey(sessionParams.customerKey)
                 .setChargeMode(settings.isRecurrentPayment())
                 .useFirstAttachedCard(settings.useFirstAttachedCard())
                 .setCameraCardScanner(settings.getCameraScanner())
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
-                .setDesignConfiguration(PayCellType.SECURE_LOGOS, PayCellType.PAY_BUTTON, PayCellType.PAYMENT_CARD_REQUISITES)
+                .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
                 .setAndroidPayParams(settings.isAndroidPayEnabled() ? androidPayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
