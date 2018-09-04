@@ -353,7 +353,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     @Override
-    public void onAndroidPayError() {
+    public void onGooglePayError() {
         hideProgressDialog();
         String title = getString(R.string.acq_default_error_title);
         String message = getString(R.string.acq_default_error_message);
@@ -482,7 +482,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         return list.toArray(new Card[list.size()]);
     }
 
-    public void showAndroidPayError() {
+    public void showGooglePayError() {
         String title = getString(R.string.acq_default_error_title);
         String message = getString(R.string.acq_default_error_message);
         dialogsManager.showErrorDialog(title, message);

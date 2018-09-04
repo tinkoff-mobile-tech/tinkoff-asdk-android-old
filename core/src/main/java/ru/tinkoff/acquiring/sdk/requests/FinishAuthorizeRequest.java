@@ -31,7 +31,7 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
     private String email;
     private String cardId;
     private String cvv;
-    private String androidPayToken;
+    private String googlePayToken;
     private String source;
 
     public FinishAuthorizeRequest() {
@@ -49,7 +49,7 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
         putIfNotNull(CVV, cvv, map);
         putIfNotNull(EMAIL, email, map);
         putIfNotNull(SOURCE, source, map);
-        putIfNotNull(ANDROID_PAY_TOKEN, androidPayToken, map);
+        putIfNotNull(ANDROID_PAY_TOKEN, googlePayToken, map);
 
         return map;
     }
@@ -110,12 +110,12 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
         this.email = email;
     }
 
-    public String getAndroidPayToken() {
-        return androidPayToken;
+    public String getGooglePayToken() {
+        return googlePayToken;
     }
 
-    public void setAndroidPayToken(String token) {
-        this.androidPayToken = token;
+    public void setGooglePayToken(String token) {
+        this.googlePayToken = token;
     }
 
     public String getSource() {

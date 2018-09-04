@@ -13,7 +13,7 @@ Acquiring SDK позволяет интегрировать [Интернет-Э
 - Получение информации о клиенте и сохраненных картах
 - Управление сохраненными картами
 - Поддержка английского
-- Поддержка Android Pay
+- Поддержка Google Pay
 
 ### Требования
 Для работы Tinkoff Acquiring SDK необходим Android версии 4.0 и выше (API level 14).
@@ -129,11 +129,11 @@ SDK состоит из следующих модулей:
 * проходить 3DS подтверждение
 * управлять списком ранее сохраненных карт
 
-#### Android Pay
+#### Google Pay
 
 [Документация](https://developers.google.com/android-pay/)
 
-Для включения Android Pay необходимо:
+Для включения Google Pay необходимо:
 
 Добавить мета информацию в манифест приложения
 
@@ -146,7 +146,7 @@ SDK состоит из следующих модулей:
 Сконфигурировать необходимые параметры 
 
 ```java
-    AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
+    GooglePayParams googlePayParams = new GooglePayParams.Builder()
                     .setMerchantName(getString(R.string.merchant_name))
                     .setAddressRequired(false)
                     .setPhoneRequired(false)
@@ -161,7 +161,7 @@ SDK состоит из следующих модулей:
 PayFormActivity
         .init(TERMINAL_KEY, PASSWORD, PUBLIC_KEY) // данные продавца
         .prepare()
-        .setAndroidPayParams(params)
+        .setGooglePayParams(params)
         .setCustomerKey(CUSTOMER_KEY)
         .startActivityForResult(this, REQUEST_CODE_PAYMENT);
 ```

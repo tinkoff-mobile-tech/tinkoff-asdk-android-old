@@ -13,34 +13,34 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * @author Alex Maksakov
  */
-final public class AndroidPayParams implements Parcelable {
+final public class GooglePayParams implements Parcelable {
 
-    public static final Creator<AndroidPayParams> CREATOR = new Creator<AndroidPayParams>() {
+    public static final Creator<GooglePayParams> CREATOR = new Creator<GooglePayParams>() {
         @Override
-        public AndroidPayParams createFromParcel(Parcel in) {
-            return new AndroidPayParams(in);
+        public GooglePayParams createFromParcel(Parcel in) {
+            return new GooglePayParams(in);
         }
 
         @Override
-        public AndroidPayParams[] newArray(int size) {
-            return new AndroidPayParams[size];
+        public GooglePayParams[] newArray(int size) {
+            return new GooglePayParams[size];
         }
     };
 
     @IntDef({WalletConstants.ENVIRONMENT_SANDBOX, WalletConstants.ENVIRONMENT_PRODUCTION, WalletConstants.ENVIRONMENT_STRICT_SANDBOX, WalletConstants.ENVIRONMENT_TEST})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface AndroidPayEnvironment {
+    public @interface GooglePayEnvironment {
     }
 
     @IntDef({WalletFragmentStyle.BuyButtonText.BUY_WITH, WalletFragmentStyle.BuyButtonText.DONATE_WITH, WalletFragmentStyle.BuyButtonText.LOGO_ONLY})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface AndroidPayButtonText {
+    public @interface GooglePayButtonText {
     }
 
     @IntDef({WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_CLASSIC, WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_GRAYSCALE, WalletFragmentStyle.BuyButtonAppearance.GOOGLE_WALLET_MONOCHROME,
             WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK, WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT, WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT_WITH_BORDER})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface AndroidPayButtonAppearance {
+    public @interface GooglePayButtonAppearance {
     }
 
     public static class Builder {
@@ -69,17 +69,17 @@ final public class AndroidPayParams implements Parcelable {
             return this;
         }
 
-        public Builder setEnvironment(@AndroidPayEnvironment int environment) {
+        public Builder setEnvironment(@GooglePayEnvironment int environment) {
             this.environment = environment;
             return this;
         }
 
-        public Builder setBuyButtonText(@AndroidPayButtonText int buyButtonText) {
+        public Builder setBuyButtonText(@GooglePayButtonText int buyButtonText) {
             this.buyButtonText = buyButtonText;
             return this;
         }
 
-        public Builder setBuyButtonAppearance(@AndroidPayButtonAppearance int buyButtonAppearance) {
+        public Builder setBuyButtonAppearance(@GooglePayButtonAppearance int buyButtonAppearance) {
             this.buyButtonAppearance = buyButtonAppearance;
             return this;
         }
@@ -94,8 +94,8 @@ final public class AndroidPayParams implements Parcelable {
             return this;
         }
 
-        public AndroidPayParams build() {
-            AndroidPayParams params = new AndroidPayParams();
+        public GooglePayParams build() {
+            GooglePayParams params = new GooglePayParams();
             params.merchantName = this.merchantName;
             params.countryCode = this.countryCode;
             params.isPhoneRequired = this.isPhoneRequired;
@@ -119,11 +119,11 @@ final public class AndroidPayParams implements Parcelable {
     private int buyButtonAppearance;
     private int theme;
 
-    private AndroidPayParams() {
+    private GooglePayParams() {
 
     }
 
-    private AndroidPayParams(Parcel in) {
+    private GooglePayParams(Parcel in) {
         merchantName = in.readString();
         countryCode = in.readString();
         isPhoneRequired = in.readByte() != 0;

@@ -150,10 +150,10 @@ public class AcquiringSdk extends Journal {
     }
 
     /**
-     * Подтверждает инициированный платеж передачей токена Android Pay
+     * Подтверждает инициированный платеж передачей токена Google Pay
      *
      * @param paymentId уникальный идентификатор транзакции в системе Банка
-     * @param token  токен полученный от Android Pay
+     * @param token  токен полученный от Google Pay
      * @param infoEmail email, на который будет отправлена квитанция об оплате
      * @return Объект ThreeDsData если терминал требует прохождения 3DS, иначе null
      */
@@ -162,7 +162,7 @@ public class AcquiringSdk extends Journal {
                                        final String infoEmail) {
         final FinishAuthorizeRequest request = new FinishAuthorizeRequestBuilder(password, terminalKey)
                 .setPaymentId(paymentId)
-                .setAndroidPayToken(token)
+                .setGooglePayToken(token)
                 .setSendEmail(infoEmail != null)
                 .setEmail(infoEmail)
                 .build();

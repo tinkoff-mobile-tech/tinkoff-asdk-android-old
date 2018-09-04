@@ -13,5 +13,5 @@ public interface IPayFormActivity extends IBaseSdkActivity {
 
     void onChargeRequestRejected(PaymentInfo paymentInfo);
 
-    void onAndroidPayError();
+    void onGooglePayError();
 }

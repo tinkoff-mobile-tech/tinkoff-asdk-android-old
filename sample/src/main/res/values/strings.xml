@@ -39,7 +39,7 @@
     <string name="settings_title_use_system_keyboard">Use system keyboard</string>
     <string name="settings_title_recurrent_payment">Recurrent payment</string>
     <string name="settings_title_use_first_saved_card">Use attached card</string>
-    <string name="settings_title_android_pay">AndroidPay</string>
+    <string name="settings_title_google_pay">GooglePay</string>
     <string name="settings_title_terminal_id">Terminal</string>
     <string name="settings_title_style_id">Style</string>
     <string name="settings_title_check_type_id">CheckType</string>

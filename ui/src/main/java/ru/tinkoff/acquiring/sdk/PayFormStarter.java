@@ -72,9 +72,9 @@ public class PayFormStarter {
         return this;
     }
 
-    public PayFormStarter setAndroidPayParams(AndroidPayParams androidPayParams) {
+    public PayFormStarter setGooglePayParams(GooglePayParams googlePayParams) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS, androidPayParams);
+        intent.putExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS, googlePayParams);
         return this;
     }
 

@@ -42,7 +42,7 @@ public class SettingsSdkManager {
         return preferences.getBoolean(context.getString(R.string.acq_sp_use_first_saved_card), true);
     }
 
-    public boolean isAndroidPayEnabled() {
+    public boolean isGooglePayEnabled() {
         return preferences.getBoolean(context.getString(R.string.acq_sp_android_pay), true);
     }
 

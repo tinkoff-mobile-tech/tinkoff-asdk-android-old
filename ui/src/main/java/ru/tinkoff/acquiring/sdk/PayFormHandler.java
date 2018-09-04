@@ -77,7 +77,7 @@ class PayFormHandler extends Handler {
                 return;
             case ANDROID_PAY_ERROR:
                 for (IPayFormActivity activity : callbacks) {
-                    activity.onAndroidPayError();
+                    activity.onGooglePayError();
                 }
                 return;
         }

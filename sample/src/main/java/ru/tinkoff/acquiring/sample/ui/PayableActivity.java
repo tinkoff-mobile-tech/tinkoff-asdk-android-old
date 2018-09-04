@@ -30,7 +30,7 @@ import java.util.HashMap;
 import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
-import ru.tinkoff.acquiring.sdk.AndroidPayParams;
+import ru.tinkoff.acquiring.sdk.GooglePayParams;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
@@ -115,7 +115,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         this.paymentDescription = description;
         boolean isCustomKeyboardEnabled = settings.isCustomKeyboardEnabled();
         String terminalId = settings.getTerminalId();
-        AndroidPayParams androidPayParams = new AndroidPayParams.Builder()
+        GooglePayParams googlePayParams = new GooglePayParams.Builder()
                 .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                 .build();
         SessionParams sessionParams = SessionParams.get(terminalId);
@@ -138,7 +138,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
                 .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
-                .setAndroidPayParams(settings.isAndroidPayEnabled() ? androidPayParams : null)
+                .setGooglePayParams(settings.isGooglePayEnabled() ? googlePayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }
 
