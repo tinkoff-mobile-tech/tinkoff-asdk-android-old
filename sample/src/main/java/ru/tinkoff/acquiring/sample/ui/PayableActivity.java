@@ -116,7 +116,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         boolean isCustomKeyboardEnabled = settings.isCustomKeyboardEnabled();
         String terminalId = settings.getTerminalId();
         GooglePayParams googlePayParams = new GooglePayParams.Builder()
-                .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
+                .setEnvironment(SessionParams.GPAY_ENVIRONMENT)
                 .build();
         SessionParams sessionParams = SessionParams.get(terminalId);
         PayFormActivity

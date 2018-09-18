@@ -13,6 +13,7 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        doNotStrip '*/mips/*.so'
     }
 
     lintOptions {
@@ -23,8 +24,8 @@ android {
         applicationId "ru.tinkoff.acquiring.sample"
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 39
-        versionName "1.3.3"
+        versionCode 41
+        versionName "1.4.0"
     }
 
     buildTypes {

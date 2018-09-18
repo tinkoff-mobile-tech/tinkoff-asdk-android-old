@@ -25,6 +25,8 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import java.util.Collection;
+
 import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 
@@ -60,7 +62,13 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings);
             ListPreference terminalPreference = (ListPreference) findPreference(getString(R.string.acq_sp_terminal_id));
-            CharSequence[] entries = { SessionParams.TEST_SDK.terminalId, SessionParams.NON_3DS.terminalId };
+            Collection<SessionParams> terminals = SessionParams.terminals();
+            CharSequence[] entries = new CharSequence[terminals.size()];
+            int i = 0;
+            for (SessionParams params : terminals) {
+                entries[i] = params.terminalId;
+                i++;
+            }
             terminalPreference.setDefaultValue(SessionParams.TEST_SDK.terminalId);
             terminalPreference.setEntries(entries);
             terminalPreference.setEntryValues(entries);
