@@ -54,11 +54,7 @@
         <activity
             android:name=".camera.DemoCameraScanActivity"
             android:label="Camera Scan" />
-
-        <activity
-            android:name="ru.tinkoff.acquiring.sdk.nfc.AsdkNfcScanActivity"
-            android:screenOrientation="portrait" />
-
+        
     </application>
 
 </manifest>
