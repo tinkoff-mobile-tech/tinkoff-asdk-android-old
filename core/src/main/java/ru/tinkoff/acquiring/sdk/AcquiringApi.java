@@ -70,6 +70,7 @@ public class AcquiringApi {
 
     private static final String JSON = "application/json";
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
+    private static final int TIMEOUT = 60000;
 
     private static final String[] oldMethods = {"Submit3DSAuthorization"};
     private static final List<String> oldMethodsList = Arrays.asList(oldMethods);
@@ -146,6 +147,8 @@ public class AcquiringApi {
             final String requestBody = formatRequestBody(request.asMap(), request.getApiMethod());
             final HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
             connection.setRequestMethod(API_REQUEST_METHOD);
+            connection.setConnectTimeout(TIMEOUT);
+            connection.setReadTimeout(TIMEOUT);
             Journal.log(String.format("=== Sending %s request to %s", API_REQUEST_METHOD, targetUrl.toString()));
 
             if (!requestBody.isEmpty()) {
