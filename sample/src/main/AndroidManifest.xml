@@ -54,7 +54,9 @@
         <activity
             android:name=".camera.DemoCameraScanActivity"
             android:label="Camera Scan" />
-        
+
+        <activity android:name=".ui.PaymentTestActivity"/>
+
     </application>
 
 </manifest>

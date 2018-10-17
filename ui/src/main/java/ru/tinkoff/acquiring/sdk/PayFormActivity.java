@@ -23,6 +23,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -73,6 +75,9 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
     static final String EXTRA_DESIGN_CONFIGURATION = "design_configuration";
     static final String EXTRA_ANDROID_PAY_PARAMS = "android_pay_params";
+    public static final String EXTRA_CARD_DATA = "extra_card_data";
+    public static final String EXTRA_PAYMENT_INFO = "extra_payment_info";
+    public static final String EXTRA_THREE_DS = "extra_three_ds";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -158,11 +163,17 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
         if (savedInstanceState == null) {
             isCardsReady = false;
-            startFinishAuthorized();
-            if (isCardChooseEnable()) {
-                String customerKey = intent.getStringExtra(EXTRA_CUSTOMER_KEY);
-                showProgressDialog();
-                requestCards(customerKey, cardManager);
+            if (intent.hasExtra(EXTRA_PAYMENT_INFO)) {
+                showRejected();
+            } else if (intent.hasExtra(EXTRA_THREE_DS)) {
+                showThreeDsData();
+            } else {
+                startFinishAuthorized();
+                if (isCardChooseEnable()) {
+                    String customerKey = intent.getStringExtra(EXTRA_CUSTOMER_KEY);
+                    showProgressDialog();
+                    requestCards(customerKey, cardManager);
+                }
             }
         } else {
             cards = new CardsArrayBundlePacker().unpack(savedInstanceState.getBundle(INSTANCE_KEY_CARDS));
@@ -171,6 +182,29 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
                 sourceCard = cards[idx];
             }
         }
+    }
+
+    private void showRejected() {
+        Bundle paymentInfoBundle = getIntent().getBundleExtra(EXTRA_PAYMENT_INFO);
+        Bundle cardInfoBundle = getIntent().getBundleExtra(EXTRA_CARD_DATA);
+        Card[] cards = new CardsArrayBundlePacker().unpack(cardInfoBundle);
+        final PaymentInfo paymentInfo = new PaymentInfoBundlePacker().unpack(paymentInfoBundle);
+
+        startFinishAuthorized();
+        onCardsReady(cards);
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onChargeRequestRejected(paymentInfo);
+            }
+        }, 500);
+    }
+
+    private void showThreeDsData() {
+        Bundle threeDsBundle = getIntent().getBundleExtra(EXTRA_THREE_DS);
+        ThreeDsData threeDsData = new ThreeDsBundlePacker().unpack(threeDsBundle);
+        start3DS(threeDsData);
     }
 
     @Override

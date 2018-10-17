@@ -21,7 +21,7 @@ import android.os.Bundle;
 /**
  * @author a.shishkin1
  */
-class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
+public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
     private static final String PAYMENT_ID = "paymentId";
     private static final String REQUEST_KEY = "requestKey";
