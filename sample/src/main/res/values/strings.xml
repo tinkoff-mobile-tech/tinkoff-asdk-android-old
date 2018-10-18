@@ -60,4 +60,6 @@
     <string name="attachment_description">Attachment Descriptions</string>
     <string name="attachment_button">Attach Card</string>
     <string name="attachment_button_ex">"Attach Card ¯\\_(ツ)_/¯"</string>
+
+    <string name="payment_test" translatable="false">Test payment</string>
 </resources>

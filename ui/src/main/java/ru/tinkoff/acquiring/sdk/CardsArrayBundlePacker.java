@@ -29,7 +29,7 @@ import java.io.ObjectOutputStream;
 /**
  * @author a.shishkin1
  */
-class CardsArrayBundlePacker implements IBundlePacker<Card[]> {
+public class CardsArrayBundlePacker implements IBundlePacker<Card[]> {
 
 
     private static final String COUNT = "count";

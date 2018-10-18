@@ -42,6 +42,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile project(':ui')
     compile project(':card-io')
+    compile project(':payment')
 
     androidTestCompile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
