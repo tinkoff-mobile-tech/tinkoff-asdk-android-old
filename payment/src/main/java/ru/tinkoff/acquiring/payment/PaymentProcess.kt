@@ -19,13 +19,17 @@ class PaymentProcess internal constructor() {
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
     private var lastKnownAction: Int? = null
+    private var state : Int = CREATED
 
     private companion object {
-
         private const val SUCCESS = 1
         private const val START_3DS = 2
         private const val CHARGE_REQUEST_REJECTED = 3
         private const val EXCEPTION = 4
+
+        private const val CREATED = 0
+        private const val EXECUTING = 1
+        private const val FINISHED = 2
     }
 
     @JvmSynthetic
@@ -37,7 +41,7 @@ class PaymentProcess internal constructor() {
                     .setAmount(coins)
                     .setChargeFlag(chargeMode)
                     .setCustomerKey(customerKey)
-                    .setRecurrent(recurrentPayment);
+                    .setRecurrent(recurrentPayment)
         }
         paymentDataUi.recurrentPayment = paymentData.recurrentPayment
         return this
@@ -54,12 +58,12 @@ class PaymentProcess internal constructor() {
             try {
                 val paymentId = sdk.init(requestBuilder)
 
-                if (Thread.interrupted()) return@Runnable
+                if (Thread.interrupted()) throw InterruptedException()
 
                 handler.run {
                     if (!chargeMode) {
                         val threeDsData = sdk.finishAuthorize(paymentId, cardData, email)
-                        if (Thread.interrupted()) return@Runnable
+                        if (Thread.interrupted()) throw InterruptedException()
 
                         if (threeDsData.isThreeDsNeed) {
                             obtainMessage(START_3DS, threeDsData)
@@ -96,24 +100,22 @@ class PaymentProcess internal constructor() {
         sendToListener(lastKnownAction ?: return, paymentListener)
     }
 
-    fun unSubscribe(paymentListener: PaymentListener) {
+    fun unsubscribe(paymentListener: PaymentListener) {
         this.paymentListeners -= paymentListener
     }
 
     fun start(): PaymentProcess {
-        if (!thread.isAlive) {
-            thread.start()
+        if (state != CREATED) {
+            throw IllegalStateException("already in use create another PaymentProcess")
         }
+        state = EXECUTING
+        thread.start()
         return this
     }
 
     fun stop() {
         thread.interrupt()
-        paymentListeners = HashSet()
-    }
-
-    fun clear() {
-        thread.interrupt()
+        state = FINISHED
     }
 
     private fun sendToListeners(action: Int) {
@@ -148,6 +150,7 @@ class PaymentProcess internal constructor() {
                 EXCEPTION -> lastException = (msg.obj as Exception)
             }
             sendToListeners(msg.what)
+            state = FINISHED
         }
     }
 
