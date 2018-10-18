@@ -97,7 +97,10 @@ class PaymentProcess internal constructor() {
 
     fun subscribe(paymentListener: PaymentListener) {
         this.paymentListeners += paymentListener
-        sendToListener(lastKnownAction ?: return, paymentListener)
+        val action = lastKnownAction
+        if (action != null) {
+            sendToListener(action,  paymentListener)
+        }
     }
 
     fun unsubscribe(paymentListener: PaymentListener) {
