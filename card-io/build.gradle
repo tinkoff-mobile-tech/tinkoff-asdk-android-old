@@ -1,13 +1,15 @@
 apply plugin: 'com.android.library'
+apply from: '../gradle/versions.gradle'
+
 
 dependencies {
-    compile 'io.card:android-sdk:5.4.1'
-    compile project(':ui')
+    implementation 'io.card:android-sdk:5.4.1'
+    implementation project(':ui')
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion compileSdk
+    buildToolsVersion buildTools
 
     lintOptions {
         disable 'InvalidPackage'
@@ -20,8 +22,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
 

@@ -16,5 +16,5 @@
 -->
 
 <resources>
-    <string name="gpay_content_description">Купить с помощью Google Pay</string>
+    <string name="gpay_content_description" translatable="false">Купить с помощью Google Pay</string>
 </resources>

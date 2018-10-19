@@ -1,14 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply from: '../gradle/versions.gradle'
+
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion compileSdk
 
+    lintOptions {
 
+        ignore "OldTargetApi"
+    }
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 28
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
         versionCode 1
         versionName "1.0"
     }
