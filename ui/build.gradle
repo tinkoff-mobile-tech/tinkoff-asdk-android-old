@@ -1,23 +1,21 @@
 apply plugin: 'com.android.library'
-
-def coreVersion = '3.1.7'
-
+apply from: '../gradle/versions.gradle'
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support:support-v4:27.0.2'
-    compile 'com.android.support:transition:27.0.2'
-    compile "ru.tinkoff.core:core-nfc:${coreVersion}"
-    compile("com.google.android.gms:play-services-wallet:11.6.2") {
+    api "com.android.support:appcompat-v7:$supportVersion"
+    api "com.android.support:support-v4:$supportVersion"
+    api "com.android.support:transition:$supportVersion"
+    implementation "ru.tinkoff.core:core-nfc:${coreVersion}"
+    api("com.google.android.gms:play-services-wallet:11.6.2") {
         exclude module: 'support-v4'
     }
 
-    compile project(':core')
+    api project(':core')
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion compileSdk
+    buildToolsVersion buildTools
 
     lintOptions {
         disable 'InvalidPackage'
@@ -30,8 +28,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
 

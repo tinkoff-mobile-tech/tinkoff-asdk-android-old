@@ -125,6 +125,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private GooglePayParams googlePayParams;
 
+    private RejectAction rejectAction;
+
     private boolean chargeMode;
     private int amountPositionMode;
     private int buttonAndIconsPositionMode;
@@ -160,21 +162,21 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         PayCellType[] cellTypes = PayCellType.toPayCellTypeArray(intTypes);
         View view = PayCellInflater.from(inflater, cellTypes).inflate(container);
 
-        ecvCard = (EditCardView) view.findViewById(R.id.ecv_card);
+        ecvCard = view.findViewById(R.id.ecv_card);
 
-        tvSrcCardLabel = (TextView) view.findViewById(R.id.tv_src_card_label);
-        tvDescription = (TextView) view.findViewById(R.id.tv_description);
-        tvTitle = (TextView) view.findViewById(R.id.tv_title);
-        tvAmount = (TextView) view.findViewById(R.id.tv_amount);
-        tvChooseCardButton = (TextView) view.findViewById(R.id.tv_src_card_choose_btn);
-        btnPay = (Button) view.findViewById(R.id.btn_pay);
+        tvSrcCardLabel = view.findViewById(R.id.tv_src_card_label);
+        tvDescription = view.findViewById(R.id.tv_description);
+        tvTitle = view.findViewById(R.id.tv_title);
+        tvAmount = view.findViewById(R.id.tv_amount);
+        tvChooseCardButton = view.findViewById(R.id.tv_src_card_choose_btn);
+        btnPay = view.findViewById(R.id.btn_pay);
         btnGooglePay = view.findViewById(R.id.rl_google_play_button);
         if (btnGooglePay != null) {
             btnGooglePay.setEnabled(false);
         }
         srcCardChooser = view.findViewById(R.id.ll_src_card_chooser);
 
-        etEmail = (EditText) view.findViewById(R.id.et_email);
+        etEmail = view.findViewById(R.id.et_email);
 
         final FragmentActivity activity = getActivity();
         cardScanner = new FullCardScanner(this, (ICameraCardScanner) activity.getIntent().getSerializableExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER));
@@ -184,7 +186,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             ecvCard.setBtnScanIcon(View.NO_ID);
         }
 
-        customKeyboard = (BankKeyboard) view.findViewById(R.id.acq_keyboard);
+        customKeyboard = view.findViewById(R.id.acq_keyboard);
 
         googlePayParams = activity.getIntent().getParcelableExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS);
         boolean isUsingCustomKeyboard = ((PayFormActivity) activity).shouldUseCustomKeyboard();
@@ -300,6 +302,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 }
             });
         }
+        if (rejectAction != null) {
+            rejectAction.onPerformReject();
+        }
     }
 
     @Override
@@ -370,7 +375,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_CARD)
                 .addAllowedPaymentMethod(WalletConstants.PAYMENT_METHOD_TOKENIZED_CARD)
                 .build();
-
 
         Wallet.WalletOptions options = new Wallet.WalletOptions.Builder()
                 .setEnvironment(googlePayParams.getEnvironment())
@@ -725,7 +729,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                     msg.sendToTarget();
                 }
             }
-
         }).start();
     }
 
@@ -842,5 +845,14 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         } else {
             return false;
         }
+    }
+
+    protected final void setRejectAction(RejectAction rejectAction) {
+        this.rejectAction = rejectAction;
+    }
+
+    protected interface RejectAction {
+
+        void onPerformReject();
     }
 }

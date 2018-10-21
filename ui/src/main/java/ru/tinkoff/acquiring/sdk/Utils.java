@@ -60,7 +60,7 @@ class Utils {
         for (Object current : args) {
             if (current instanceof Closeable) {
                 closeCloseable((Closeable) current);
-            } else if (current instanceof AutoCloseable) {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && current instanceof AutoCloseable) {
                 closeCloseable((AutoCloseable) current);
             } else {
                 String msg = "close not supported for " + ((current == null) ? "null" : current.getClass().getCanonicalName());

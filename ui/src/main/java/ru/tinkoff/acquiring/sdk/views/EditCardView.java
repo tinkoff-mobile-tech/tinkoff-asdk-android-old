@@ -1213,7 +1213,6 @@ public class EditCardView extends ViewGroup {
         private int mode;
         private float animationFactor = 0f;
 
-
         private OnFocusChangeListener customOnFocusChangedListener;
 
         public CardNumberEditText(Context context) {
@@ -1288,7 +1287,7 @@ public class EditCardView extends ViewGroup {
             this.customOnFocusChangedListener = customOnFocusChangedListener;
         }
 
-        public static final Property<CardNumberEditText, Float> ANIMATION_FACTOR = new FloatProperty<CardNumberEditText>("card_number_animation_factor") {
+        public static final Property<CardNumberEditText, Float> ANIMATION_FACTOR = new Property<CardNumberEditText, Float>(Float.class, "card_number_animation_factor") {
 
             @Override
             public Float get(CardNumberEditText object) {
@@ -1296,7 +1295,7 @@ public class EditCardView extends ViewGroup {
             }
 
             @Override
-            public void setValue(CardNumberEditText object, float value) {
+            public void set(CardNumberEditText object, Float value) {
                 object.setAnimationFactor(value);
             }
         };
@@ -1325,7 +1324,7 @@ public class EditCardView extends ViewGroup {
             tp.setColor(color);
         }
 
-        public static final Property<MutableColorSpan, Integer> ALPHA = new IntProperty<MutableColorSpan>("span_alpha") {
+        public static final Property<MutableColorSpan, Integer> ALPHA = new Property<MutableColorSpan, Integer>(Integer.class, "span_alpha") {
 
             @Override
             public Integer get(MutableColorSpan object) {
@@ -1333,7 +1332,7 @@ public class EditCardView extends ViewGroup {
             }
 
             @Override
-            public void setValue(MutableColorSpan object, int value) {
+            public void set(MutableColorSpan object, Integer value) {
                 object.setAlpha(value);
             }
         };
@@ -1448,7 +1447,7 @@ public class EditCardView extends ViewGroup {
         }
     }
 
-    public static final Property<EditCardView, Float> CARD_SYSTEM_LOGO_ANIMATION_FACTOR = new FloatProperty<EditCardView>("card_view_logo_animation_factor") {
+    public static final Property<EditCardView, Float> CARD_SYSTEM_LOGO_ANIMATION_FACTOR = new Property<EditCardView, Float>(Float.class, "card_view_logo_animation_factor") {
 
         @Override
         public Float get(EditCardView object) {
@@ -1456,12 +1455,12 @@ public class EditCardView extends ViewGroup {
         }
 
         @Override
-        public void setValue(EditCardView object, float value) {
+        public void set(EditCardView object, Float value) {
             object.setCardSystemLogoAnimationFactor(value);
         }
     };
 
-    public static final Property<Paint, Integer> PAINT_ALPHA = new IntProperty<Paint>("paint_alpha") {
+    public static final Property<Paint, Integer> PAINT_ALPHA = new Property<Paint, Integer>(Integer.class, "paint_alpha") {
 
         @Override
         public Integer get(Paint object) {
@@ -1469,7 +1468,7 @@ public class EditCardView extends ViewGroup {
         }
 
         @Override
-        public void setValue(Paint object, int value) {
+        public void set(Paint object, Integer value) {
             object.setAlpha(value);
         }
     };

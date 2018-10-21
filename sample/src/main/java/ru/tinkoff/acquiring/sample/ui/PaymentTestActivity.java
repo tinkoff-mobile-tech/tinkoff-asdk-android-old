@@ -93,7 +93,7 @@ public class PaymentTestActivity extends AppCompatActivity {
     }
 
     private CardData randomCard() {
-        return new CardData("2222222222222224", "08/22", "111");
+        return new CardData("2222222222222224", "08/22", "111", null, "144055");
     }
 
     private PaymentData randomPaymentInfo() {

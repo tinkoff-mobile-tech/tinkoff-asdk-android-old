@@ -23,8 +23,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -191,14 +189,20 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         final PaymentInfo paymentInfo = new PaymentInfoBundlePacker().unpack(paymentInfoBundle);
 
         startFinishAuthorized();
-        onCardsReady(cards);
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+        EnterCardFragment fragment = createEnterCardFragment(false);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
+
+        onCardsReady(cards);
+        fragment.setRejectAction(new EnterCardFragment.RejectAction() {
             @Override
-            public void run() {
+            public void onPerformReject() {
                 onChargeRequestRejected(paymentInfo);
             }
-        }, 500);
+        });
     }
 
     private void showThreeDsData() {

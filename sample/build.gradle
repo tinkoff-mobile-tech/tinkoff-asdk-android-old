@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
+apply from: '../gradle/versions.gradle'
 
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    compileSdkVersion compileSdk
+    buildToolsVersion buildTools
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -22,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId "ru.tinkoff.acquiring.sample"
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
         versionCode 41
         versionName "1.4.0"
     }
@@ -39,11 +40,11 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile project(':ui')
-    compile project(':card-io')
-    compile project(':payment')
+    api "com.android.support:appcompat-v7:$supportVersion"
+    implementation project(':ui')
+    implementation project(':card-io')
+    implementation project(':payment')
 
-    androidTestCompile 'junit:junit:4.12'
-    testCompile 'junit:junit:4.12'
+    androidTestImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
