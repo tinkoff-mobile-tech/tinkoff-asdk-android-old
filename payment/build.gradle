@@ -1,7 +1,11 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply from: '../gradle/versions.gradle'
+apply from: '../gradle/publish-lib.gradle'
 
+tasks.withType(Javadoc).all {
+    enabled = false
+}
 
 android {
     compileSdkVersion compileSdk
