@@ -19,7 +19,7 @@ class PaymentProcess internal constructor() {
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
     private var lastKnownAction: Int? = null
-    private var state : Int = CREATED
+    private var state: Int = CREATED
 
     private companion object {
         private const val SUCCESS = 1
@@ -33,15 +33,18 @@ class PaymentProcess internal constructor() {
     }
 
     @JvmSynthetic
-    internal fun initPaymentRequest(initRequestBuilder: InitRequestBuilder,
-                                    customerKey: String,
-                                    paymentData: PaymentData): PaymentProcess {
+    internal fun initPaymentRequest(
+            initRequestBuilder: InitRequestBuilder,
+            paymentData: PaymentData,
+            modifyRequest: InitRequestBuilder.() -> Unit
+    ): PaymentProcess {
         requestBuilder = paymentData.run {
             initRequestBuilder.setOrderId(orderId)
                     .setAmount(coins)
                     .setChargeFlag(chargeMode)
-                    .setCustomerKey(customerKey)
+                    .setCustomerKey(paymentData.customerKey)
                     .setRecurrent(recurrentPayment)
+                    .also(modifyRequest)
         }
         paymentDataUi.recurrentPayment = paymentData.recurrentPayment
         return this
@@ -49,10 +52,10 @@ class PaymentProcess internal constructor() {
 
     @JvmSynthetic
     internal fun initPaymentThread(sdk: AcquiringSdk,
-                                   cardData: CardData,
+                                   paySource: PaySource,
                                    email: String?,
                                    chargeMode: Boolean): PaymentProcess {
-        paymentDataUi.card = cardData.map()
+        paymentDataUi.card = (paySource as? CardDataPaySource)?.cardData?.map()
 
         thread = Thread(Runnable {
             try {
@@ -61,8 +64,13 @@ class PaymentProcess internal constructor() {
                 if (Thread.interrupted()) throw InterruptedException()
 
                 handler.run {
-                    if (!chargeMode) {
-                        val threeDsData = sdk.finishAuthorize(paymentId, cardData, email)
+                    if (!chargeMode || paySource is GPayTokenPaySource) {
+                        val threeDsData = when (paySource) {
+                            is CardDataPaySource -> sdk.finishAuthorize(paymentId, paySource.cardData, email)
+                            is GPayTokenPaySource -> sdk.finishAuthorize(paymentId, paySource.token, email)
+                            else -> throw IllegalArgumentException()
+                        }
+
                         if (Thread.interrupted()) throw InterruptedException()
 
                         if (threeDsData.isThreeDsNeed) {
@@ -71,6 +79,8 @@ class PaymentProcess internal constructor() {
                             obtainMessage(SUCCESS)
                         }
                     } else {
+                        val cardData = (paySource as? CardDataPaySource)?.cardData
+                                ?: throw IllegalArgumentException()
                         val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
                         if (paymentInfo.isSuccess) {
                             obtainMessage(SUCCESS)
@@ -99,7 +109,7 @@ class PaymentProcess internal constructor() {
         this.paymentListeners += paymentListener
         val action = lastKnownAction
         if (action != null) {
-            sendToListener(action,  paymentListener)
+            sendToListener(action, paymentListener)
         }
     }
 
@@ -157,12 +167,4 @@ class PaymentProcess internal constructor() {
         }
     }
 
-    interface PaymentListener {
-
-        fun onCompleted()
-
-        fun onUiNeeded(paymentDataUi: PaymentDataUi)
-
-        fun onError(exception: Exception)
-    }
 }
