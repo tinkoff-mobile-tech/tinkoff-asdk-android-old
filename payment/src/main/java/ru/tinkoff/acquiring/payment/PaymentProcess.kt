@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import ru.tinkoff.acquiring.sdk.*
+import ru.tinkoff.acquiring.sdk.AcquiringSdk
+import ru.tinkoff.acquiring.sdk.Card
+import ru.tinkoff.acquiring.sdk.CardData
+import ru.tinkoff.acquiring.sdk.CardStatus
+import ru.tinkoff.acquiring.sdk.PaymentInfo
+import ru.tinkoff.acquiring.sdk.ThreeDsData
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 
 /**
@@ -19,6 +24,7 @@ class PaymentProcess internal constructor() {
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
     private var lastKnownAction: Int? = null
+    private var paymentId: Long? = null
     private var state: Int = CREATED
 
     private companion object {
@@ -76,14 +82,14 @@ class PaymentProcess internal constructor() {
                         if (threeDsData.isThreeDsNeed) {
                             obtainMessage(START_3DS, threeDsData)
                         } else {
-                            obtainMessage(SUCCESS)
+                            obtainMessage(SUCCESS, threeDsData.paymentId)
                         }
                     } else {
                         val cardData = (paySource as? CardDataPaySource)?.cardData
                                 ?: throw IllegalArgumentException()
                         val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
                         if (paymentInfo.isSuccess) {
-                            obtainMessage(SUCCESS)
+                            obtainMessage(SUCCESS, paymentInfo.paymentId)
                         } else {
                             obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo)
                         }
@@ -119,7 +125,7 @@ class PaymentProcess internal constructor() {
 
     fun start(): PaymentProcess {
         if (state != CREATED) {
-            throw IllegalStateException("already in use create another PaymentProcess")
+            throw IllegalStateException("Already in use create another PaymentProcess")
         }
         state = EXECUTING
         thread.start()
@@ -139,7 +145,7 @@ class PaymentProcess internal constructor() {
     private fun sendToListener(action: Int, listener: PaymentListener) {
         listener.apply {
             when (action) {
-                SUCCESS -> onCompleted()
+                SUCCESS -> onCompleted(paymentId ?: return)
                 CHARGE_REQUEST_REJECTED, START_3DS -> onUiNeeded(paymentDataUi)
                 EXCEPTION -> onError(lastException ?: return)
             }
@@ -152,6 +158,8 @@ class PaymentProcess internal constructor() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             when (msg.what) {
+                SUCCESS -> paymentId = msg.obj as Long
+                EXCEPTION -> lastException = (msg.obj as Exception)
                 CHARGE_REQUEST_REJECTED -> {
                     paymentDataUi.paymentInfo = msg.obj as PaymentInfo
                     paymentDataUi.status = PaymentDataUi.Status.REJECTED
@@ -160,11 +168,9 @@ class PaymentProcess internal constructor() {
                     paymentDataUi.threeDsData = msg.obj as ThreeDsData
                     paymentDataUi.status = PaymentDataUi.Status.THREE_DS_NEEDED
                 }
-                EXCEPTION -> lastException = (msg.obj as Exception)
             }
             sendToListeners(msg.what)
             state = FINISHED
         }
     }
-
 }

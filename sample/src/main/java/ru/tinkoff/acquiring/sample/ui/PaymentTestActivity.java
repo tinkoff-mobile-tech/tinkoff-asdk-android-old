@@ -53,14 +53,14 @@ public class PaymentTestActivity extends AppCompatActivity {
     }
 
     private void pay() {
-        CardData cardData = randomCard();
+        final CardData cardData = randomCard();
         final PaymentData paymentData = randomPaymentInfo();
 
         tinkoffPay.pay(cardData, paymentData)
                 .start()
                 .subscribe(new PaymentListener() {
                     @Override
-                    public void onCompleted() {
+                    public void onCompleted(long paymentId) {
                         Toast.makeText(PaymentTestActivity.this, "onCompleted ", Toast.LENGTH_SHORT).show();
                     }
 

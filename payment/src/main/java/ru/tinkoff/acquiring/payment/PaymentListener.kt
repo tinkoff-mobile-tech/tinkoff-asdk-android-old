@@ -2,7 +2,7 @@ package ru.tinkoff.acquiring.payment
 
 interface PaymentListener {
 
-    fun onCompleted()
+    fun onCompleted(paymentId: Long)
 
     fun onUiNeeded(paymentDataUi: PaymentDataUi)
 
