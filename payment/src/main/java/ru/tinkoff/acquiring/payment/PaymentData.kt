@@ -11,6 +11,6 @@ data class PaymentData @JvmOverloads constructor(
         val chargeMode: Boolean,
         val language: String? = null,
         val email: String? = null,
-        val title: String = "",
-        val description: String = ""
+        val title: String? = null,
+        val description: String? = null
 )

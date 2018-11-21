@@ -60,8 +60,8 @@ public class PaymentTestActivity extends AppCompatActivity {
                 .start()
                 .subscribe(new PaymentListener() {
                     @Override
-                    public void onCompleted(long paymentId) {
-                        Toast.makeText(PaymentTestActivity.this, "onCompleted ", Toast.LENGTH_SHORT).show();
+                    public void onSuccess(long paymentId) {
+                        Toast.makeText(PaymentTestActivity.this, "onSuccess ", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

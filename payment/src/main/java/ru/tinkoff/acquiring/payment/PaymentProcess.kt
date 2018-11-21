@@ -145,9 +145,15 @@ class PaymentProcess internal constructor() {
     private fun sendToListener(action: Int, listener: PaymentListener) {
         listener.apply {
             when (action) {
-                SUCCESS -> onCompleted(paymentId ?: return)
+                SUCCESS -> {
+                    val paymentId = paymentId ?: return
+                    onSuccess(paymentId)
+                }
                 CHARGE_REQUEST_REJECTED, START_3DS -> onUiNeeded(paymentDataUi)
-                EXCEPTION -> onError(lastException ?: return)
+                EXCEPTION -> {
+                    val lastException = lastException ?: return
+                    onError(lastException)
+                }
             }
         }
     }
