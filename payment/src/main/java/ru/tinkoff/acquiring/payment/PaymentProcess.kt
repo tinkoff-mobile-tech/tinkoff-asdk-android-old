@@ -89,7 +89,7 @@ class PaymentProcess internal constructor() {
                                 ?: throw IllegalArgumentException()
                         val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
                         if (paymentInfo.isSuccess) {
-                            obtainMessage(SUCCESS, paymentInfo.paymentId)
+                            obtainMessage(SUCCESS, paymentId)
                         } else {
                             obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo)
                         }

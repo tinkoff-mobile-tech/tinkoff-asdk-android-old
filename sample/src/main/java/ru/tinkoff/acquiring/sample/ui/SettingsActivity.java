@@ -30,6 +30,7 @@ import java.util.Collection;
 import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
 
+@SuppressWarnings("deprecation")
 public class SettingsActivity extends AppCompatActivity {
 
     public static void start(Context context) {
