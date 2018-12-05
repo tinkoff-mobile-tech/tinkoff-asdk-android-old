@@ -137,7 +137,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
-                .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
+//                .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
                 .setGooglePayParams(settings.isGooglePayEnabled() ? googlePayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }

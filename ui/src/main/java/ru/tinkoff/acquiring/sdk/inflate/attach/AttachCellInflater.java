@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ru.tinkoff.acquiring.sdk.R;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 
 import static ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType.ATTACH_BUTTON;
 import static ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType.PAYMENT_CARD_REQUISITES;
@@ -44,7 +47,7 @@ public class AttachCellInflater {
 
     public View inflate(ViewGroup container) {
         validate(PAYMENT_CARD_REQUISITES, ATTACH_BUTTON, SECURE_LOGOS);
-
+        AsdkLocalization localization = AsdkLocalizations.require(container.getContext());
         View root = inflater.inflate(R.layout.acq_fragment_attach_card_base, container, false);
         container = root.findViewById(R.id.ll_container_layout);
         for (AttachCellType cellType : cellTypes) {
@@ -58,9 +61,11 @@ public class AttachCellInflater {
                 case PAYMENT_CARD_REQUISITES:
                     inflater.inflate(R.layout.acq_cell_payment_card_requisites_attach, container, true);
                     break;
-                case EMAIL:
-                    inflater.inflate(R.layout.acq_cell_email, container, true);
+                case EMAIL: {
+                    View view = inflater.inflate(R.layout.acq_cell_email, container, true);
+                    ((TextView) view.findViewById(R.id.et_email)).setHint(localization.payEmail);
                     break;
+                }
                 case ATTACH_BUTTON:
                     inflater.inflate(R.layout.acq_cell_attach_button, container, true);
                     break;

@@ -37,6 +37,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
+
 /**
  * @author a.shishkin1
  */
@@ -53,7 +56,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     public static CardListFragment newInstance(String customerKey, boolean chargeMode) {
         Bundle args = new Bundle();
         args.putString(EXTRA_CUSTOMER_KEY, customerKey);
-        args.putBoolean(PayFormActivity.EXTRA_CHARGE_MODE, chargeMode);
+        args.putBoolean(TAcqIntentExtra.EXTRA_CHARGE_MODE, chargeMode);
         CardListFragment fragment = new CardListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -64,7 +67,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.acq_fragment_card_list, container, false);
         lvCards = (ListView) view.findViewById(R.id.lv_cards);
-        adapter = new CardsAdapter(getActivity(), getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE, false));
+        adapter = new CardsAdapter(getActivity(), getArguments().getBoolean(TAcqIntentExtra.EXTRA_CHARGE_MODE, false));
         lvCards.setAdapter(adapter);
         lvCards.setOnItemClickListener(this);
         lvCards.setOnItemLongClickListener(this);
@@ -135,11 +138,13 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
         private CardLogoCache cardLogoCache;
         private final boolean chargeMode;
         private int selectedItemPosition = NOT_SET;
+        private AsdkLocalization localization;
 
         public CardsAdapter(Activity context, boolean chargeMode) {
             this.context = context;
             this.chargeMode = chargeMode;
             this.cardLogoCache = new ThemeCardLogoCache(context);
+            localization = AsdkLocalizations.require(context);
         }
 
         @Override
@@ -208,6 +213,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
             } else if (type == Item.NEW_CARD) {
                 if (convertView == null) {
                     convertView = LayoutInflater.from(context).inflate(R.layout.acq_item_new_card, parent, false);
+                    ((TextView)convertView.findViewById(R.id.acq_tv_new_card)).setText(localization.cardListNewCard);
                 }
                 return convertView;
             }
@@ -298,7 +304,10 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.menu_delete_card, menu);
+            menu
+                    .add(0, R.id.action_delete, 0,  AsdkLocalizations.require(CardListFragment.this).cardListDelete)
+                    .setIcon(R.drawable.acq_delete)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             return true;
         }
 
@@ -310,7 +319,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
             Card target = adapter.getSelectedItem();
             AcquiringSdk sdk = ((PayFormActivity) getActivity()).getSdk();
-            deleteCard(sdk, target, customerKey, getString(R.string.acq_cant_delete_card_message));
+            deleteCard(sdk, target, customerKey, AsdkLocalizations.require(CardListFragment.this).cardListRemoveCardFailMessage);
             mode.finish();
             return true;
         }

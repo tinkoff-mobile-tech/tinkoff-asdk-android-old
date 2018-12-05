@@ -1,9 +1,11 @@
 package ru.tinkoff.acquiring.sdk;
 
+import ru.tinkoff.acquiring.sdk.localization.HasAsdkLocalization;
+
 /**
  * @author Vitaliy Markus
  */
-public interface IBaseSdkActivity {
+public interface IBaseSdkActivity extends HasAsdkLocalization {
 
     void success();
 

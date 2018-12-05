@@ -3,10 +3,11 @@
     style="?acqItemsStyle">
 
     <TextView
+        android:id="@+id/acq_tv_new_card"
         style="?acqTitleTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="@string/acq_enter_new_card_label" />
+        />
 
 </FrameLayout>

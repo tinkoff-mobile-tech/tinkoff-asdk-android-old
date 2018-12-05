@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="@string/acq_attaching_card_loop_title"
         android:visibility="visible" />
 
     <ru.tinkoff.acquiring.sdk.views.FixCompatEditText
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:digits="0123456789.,"
         android:gravity="left"
-        android:hint="@string/acq_attaching_card_loop_amount_hint"
         android:imeOptions="actionDone"
         android:inputType="numberDecimal" />
 
@@ -31,8 +29,7 @@
         style="?acqButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?acqViewDivider"
-        android:text="@string/acq_check" />
+        android:layout_marginTop="?acqViewDivider" />
 
     <Space
         android:id="@+id/space"

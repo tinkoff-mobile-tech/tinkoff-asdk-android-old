@@ -21,6 +21,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import ru.tinkoff.acquiring.sdk.localization.HasAsdkLocalization;
+
 /**
  * @author Mikhail Artemyev
  */
@@ -49,11 +51,16 @@ class DialogsManager {
                          final DialogInterface.OnClickListener onClickListener) {
         dismissDialogs();
 
+        String msg = context.getString(android.R.string.ok);
+        if (context instanceof HasAsdkLocalization) {
+            msg = ((HasAsdkLocalization) context).getAsdkLocalization().payDialogErrorAcceptButton;
+        }
+
         messageDialog = new AlertDialog.Builder(context)
                 .setMessage(message)
                 .setTitle(title)
                 .setCancelable(false)
-                .setNeutralButton(R.string.acq_dialog_dismiss_btn, onClickListener)
+                .setNeutralButton(msg, onClickListener)
                 .create();
 
         messageDialog.show();

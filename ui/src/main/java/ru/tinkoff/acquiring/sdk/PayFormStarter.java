@@ -45,84 +45,96 @@ public class PayFormStarter {
 
     public PayFormStarter prepare(String orderId, Money amount, String title, String description, String cardId, String email, boolean recurrentPayment, boolean customKeyboard) {
         intent = new Intent();
-        intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
-        intent.putExtra(PayFormActivity.EXTRA_AMOUNT, amount);
-        intent.putExtra(PayFormActivity.EXTRA_TITLE, title);
-        intent.putExtra(PayFormActivity.EXTRA_DESCRIPTION, description);
-        intent.putExtra(PayFormActivity.EXTRA_CARD_ID, cardId);
-        intent.putExtra(PayFormActivity.EXTRA_E_MAIL, email);
-        intent.putExtra(PayFormActivity.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
-        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
-        intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
-        intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
-        intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
+        intent.putExtra(TAcqIntentExtra.EXTRA_ORDER_ID, orderId);
+        intent.putExtra(TAcqIntentExtra.EXTRA_AMOUNT, amount);
+        intent.putExtra(TAcqIntentExtra.EXTRA_TITLE, title);
+        intent.putExtra(TAcqIntentExtra.EXTRA_DESCRIPTION, description);
+        intent.putExtra(TAcqIntentExtra.EXTRA_CARD_ID, cardId);
+        intent.putExtra(TAcqIntentExtra.EXTRA_E_MAIL, email);
+        intent.putExtra(TAcqIntentExtra.EXTRA_CUSTOM_KEYBOARD, customKeyboard);
+        intent.putExtra(TAcqIntentExtra.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
+        intent.putExtra(TAcqIntentExtra.EXTRA_TERMINAL_KEY, terminalKey);
+        intent.putExtra(TAcqIntentExtra.EXTRA_PASSWORD, password);
+        intent.putExtra(TAcqIntentExtra.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(TAcqIntentExtra.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
     public PayFormStarter prepare(String orderId, Long amount, boolean recurrentPayment) {
         intent = new Intent();
-        intent.putExtra(PayFormActivity.EXTRA_ORDER_ID, orderId);
-        intent.putExtra(PayFormActivity.EXTRA_AMOUNT, Money.ofRubles(amount));
-        intent.putExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
-        intent.putExtra(PayFormActivity.EXTRA_TERMINAL_KEY, terminalKey);
-        intent.putExtra(PayFormActivity.EXTRA_PASSWORD, password);
-        intent.putExtra(PayFormActivity.EXTRA_PUBLIC_KEY, publicKey);
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
+        intent.putExtra(TAcqIntentExtra.EXTRA_ORDER_ID, orderId);
+        intent.putExtra(TAcqIntentExtra.EXTRA_AMOUNT, Money.ofRubles(amount));
+        intent.putExtra(TAcqIntentExtra.EXTRA_RECURRENT_PAYMENT, recurrentPayment);
+        intent.putExtra(TAcqIntentExtra.EXTRA_TERMINAL_KEY, terminalKey);
+        intent.putExtra(TAcqIntentExtra.EXTRA_PASSWORD, password);
+        intent.putExtra(TAcqIntentExtra.EXTRA_PUBLIC_KEY, publicKey);
+        intent.putExtra(TAcqIntentExtra.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(PayCellInflater.DEFAULT_CELL_TYPES));
         return this;
     }
 
     public PayFormStarter setGooglePayParams(GooglePayParams googlePayParams) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS, googlePayParams);
+        intent.putExtra(TAcqIntentExtra.EXTRA_ANDROID_PAY_PARAMS, googlePayParams);
         return this;
     }
 
     public PayFormStarter setCustomerKey(String customerKey) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_CUSTOMER_KEY, customerKey);
+        intent.putExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY, customerKey);
         return this;
     }
 
     public PayFormStarter setReceipt(Receipt receipt) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_RECEIPT_VALUE, receipt);
+        intent.putExtra(TAcqIntentExtra.EXTRA_RECEIPT_VALUE, receipt);
         return this;
     }
 
     public PayFormStarter setData(HashMap<String, String> data) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_DATA_VALUE, data);
+        intent.putExtra(TAcqIntentExtra.EXTRA_DATA_VALUE, data);
         return this;
     }
 
     public PayFormStarter setChargeMode(boolean mode) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_CHARGE_MODE, mode);
+        intent.putExtra(TAcqIntentExtra.EXTRA_CHARGE_MODE, mode);
         return this;
     }
 
     public PayFormStarter useFirstAttachedCard(boolean use) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_USE_FIRST_ATTACHED_CARD, use);
+        intent.putExtra(TAcqIntentExtra.EXTRA_USE_FIRST_ATTACHED_CARD, use);
         return this;
     }
 
     public PayFormStarter setTheme(@StyleRes int theme) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_THEME, theme);
+        intent.putExtra(TAcqIntentExtra.EXTRA_THEME, theme);
         return this;
     }
 
     public PayFormStarter setCameraCardScanner(ICameraCardScanner cameraCardScanner) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
+        intent.putExtra(TAcqIntentExtra.EXTRA_CAMERA_CARD_SCANNER, cameraCardScanner);
         return this;
     }
 
     public PayFormStarter setDesignConfiguration(PayCellType... types) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(types));
+        intent.putExtra(TAcqIntentExtra.EXTRA_DESIGN_CONFIGURATION, PayCellType.toIntArray(types));
+        return this;
+    }
+
+    public PayFormStarter setLanguage(Language language) {
+        checkIntent();
+        intent.putExtra(TAcqIntentExtra.EXTRA_LANGUAGE, language.ordinal());
+        return this;
+    }
+
+    public PayFormStarter setRawLocalizationResourceId(int rawLocalizationResourceId) {
+        checkIntent();
+        intent.putExtra(TAcqIntentExtra.EXTRA_LOCALIZATION_RAW_RESOURCE_ID, rawLocalizationResourceId);
         return this;
     }
 

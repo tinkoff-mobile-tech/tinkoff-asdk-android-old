@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements
                         .prepare(params.customerKey, settings.getCheckType(), settings.isCustomKeyboardEnabled(), params.customerEmail)
                         .setTheme(settings.resolveAttachCardStyle())
                         .setCameraCardScanner(settings.getCameraScanner())
-                        .setDesignConfiguration(AttachCellType.ATTACH_BUTTON, AttachCellType.SECURE_LOGOS, AttachCellType.PAYMENT_CARD_REQUISITES)
+//                        .setDesignConfiguration(AttachCellType.ATTACH_BUTTON, AttachCellType.SECURE_LOGOS, AttachCellType.PAYMENT_CARD_REQUISITES)
                         .startActivityForResult(this, ATTACH_CARD_REQUEST_CODE);
                 return true;
             case R.id.menu_action_about:

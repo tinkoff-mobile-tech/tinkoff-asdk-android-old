@@ -48,10 +48,10 @@ class TinkoffPay private constructor(private var sdk: AcquiringSdk,
     private fun PayFormStarter.addPaymentUiData(paymentDataUi: PaymentDataUi): PayFormStarter {
         paymentDataUi.apply {
             if (card != null && paymentInfo != null) {
-                intent.putExtra(PayFormActivity.EXTRA_CARD_DATA, CardsArrayBundlePacker().pack(arrayOf(paymentDataUi.card)))
-                intent.putExtra(PayFormActivity.EXTRA_PAYMENT_INFO, PaymentInfoBundlePacker().pack(paymentDataUi.paymentInfo))
+                intent.putExtra(TAcqIntentExtra.EXTRA_CARD_DATA, CardsArrayBundlePacker().pack(arrayOf(paymentDataUi.card)))
+                intent.putExtra(TAcqIntentExtra.EXTRA_PAYMENT_INFO, PaymentInfoBundlePacker().pack(paymentDataUi.paymentInfo))
             } else if (threeDsData != null) {
-                intent.putExtra(PayFormActivity.EXTRA_THREE_DS, ThreeDsBundlePacker().pack(threeDsData))
+                intent.putExtra(TAcqIntentExtra.EXTRA_THREE_DS, ThreeDsBundlePacker().pack(threeDsData))
             }
         }
         return this

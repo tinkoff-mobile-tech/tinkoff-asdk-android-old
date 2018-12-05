@@ -23,7 +23,6 @@
         <item name="acqPriceLayoutStyle">@style/AcquiringPriceLayoutStyle</item>
         <item name="acqViewDivider">16dp</item>
         <item name="acqContentBlockDivider">20dp</item>
-        <item name="acqPayFormTitle">@string/acq_screen_title</item>
         <item name="acqCardIcons">@style/AcquiringCardSystemsIcons</item>
         <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle</item>
         <!---->
@@ -33,8 +32,6 @@
         <item name="acqPaySecureIconStyle">@style/AcquiringPaySecureIconStyle</item>
         <item name="acqPayAmountPosition">onPayButton</item>
         <item name="acqPayButtonAndIconPosition">buttonUnderFieldsIconsOnBottom</item>
-        <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount</item>
-        <item name="acqMoneyAmountFormat">@string/acq_money_amount_format</item>
 
     </style>
 
@@ -56,14 +53,10 @@
     </style>
 
     <style name="AcquiringCardViewStyle" parent="AcquiringFieldStyle">
-        <item name="numberHint">@string/acq_card_number_hint</item>
-        <item name="dateHint">@string/acq_exp_date_hint</item>
-        <item name="cvcHint">@string/acq_cvc_hint</item>
     </style>
 
     <style name="AcquiringButtonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button">
         <item name="android:background">@drawable/acq_button_bg</item>
-        <item name="android:text">@string/acq_pay</item>
     </style>
 
     <style name="AcquiringTitleStyle">
@@ -159,7 +152,6 @@
     </style>
 
     <style name="AcquiringPayEmailStyle" parent="AcquiringFieldStyle">
-        <item name="android:hint">@string/acq_email_hint</item>
     </style>
 
     <style name="AcquiringPaySecureIconStyle">

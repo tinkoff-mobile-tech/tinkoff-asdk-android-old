@@ -9,9 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
 
 /**
  * @author Vitaliy Markus
@@ -19,27 +20,13 @@ import android.widget.Toast;
 public class AttachCardFormActivity extends AppCompatActivity implements IAttachCardFormActivity {
 
     public static final int RESULT_ERROR = 500;
-    static final String EXTRA_ERROR = "error";
-
-    static final String EXTRA_TERMINAL_KEY = "terminal_key";
-    static final String EXTRA_PASSWORD = "password";
-    static final String EXTRA_PUBLIC_KEY = "public_key";
-
-    static final String EXTRA_CUSTOMER_KEY = "customer_key";
-    static final String EXTRA_CHECK_TYPE = "check_type";
-    static final String EXTRA_CUSTOM_KEYBOARD = "keyboard";
-    static final String EXTRA_DATA = "data";
-    static final String EXTRA_THEME = "theme";
-    static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
-    static final String EXTRA_CARD_ID = "card_id";
-    static final String EXTRA_EMAIL = "email";
-    static final String EXTRA_DESIGN_CONFIGURATION = "design_configuration";
 
     private DialogsManager dialogsManager;
     private AcquiringSdk sdk;
 
     private boolean useCustomKeyboard;
     private String cardId;
+    private AsdkLocalizationProperty asdkLocalization;
 
     public static AttachCardFormStarter init(String terminalKey, String password, String publicKey) {
         return new AttachCardFormStarter(terminalKey, password, publicKey);
@@ -47,23 +34,23 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
 
     public static void dispatchResult(int resultCode, Intent data, OnAttachCardListener listener) {
         if (resultCode == RESULT_OK) {
-            listener.onSuccess(data.getStringExtra(AttachCardFormActivity.EXTRA_CARD_ID));
+            listener.onSuccess(data.getStringExtra(TAcqIntentExtra.EXTRA_CARD_ID));
         } else if (resultCode == RESULT_CANCELED) {
             listener.onCancelled();
         } else if (resultCode == RESULT_ERROR) {
-            listener.onError((Exception) data.getSerializableExtra(EXTRA_ERROR));
+            listener.onError((Exception) data.getSerializableExtra(TAcqIntentExtra.EXTRA_ERROR));
         }
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        asdkLocalization = new AsdkLocalizationProperty(this);
         Intent intent = getIntent();
         initActivity(intent);
         dialogsManager = new DialogsManager(this);
         sdk = createSdk(intent);
-        useCustomKeyboard = intent.getBooleanExtra(EXTRA_CUSTOM_KEYBOARD, false);
+        useCustomKeyboard = intent.getBooleanExtra(TAcqIntentExtra.EXTRA_CUSTOM_KEYBOARD, false);
 
         if (savedInstanceState == null) {
             addAttachCardFragment();
@@ -99,7 +86,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     public void success() {
         hideProgressDialog();
         Intent data = new Intent();
-        data.putExtra(EXTRA_CARD_ID, cardId);
+        data.putExtra(TAcqIntentExtra.EXTRA_CARD_ID, cardId);
         setResult(RESULT_OK, data);
         finish();
     }
@@ -112,7 +99,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
 
     @Override
     public void showProgressDialog() {
-        dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_attach_card_text));
+        dialogsManager.showProgressDialog(getAsdkLocalization().addCardDialogProgressAddCardMessage);
     }
 
     @Override
@@ -129,7 +116,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
         }
 
         Intent data = new Intent();
-        data.putExtra(EXTRA_ERROR, throwable);
+        data.putExtra(TAcqIntentExtra.EXTRA_ERROR, throwable);
         setResult(RESULT_ERROR, data);
         finish();
     }
@@ -150,15 +137,15 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     public void showErrorDialog(Exception e) {
         String message = e.getMessage();
         if (TextUtils.isEmpty(message)) {
-            message = getString(R.string.acq_default_error_message);
+            message = getAsdkLocalization().addCardDialogErrorFallbackMessage;
         }
-        dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
+        dialogsManager.showErrorDialog(getAsdkLocalization().addCardDialogErrorTitle, message);
     }
 
     @Override
     public void noNetwork() {
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_network_error_message);
+        String title = getAsdkLocalization().addCardDialogErrorTitle;
+        String message = getAsdkLocalization().addCardDialogErrorNetwork;
         DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -215,7 +202,7 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
     }
 
     private void initActivity(Intent intent) {
-        int theme = intent.getIntExtra(EXTRA_THEME, 0);
+        int theme = intent.getIntExtra(TAcqIntentExtra.EXTRA_THEME, 0);
         if (theme != 0) {
             setTheme(theme);
         }
@@ -224,16 +211,13 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
         setContentView(R.layout.acq_activity);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.acqPayFormTitle, tv, true);
-        String title = getResources().getString(tv.resourceId);
-        setTitle(title);
+        setTitle(getAsdkLocalization().addCardTitle);
     }
 
     private AcquiringSdk createSdk(Intent intent) {
-        String terminalKey = intent.getStringExtra(EXTRA_TERMINAL_KEY);
-        String password = intent.getStringExtra(EXTRA_PASSWORD);
-        String publicKey = intent.getStringExtra(EXTRA_PUBLIC_KEY);
+        String terminalKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_TERMINAL_KEY);
+        String password = intent.getStringExtra(TAcqIntentExtra.EXTRA_PASSWORD);
+        String publicKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_PUBLIC_KEY);
         return new AcquiringSdk(terminalKey, password, publicKey);
     }
 
@@ -251,5 +235,10 @@ public class AttachCardFormActivity extends AppCompatActivity implements IAttach
                 .replace(R.id.content_frame, fragment)
                 .commit();
 
+    }
+
+    @Override
+    public AsdkLocalization getAsdkLocalization() {
+        return asdkLocalization.getAsdkLocalization();
     }
 }
