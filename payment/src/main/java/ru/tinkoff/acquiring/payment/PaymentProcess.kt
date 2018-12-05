@@ -82,7 +82,7 @@ class PaymentProcess internal constructor() {
                         if (threeDsData.isThreeDsNeed) {
                             obtainMessage(START_3DS, threeDsData)
                         } else {
-                            obtainMessage(SUCCESS, threeDsData.paymentId)
+                            obtainMessage(SUCCESS, paymentId)
                         }
                     } else {
                         val cardData = (paySource as? CardDataPaySource)?.cardData
