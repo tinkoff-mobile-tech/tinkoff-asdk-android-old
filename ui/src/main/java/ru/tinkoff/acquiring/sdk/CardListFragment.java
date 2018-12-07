@@ -305,7 +305,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             menu
-                    .add(0, R.id.action_delete, 0,  AsdkLocalizations.require(CardListFragment.this).cardListDelete)
+                    .add(0, R.id.acq_action_delete, 0,  AsdkLocalizations.require(CardListFragment.this).cardListDelete)
                     .setIcon(R.drawable.acq_delete)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             return true;
@@ -313,7 +313,7 @@ public class CardListFragment extends Fragment implements AdapterView.OnItemClic
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            if (item.getItemId() != R.id.action_delete) {
+            if (item.getItemId() != R.id.acq_action_delete) {
                 return false;
             }
 

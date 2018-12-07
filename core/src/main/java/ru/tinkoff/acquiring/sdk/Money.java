@@ -87,6 +87,7 @@ public class Money implements Serializable, Comparable<Money> {
         return String.format("%02d", fractional);
     }
 
+    @Deprecated
     public String toHumanReadableString() {
         return toString() + " P";
     }

@@ -156,7 +156,7 @@ public class AsdkLocalizations {
             if (serializedName == null) continue;
 
             try {
-                if (field.get(localization) == null) {
+                if (field.get(localization) == null && field.getAnnotation(Optional.class) == null) {
                     missing.add(serializedName.value());
                 }
             } catch (IllegalAccessException e) {

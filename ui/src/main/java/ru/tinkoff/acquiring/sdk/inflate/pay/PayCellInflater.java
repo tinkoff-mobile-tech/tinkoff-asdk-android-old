@@ -61,7 +61,7 @@ public class PayCellInflater {
                     break;
                 case AMOUNT: {
                     View view = inflater.inflate(R.layout.acq_cell_amount, container, true);
-                    ((TextView)view.findViewById(R.id.tv_amount_label)).setText(localization.payMoneyAmount);
+                    ((TextView)view.findViewById(R.id.tv_amount_label)).setText(localization.payMoneyAmountLabel);
                     break;
                 }
                 case PAYMENT_CARD_REQUISITES: {

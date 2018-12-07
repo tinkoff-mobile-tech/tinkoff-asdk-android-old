@@ -59,7 +59,7 @@ import com.google.android.gms.wallet.WalletConstants;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.IllegalFormatException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -82,19 +82,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 5;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
-
-    private static final int AMOUNT_POSITION_INDEX = 0;
-    private static final int BUTTON_POSITION_INDEX = 1;
-    private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
-    private static final int MONEY_AMOUNT_FORMAT_INDEX = 3;
-
-    private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
-
-    private static final int BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM = 0;
-    private static final int ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS = 1;
-    private static final int ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM = 2;
-    private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
-    private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
 
     private static final String RECURRING_TYPE_KEY = "recurringType";
     private static final String RECURRING_TYPE_VALUE = "12";
@@ -243,14 +230,30 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         final Money amount = (Money) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_AMOUNT);
 
-        String amountTextWithRubbles = amount != null ? amount.toHumanReadableString() : "";
-        String amountText = amount != null ? amount.toString() : ""; /* TODO*/
+        String amountText = amount != null ? amount.toString() : "";
 
         AsdkLocalization localization = AsdkLocalizations.require(this);
         if (tvAmount != null) {
-            tvAmount.setText(localization.payMoneyAmount);
+            try {
+                if (localization.payMoneyAmountFormat != null) {
+                    tvAmount.setText(String.format(localization.payMoneyAmountFormat, amountText));
+                } else {
+                    tvAmount.setText(amountText);
+                }
+            } catch (IllegalFormatException e) {
+                tvAmount.setText(amountText);
+            }
         }
-        btnPay.setText(localization.payPayButton);
+
+        try {
+            if (localization.payPayButtonFormat != null) {
+                btnPay.setText(String.format(localization.payPayButtonFormat, amountText));
+            } else {
+                btnPay.setText(localization.payPayButton);
+            }
+        } catch (IllegalFormatException e) {
+            btnPay.setText(localization.payPayButton);
+        }
 
         btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -649,7 +652,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;
-                    if (cause != null && cause instanceof NetworkException) {
+                    if (cause instanceof NetworkException) {
                         msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK);
                     } else {
                         msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);

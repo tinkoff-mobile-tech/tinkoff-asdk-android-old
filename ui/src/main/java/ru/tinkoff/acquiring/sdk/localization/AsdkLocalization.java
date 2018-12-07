@@ -25,11 +25,15 @@ public class AsdkLocalization {
 
     @SerializedName("Pay.Card.CvcHint") public String payCardCvcHint;
 
-    @SerializedName("Pay.Money.Amount") public String payMoneyAmount;
+    @SerializedName("Pay.Money.Amount.Label") public String payMoneyAmountLabel;
+
+    @SerializedName("Pay.Money.Amount.Format") @Optional public String payMoneyAmountFormat;
 
     @SerializedName("Pay.Email") public String payEmail;
 
     @SerializedName("Pay.PayButton") public String payPayButton;
+
+    @SerializedName("Pay.PayButton.Format") @Optional public String payPayButtonFormat;
 
     @SerializedName("Pay.Dialog.Error.Title") public String payDialogErrorTitle;
 
