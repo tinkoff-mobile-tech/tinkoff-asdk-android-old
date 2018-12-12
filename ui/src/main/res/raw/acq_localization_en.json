@@ -28,7 +28,7 @@
   "Pay.Nfc.Fail": " ",
   "Pay.NoScanProviders": " ",
   "ConfirmationLoop.Title": " ",
-  "ConfirmationLoop.Description": "In order to confirm the binding of your card we wrote off and returned a small amount of money (up to 1,99 ?)/ Please, specify the sum with accuracy to amount of coins.",
+  "ConfirmationLoop.Description": "In order to confirm the binding of your card we wrote off and returned a small amount of money (up to 1,99 ?)\n Please, specify the sum with accuracy to amount of coins.",
   "ConfirmationLoop.Amount": "Blocked amount",
   "ConfirmationLoop.Dialog.Validation.InvalidAmount": "Please enter correct amount in coins",
   "ConfirmationLoop.CheckButton": "Check",

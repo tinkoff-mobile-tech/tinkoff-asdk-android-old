@@ -57,8 +57,8 @@ public class LoopConfirmationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.acq_fragment_loop_confirmation, container, false);
         AsdkLocalization localization = AsdkLocalizations.require(this);
-        ((TextView) root.findViewById(R.id.tv_title)).setText(localization.confirmationLoopTitle);
-        ((TextView) root.findViewById(R.id.et_amount)).setText(localization.confirmationLoopDescription);
+        ((TextView) root.findViewById(R.id.tv_title)).setText(localization.confirmationLoopDescription);
+        ((EditText) root.findViewById(R.id.et_amount)).setHint(localization.confirmationLoopAmount);
         ((TextView) root.findViewById(R.id.btn_check)).setText(localization.confirmationLoopCheckButton);
         initViews(root);
         resolveButtonAndIconsPosition(root);

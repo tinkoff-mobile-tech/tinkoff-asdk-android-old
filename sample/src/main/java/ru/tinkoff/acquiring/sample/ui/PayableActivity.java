@@ -32,6 +32,7 @@ import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sdk.GooglePayParams;
 import ru.tinkoff.acquiring.sdk.Item;
+import ru.tinkoff.acquiring.sdk.Language;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
@@ -134,6 +135,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 .setChargeMode(settings.isRecurrentPayment())
                 .useFirstAttachedCard(settings.useFirstAttachedCard())
                 .setCameraCardScanner(settings.getCameraScanner())
+                .setLanguage(Language.RUSSIAN)
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())

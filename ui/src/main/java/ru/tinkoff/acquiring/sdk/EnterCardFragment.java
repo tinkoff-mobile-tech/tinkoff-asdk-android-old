@@ -443,18 +443,26 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     }
 
     private void setRecurrentModeForCardView(boolean recurrentMode) {
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         if (recurrentMode) {
-            AsdkLocalization localization = AsdkLocalizations.require(this);
             ecvCard.setEnabled(false);
             ecvCard.setFocusable(false);
             ecvCard.clearFocus();
             ecvCard.setFullCardNumberModeEnable(false);
-            ecvCard.setCardHint(localization.payCardPanHintRecurrent);
+            ecvCard.setHints(
+                    localization.payCardPanHintRecurrent,
+                    localization.payCardExpireDateHint,
+                    localization.payCardCvcHint
+            );
         } else {
             ecvCard.setEnabled(true);
             ecvCard.setFocusable(true);
             ecvCard.setFullCardNumberModeEnable(true);
-            ecvCard.setCardHint(ecvCard.getCardNumberHint());
+            ecvCard.setHints(
+                    localization.payCardPanHint,
+                    localization.payCardExpireDateHint,
+                    localization.payCardCvcHint
+            );
         }
     }
 
@@ -677,7 +685,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 boolean hasCard = sourceCard != null;
                 boolean needClearCardView = needClearCardView(activity);
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
-                tvSrcCardLabel.setText(getLabel(chargeMode, hasCard));
+                tvSrcCardLabel.setText(getLabel(hasCard));
                 if (chargeMode) {
                     if (hasCard) {
                         ecvCard.setRecurrentPaymentMode(true);
@@ -751,12 +759,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         return bundle != null;
     }
 
-    private String getLabel(boolean chargeMode, boolean hasCard) {
+    private String getLabel(boolean hasCard) {
         AsdkLocalization localization = AsdkLocalizations.require(this);
         if (hasCard) {
             return localization.payCardSavedCard;
-        } else if (chargeMode) {
-            return "";
         } else {
             return localization.payCardNewCard;
         }

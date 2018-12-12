@@ -69,9 +69,11 @@ public class PayCellInflater {
                     ((TextView)view.findViewById(R.id.tv_src_card_choose_btn)).setText(localization.payCardChangeCard);
                     break;
                 }
-                case EMAIL:
-                    inflater.inflate(R.layout.acq_cell_email, container, true);
+                case EMAIL: {
+                    View view = inflater.inflate(R.layout.acq_cell_email, container, true);
+                    ((TextView) view.findViewById(R.id.et_email)).setHint(localization.payEmail);
                     break;
+                }
                 case PAY_BUTTON:
                     inflater.inflate(R.layout.acq_cell_pay_button, container, true);
                     break;
