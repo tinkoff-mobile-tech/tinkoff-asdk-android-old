@@ -11,9 +11,9 @@ import android.widget.Button;
 
 import ru.tinkoff.acquiring.sdk.CreditCard;
 import ru.tinkoff.acquiring.sdk.R;
-import ru.tinkoff.core.nfc2.BaseNfcActivity;
-import ru.tinkoff.core.nfc2.ImperfectAlgorithmException;
-import ru.tinkoff.core.nfc2.MalformedDataException;
+import ru.tinkoff.core.nfc.BaseNfcActivity;
+import ru.tinkoff.core.nfc.ImperfectAlgorithmException;
+import ru.tinkoff.core.nfc.MalformedDataException;
 
 /**
  * @author Vitaliy Markus
