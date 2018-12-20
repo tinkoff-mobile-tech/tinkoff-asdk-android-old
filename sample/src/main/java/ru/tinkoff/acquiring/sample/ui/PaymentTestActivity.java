@@ -14,9 +14,8 @@ import java.util.Random;
 
 import ru.tinkoff.acquiring.payment.PaymentData;
 import ru.tinkoff.acquiring.payment.PaymentDataUi;
-import ru.tinkoff.acquiring.payment.PaymentProcess;
+import ru.tinkoff.acquiring.payment.PaymentListener;
 import ru.tinkoff.acquiring.payment.TinkoffPay;
-import ru.tinkoff.acquiring.payment.TinkoffPay.Builder;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
@@ -50,23 +49,19 @@ public class PaymentTestActivity extends AppCompatActivity {
 
     private void initPayment() {
         SessionParams sessionParams = SessionParams.TEST_SDK;
-        tinkoffPay = Builder
-                .init(sessionParams.terminalId, sessionParams.secret, sessionParams.publicKey)
-                .setEmail(sessionParams.customerEmail)
-                .setCustomerKey(sessionParams.customerKey)
-                .build();
+        tinkoffPay = new TinkoffPay(sessionParams.terminalId, sessionParams.secret, sessionParams.publicKey);
     }
 
     private void pay() {
-        CardData cardData = randomCard();
+        final CardData cardData = randomCard();
         final PaymentData paymentData = randomPaymentInfo();
 
         tinkoffPay.pay(cardData, paymentData)
                 .start()
-                .subscribe(new PaymentProcess.PaymentListener() {
+                .subscribe(new PaymentListener() {
                     @Override
-                    public void onCompleted() {
-                        Toast.makeText(PaymentTestActivity.this, "onCompleted ", Toast.LENGTH_SHORT).show();
+                    public void onSuccess(long paymentId) {
+                        Toast.makeText(PaymentTestActivity.this, "onSuccess ", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -98,11 +93,14 @@ public class PaymentTestActivity extends AppCompatActivity {
 
     private PaymentData randomPaymentInfo() {
         String oderId = String.valueOf(Math.abs(new Random().nextInt()));
-
-        return new PaymentData(oderId,
+        SessionParams sessionParams = SessionParams.TEST_SDK;
+        return new PaymentData(
+                sessionParams.customerKey,
+                oderId,
                 Money.ofRubles(10).getCoins(),
                 settings.isRecurrentPayment(),
                 true,
-                "ru");
+                "ru"
+        );
     }
 }
