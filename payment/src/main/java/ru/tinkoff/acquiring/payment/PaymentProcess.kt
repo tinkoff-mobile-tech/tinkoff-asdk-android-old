@@ -50,6 +50,11 @@ class PaymentProcess internal constructor() {
                     .setChargeFlag(chargeMode)
                     .setCustomerKey(paymentData.customerKey)
                     .setRecurrent(recurrentPayment)
+                    .apply {
+                        paymentData.marketPlaceData?.apply {
+                            setReceipts(receipts, shops)
+                        }
+                    }
                     .also(modifyRequest)
         }
         paymentDataUi.recurrentPayment = paymentData.recurrentPayment

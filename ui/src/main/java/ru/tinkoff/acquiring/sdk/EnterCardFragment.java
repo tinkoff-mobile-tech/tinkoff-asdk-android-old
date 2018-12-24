@@ -61,6 +61,7 @@ import com.google.android.gms.wallet.WalletConstants;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -578,6 +579,12 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         final Receipt receiptValue = (Receipt) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPT_VALUE);
         if (receiptValue != null) {
             builder.setReceipt(receiptValue);
+        }
+
+        final List<Receipt> receipts = (List<Receipt>) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE);
+        final List<Shop> shops = (List<Shop>) intent.getSerializableExtra(PayFormActivity.EXTRA_SHOPS_VALUE);
+        if (receipts != null && shops != null) {
+            builder.setReceipts(receipts, shops);
         }
 
         final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(PayFormActivity.EXTRA_DATA_VALUE);

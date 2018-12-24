@@ -17,9 +17,11 @@
 package ru.tinkoff.acquiring.sdk.requests;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.Receipt;
+import ru.tinkoff.acquiring.sdk.Shop;
 
 /**
  * @author Mikhail Artemyev
@@ -35,6 +37,8 @@ final public class InitRequest extends AcquiringRequest {
     private String language;
     private String payType;
     private Receipt receipt;
+    private List<Receipt> receipts;
+    private List<Shop> shops;
     private Map<String, String> data;
     private boolean chargeFlag;
 
@@ -55,6 +59,8 @@ final public class InitRequest extends AcquiringRequest {
         putIfNotNull(LANGUAGE, language, map);
         putIfNotNull(PAY_TYPE, payType, map);
         putIfNotNull(RECEIPT, receipt, map);
+        putIfNotNull(RECEIPTS, receipts, map);
+        putIfNotNull(SHOPS, shops, map);
         putDataIfNonNull(map);
 
         return map;
@@ -130,6 +136,11 @@ final public class InitRequest extends AcquiringRequest {
 
     void setReceipt(Receipt receiptValue) {
         this.receipt = receiptValue;
+    }
+
+    void setReceipts(List<Receipt> receipts, List<Shop> shops) {
+        this.receipts = receipts;
+        this.shops = shops;
     }
 
     public Map<String, String> getData() {

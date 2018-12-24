@@ -45,6 +45,8 @@ public class AcquiringRequest {
     public static final String CVV = "CVV";
     public static final String PAY_TYPE = "PayType";
     public static final String RECEIPT = "Receipt";
+    public static final String RECEIPTS = "Receipts";
+    public static final String SHOPS = "Shops";
     public static final String DATA = "DATA";
     public static final String CHARGE_FLAG = "chargeFlag";
     public static final String DATA_KEY_EMAIL = "Email";
