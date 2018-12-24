@@ -68,7 +68,7 @@ class TinkoffPay constructor(
                 .setTheme(R.style.AcquiringTheme)
                 .apply {
                     paymentData.marketPlaceData?.apply {
-                        serReceipts(receipts, shops)
+                        setShops(shops, receipts)
                     }
                 }
                 .additionalParams()

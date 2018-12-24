@@ -583,8 +583,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         final List<Receipt> receipts = (List<Receipt>) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE);
         final List<Shop> shops = (List<Shop>) intent.getSerializableExtra(PayFormActivity.EXTRA_SHOPS_VALUE);
-        if (receipts != null && shops != null) {
-            builder.setReceipts(receipts, shops);
+        if (shops != null) {
+            builder.setShops(shops, receipts);
         }
 
         final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(PayFormActivity.EXTRA_DATA_VALUE);

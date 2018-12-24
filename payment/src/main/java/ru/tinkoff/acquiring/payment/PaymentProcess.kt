@@ -52,7 +52,7 @@ class PaymentProcess internal constructor() {
                     .setRecurrent(recurrentPayment)
                     .apply {
                         paymentData.marketPlaceData?.apply {
-                            setReceipts(receipts, shops)
+                            setShops(shops, receipts)
                         }
                     }
                     .also(modifyRequest)

@@ -19,6 +19,7 @@ package ru.tinkoff.acquiring.sdk;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 
 import java.util.ArrayList;
@@ -93,10 +94,12 @@ public class PayFormStarter {
         return this;
     }
 
-    public PayFormStarter serReceipts(@NonNull ArrayList<Receipt> receipts, @NonNull ArrayList<Shop> shops) {
+    public PayFormStarter setShops(@NonNull ArrayList<Shop> shops, @Nullable ArrayList<Receipt> receipts) {
         checkIntent();
-        intent.putExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE, receipts);
         intent.putExtra(PayFormActivity.EXTRA_SHOPS_VALUE, shops);
+        if (receipts != null) {
+            intent.putExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE, receipts);
+        }
         return this;
     }
 

@@ -95,7 +95,7 @@ public class PaymentTestActivity extends AppCompatActivity {
     }
 
     private CardData randomCard() {
-        return new CardData("2222222222222224", "08/22", "111", null, "144055");
+        return new CardData("4300000000000777", "11/22", "111");
     }
 
     private PaymentData randomPaymentInfo() {
@@ -107,8 +107,8 @@ public class PaymentTestActivity extends AppCompatActivity {
                 sessionParams.customerKey,
                 oderId,
                 Money.ofRubles(10).getCoins(),
-                settings.isRecurrentPayment(),
-                true,
+                false,
+                false,
                 marketPlaceData,
                 "ru",
                 "email@test.ru"
@@ -127,6 +127,6 @@ public class PaymentTestActivity extends AppCompatActivity {
         Shop shop = new Shop("100", "Название товара 1", 5000L);
         shops.add(shop);
 
-        return new MarketPlaceData(receipts, shops);
+        return new MarketPlaceData(shops, receipts);
     }
 }

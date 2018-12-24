@@ -20,6 +20,6 @@ data class PaymentData @JvmOverloads constructor(
 )
 
 data class MarketPlaceData(
-        val receipts: ArrayList<Receipt>,
-        val shops: ArrayList<Shop>
+        val shops: ArrayList<Shop>,
+        val receipts: ArrayList<Receipt>?
 )

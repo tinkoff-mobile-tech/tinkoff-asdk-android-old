@@ -119,11 +119,11 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
     }
 
     /**
+     * @param shops    - Объекты с данными магазинов
      * @param receipts - Объекты с данными чеков
-     * @param shops - Объекты с данными магазинов
      */
-    public InitRequestBuilder setReceipts(List<Receipt> receipts, List<Shop> shops) {
-        request.setReceipts(receipts, shops);
+    public InitRequestBuilder setShops(List<Shop> shops, List<Receipt> receipts) {
+        request.setShops(shops, receipts);
         return this;
     }
 

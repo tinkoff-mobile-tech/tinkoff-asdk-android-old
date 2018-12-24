@@ -138,7 +138,7 @@ final public class InitRequest extends AcquiringRequest {
         this.receipt = receiptValue;
     }
 
-    void setReceipts(List<Receipt> receipts, List<Shop> shops) {
+    void setShops(List<Shop> shops, List<Receipt> receipts) {
         this.receipts = receipts;
         this.shops = shops;
     }
