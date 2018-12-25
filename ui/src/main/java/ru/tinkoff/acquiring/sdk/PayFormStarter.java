@@ -18,9 +18,13 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
 import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
@@ -87,6 +91,15 @@ public class PayFormStarter {
     public PayFormStarter setReceipt(Receipt receipt) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_RECEIPT_VALUE, receipt);
+        return this;
+    }
+
+    public PayFormStarter setShops(@NonNull ArrayList<Shop> shops, @Nullable ArrayList<Receipt> receipts) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_SHOPS_VALUE, shops);
+        if (receipts != null) {
+            intent.putExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE, receipts);
+        }
         return this;
     }
 

@@ -21,7 +21,7 @@ class TinkoffPay constructor(
 ) {
 
     private val sdk: AcquiringSdk = AcquiringSdk(terminalKey, password, publicKey)
-    private var cardId : String? = null
+    private var cardId: String? = null
 
     var paymentData: PaymentData? = null
 
@@ -66,6 +66,11 @@ class TinkoffPay constructor(
                 .useFirstAttachedCard(true)
                 .addPaymentUiData(paymentDataUi)
                 .setTheme(R.style.AcquiringTheme)
+                .apply {
+                    paymentData.marketPlaceData?.apply {
+                        setShops(shops, receipts)
+                    }
+                }
                 .additionalParams()
                 .startActivityForResult(activity, requestCode)
     }

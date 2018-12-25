@@ -66,6 +66,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_RECURRENT_PAYMENT = "recurrent_payment";
     static final String EXTRA_PAYMENT_ID = "payment_id";
     static final String EXTRA_RECEIPT_VALUE = "receipt_value";
+    static final String EXTRA_RECEIPTS_VALUE = "receipts_value";
+    static final String EXTRA_SHOPS_VALUE = "shops_value";
     static final String EXTRA_DATA_VALUE = "data_value";
     static final String EXTRA_CHARGE_MODE = "charge_mode";
     static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
