@@ -240,8 +240,8 @@ public class KeyView extends View {
         super.onDraw(canvas);
 
         if (contentText != null) {
-            final float x = (canvas.getWidth() / 2) - (textWidth / 2);
-            final float y = (canvas.getHeight() / 2) - ((contentPaint.descent() + contentPaint.ascent()) / 2);
+            final float x = (getWidth() / 2) - (textWidth / 2);
+            final float y = (getHeight() / 2) - ((contentPaint.descent() + contentPaint.ascent()) / 2);
             canvas.drawText(contentText, x, y, contentPaint);
         }
 
