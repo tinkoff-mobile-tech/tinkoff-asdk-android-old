@@ -23,10 +23,10 @@
   "Pay.Dialog.Progress.PayMessage": "Оплата…",
   "Pay.Dialog.CardScan.Nfc": "Сканировать по NFC",
   "Pay.Dialog.CardScan.Camera": "Сканировать камерой",
-  "Pay.Dialog.Cvc.Message": " ",
+  "Pay.Dialog.Cvc.Message": "Для совершения платежа, введите CVC",
   "Pay.Dialog.Cvc.AcceptButton": "OK",
-  "Pay.Nfc.Fail": " ",
-  "Pay.NoScanProviders": " ",
+  "Pay.Nfc.Fail": "Не удалось распознать карту",
+  "Pay.NoScanProviders": "Отсутствуют провайдеры для сканирования",
   "ConfirmationLoop.Title": "Оплата",
   "ConfirmationLoop.Description": "Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ?)\nПожалуйста, укажите ее с точностью до копеек",
   "ConfirmationLoop.Amount": "Заблокированная сумма",
@@ -37,7 +37,7 @@
   "AddCard.AddCardButton": "Добавить",
   "AddCard.Dialog.Error.Title": "Ошибка",
   "AddCard.Dialog.Error.Network": "Вероятно, соединение с интернетом прервано, попробуйте позже",
-  "AddCard.Nfc.Fail": " ",
+  "AddCard.Nfc.Fail": "Не удалось распознать карту",
   "AddCard.Dialog.Progress.AddCardMessage": "Добавление карты...",
   "AddCard.Dialog.Error.FallbackMessage": "Что-то пошло не так",
   "AddCard.NoScanProviders": " ",
@@ -48,6 +48,6 @@
   "Nfc.Title": " ",
   "Nfc.Description": "Поднесите карту\\nк задней крышке телефона",
   "Nfc.CloseButton": "Закрыть",
-  "Nfc.Dialog.Disable.Title": " ",
-  "Nfc.Dialog.Disable.Message": " "
+  "Nfc.Dialog.Disable.Title": "NFC выключен",
+  "Nfc.Dialog.Disable.Message": "Для сканирования карты необходимо включить NFC"
 }
