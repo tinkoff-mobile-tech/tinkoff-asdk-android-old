@@ -11,6 +11,8 @@ import io.card.payment.CardIOActivity;
 import ru.tinkoff.acquiring.sdk.CreditCard;
 import ru.tinkoff.acquiring.sdk.ICameraCardScanner;
 import ru.tinkoff.acquiring.sdk.ICreditCard;
+import ru.tinkoff.acquiring.sdk.Language;
+import ru.tinkoff.acquiring.sdk.TAcqIntentExtra;
 
 /**
  * @author Vitaliy Markus
@@ -22,6 +24,7 @@ public class CameraCardIOScanner implements ICameraCardScanner {
         Intent scanIntent = createIntent(fragment.getActivity());
         fragment.startActivityForResult(scanIntent, requestCode);
     }
+
     @Override
     public boolean hasResult(@NonNull Intent data) {
         return data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT);
@@ -52,8 +55,20 @@ public class CameraCardIOScanner implements ICameraCardScanner {
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false);
         scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
         scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
+        setLanguageOrLocale(activity, scanIntent);
         return scanIntent;
     }
-    
+
+    private void setLanguageOrLocale(Activity activity, Intent scanIntent) {
+        Intent intent = activity.getIntent();
+        if (intent == null) {
+            return;
+        }
+        int languageExtra = intent.getIntExtra(TAcqIntentExtra.EXTRA_LANGUAGE, -1);
+        if (languageExtra != -1) {
+            Language language = Language.values()[languageExtra];
+            scanIntent.putExtra(CardIOActivity.EXTRA_LANGUAGE_OR_LOCALE, language.toString());
+        }
+    }
 }
 
