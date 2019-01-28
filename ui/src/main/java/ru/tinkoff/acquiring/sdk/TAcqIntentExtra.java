@@ -4,7 +4,7 @@ package ru.tinkoff.acquiring.sdk;
  * @author a.shishkin1
  */
 public class TAcqIntentExtra {
-    
+
     public static final String EXTRA_TERMINAL_KEY = "terminal_key";
     public static final String EXTRA_PASSWORD = "password";
     public static final String EXTRA_PUBLIC_KEY = "public_key";
@@ -35,8 +35,9 @@ public class TAcqIntentExtra {
     public static final String EXTRA_LOCALIZATION_RAW_RESOURCE_ID = "localizationRawResourceId";
     public static final String EXTRA_LOCALIZATION_FILE_PATH = "localizationFilePath";
     public static final String EXTRA_ERROR = "error";
-    
-    private TAcqIntentExtra () {
+    public static final String EXTRA_SHOPS_VALUE = "shops_value";
+
+    private TAcqIntentExtra() {
         throw new AssertionError("no TAcqIntentExtra instances");
     }
 }

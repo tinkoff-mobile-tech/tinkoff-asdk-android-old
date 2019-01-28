@@ -16,10 +16,12 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.PayType;
 import ru.tinkoff.acquiring.sdk.Receipt;
+import ru.tinkoff.acquiring.sdk.Shop;
 
 /**
  * @author Mikhail Artemyev
@@ -113,6 +115,15 @@ final public class InitRequestBuilder extends AcquiringRequestBuilder<InitReques
      */
     public InitRequestBuilder setReceipt(Receipt receipt) {
         request.setReceipt(receipt);
+        return this;
+    }
+
+    /**
+     * @param shops    - Объекты с данными магазинов
+     * @param receipts - Объекты с данными чеков
+     */
+    public InitRequestBuilder setShops(List<Shop> shops, List<Receipt> receipts) {
+        request.setShops(shops, receipts);
         return this;
     }
 

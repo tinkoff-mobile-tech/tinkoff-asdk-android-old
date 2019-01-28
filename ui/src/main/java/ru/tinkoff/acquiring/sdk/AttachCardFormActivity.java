@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.HasAsdkLocalization;
 
 /**
  * @author Vitaliy Markus

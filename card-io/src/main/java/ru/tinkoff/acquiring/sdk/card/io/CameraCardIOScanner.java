@@ -54,5 +54,6 @@ public class CameraCardIOScanner implements ICameraCardScanner {
         scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true);
         return scanIntent;
     }
+    
 }
 

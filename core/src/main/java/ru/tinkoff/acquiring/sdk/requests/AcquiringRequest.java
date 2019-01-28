@@ -45,6 +45,8 @@ public class AcquiringRequest {
     public static final String CVV = "CVV";
     public static final String PAY_TYPE = "PayType";
     public static final String RECEIPT = "Receipt";
+    public static final String RECEIPTS = "Receipts";
+    public static final String SHOPS = "Shops";
     public static final String DATA = "DATA";
     public static final String CHARGE_FLAG = "chargeFlag";
     public static final String DATA_KEY_EMAIL = "Email";
@@ -52,7 +54,7 @@ public class AcquiringRequest {
     public static final String REQUEST_KEY = "RequestKey";
     public static final String SOURCE = "Source";
     public static final String ANDROID_PAY_TOKEN = "EncryptedPaymentData";
-    public static final String[] IGNORED_FIELDS_VALUES = new String[]{DATA, RECEIPT};
+    public static final String[] IGNORED_FIELDS_VALUES = new String[]{DATA, RECEIPT, RECEIPTS, SHOPS};
     public static final Set<String> IGNORED_FIELDS = new HashSet<>(Arrays.asList(IGNORED_FIELDS_VALUES));
 
     private String terminalKey;

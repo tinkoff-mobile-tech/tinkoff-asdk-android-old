@@ -60,6 +60,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -82,6 +84,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 5;
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
+
+    private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
 
     private static final String RECURRING_TYPE_KEY = "recurringType";
     private static final String RECURRING_TYPE_VALUE = "12";
@@ -115,6 +119,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private RejectAction rejectAction;
 
     private boolean chargeMode;
+    private int amountPositionMode;
     private PaymentInfo rejectedPaymentInfo;
 
     private PaymentsClient paymentsClient;
@@ -126,7 +131,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Nullable
     @Override
@@ -201,6 +205,13 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         if (chargeMode) {
             setRecurrentModeForCardView(true);
             ecvCard.setRecurrentPaymentMode(true);
+        }
+
+        if (amountPositionMode != AMOUNT_POSITION_OVER_FIELDS) {
+            View amountLayout = view.findViewById(R.id.ll_price_layout);
+            if (amountLayout != null) {
+                amountLayout.setVisibility(View.GONE);
+            }
         }
 
         return view;
@@ -519,6 +530,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
 
         final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_DATA_VALUE);
+        final List<Receipt> receipts = (List<Receipt>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_RECEIPT_VALUE);
+        final List<Shop> shops = (List<Shop>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_SHOPS_VALUE);
+        if (shops != null) {
+            builder.setShops(shops, receipts);
+        }
         if (dataValue != null) {
             builder.setData(dataValue);
         }

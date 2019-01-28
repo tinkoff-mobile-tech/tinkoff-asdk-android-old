@@ -6,9 +6,12 @@ import java.io.Serializable;
 
 /**
  * @author Vitaliy Markus
- *         Объект с данными чека
+ * Объект с данными чека
  */
 public class Receipt implements Serializable {
+
+    @SerializedName("ShopCode")
+    private String shopCode;
 
     @SerializedName("Items")
     private Item[] items;
@@ -28,6 +31,11 @@ public class Receipt implements Serializable {
      * @param taxation Система налогообложения.
      */
     public Receipt(Item[] items, String email, Taxation taxation) {
+        this(null, items, email, taxation);
+    }
+
+    public Receipt(String shopCode, Item[] items, String email, Taxation taxation) {
+        this.shopCode = shopCode;
         this.items = items;
         this.email = email;
         this.taxation = taxation;
@@ -54,5 +62,13 @@ public class Receipt implements Serializable {
      */
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getShopCode() {
+        return shopCode;
+    }
+
+    public void setShopCode(String shopCode) {
+        this.shopCode = shopCode;
     }
 }

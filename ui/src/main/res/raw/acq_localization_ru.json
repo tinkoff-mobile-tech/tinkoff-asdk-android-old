@@ -46,7 +46,7 @@
   "CardList.Delete": "Удалить",
   "CardList.RemoveCard.FailMessage": "Не удалось удалить карту, попробуйте позже",
   "Nfc.Title": " ",
-  "Nfc.Description": "Поднесите карту\\nк задней крышке телефона",
+  "Nfc.Description": "Поднесите карту\nк задней крышке телефона",
   "Nfc.CloseButton": "Закрыть",
   "Nfc.Dialog.Disable.Title": "NFC выключен",
   "Nfc.Dialog.Disable.Message": "Для сканирования карты необходимо включить NFC"

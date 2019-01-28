@@ -4,7 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import ru.tinkoff.acquiring.sdk.*
+import ru.tinkoff.acquiring.sdk.AcquiringSdk
+import ru.tinkoff.acquiring.sdk.Card
+import ru.tinkoff.acquiring.sdk.CardData
+import ru.tinkoff.acquiring.sdk.CardStatus
+import ru.tinkoff.acquiring.sdk.PaymentInfo
+import ru.tinkoff.acquiring.sdk.ThreeDsData
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 
 /**
@@ -19,7 +24,8 @@ class PaymentProcess internal constructor() {
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
     private var lastKnownAction: Int? = null
-    private var state : Int = CREATED
+    private var paymentId: Long? = null
+    private var state: Int = CREATED
 
     private companion object {
         private const val SUCCESS = 1
@@ -33,15 +39,23 @@ class PaymentProcess internal constructor() {
     }
 
     @JvmSynthetic
-    internal fun initPaymentRequest(initRequestBuilder: InitRequestBuilder,
-                                    customerKey: String,
-                                    paymentData: PaymentData): PaymentProcess {
+    internal fun initPaymentRequest(
+            initRequestBuilder: InitRequestBuilder,
+            paymentData: PaymentData,
+            modifyRequest: InitRequestBuilder.() -> Unit
+    ): PaymentProcess {
         requestBuilder = paymentData.run {
             initRequestBuilder.setOrderId(orderId)
                     .setAmount(coins)
                     .setChargeFlag(chargeMode)
-                    .setCustomerKey(customerKey)
+                    .setCustomerKey(paymentData.customerKey)
                     .setRecurrent(recurrentPayment)
+                    .apply {
+                        paymentData.marketPlaceData?.apply {
+                            setShops(shops, receipts)
+                        }
+                    }
+                    .also(modifyRequest)
         }
         paymentDataUi.recurrentPayment = paymentData.recurrentPayment
         return this
@@ -49,10 +63,10 @@ class PaymentProcess internal constructor() {
 
     @JvmSynthetic
     internal fun initPaymentThread(sdk: AcquiringSdk,
-                                   cardData: CardData,
+                                   paySource: PaySource,
                                    email: String?,
                                    chargeMode: Boolean): PaymentProcess {
-        paymentDataUi.card = cardData.map()
+        paymentDataUi.card = (paySource as? CardDataPaySource)?.cardData?.map()
 
         thread = Thread(Runnable {
             try {
@@ -61,19 +75,26 @@ class PaymentProcess internal constructor() {
                 if (Thread.interrupted()) throw InterruptedException()
 
                 handler.run {
-                    if (!chargeMode) {
-                        val threeDsData = sdk.finishAuthorize(paymentId, cardData, email)
+                    if (!chargeMode || paySource is GPayTokenPaySource) {
+                        val threeDsData = when (paySource) {
+                            is CardDataPaySource -> sdk.finishAuthorize(paymentId, paySource.cardData, email)
+                            is GPayTokenPaySource -> sdk.finishAuthorize(paymentId, paySource.token, email)
+                            else -> throw IllegalArgumentException()
+                        }
+
                         if (Thread.interrupted()) throw InterruptedException()
 
                         if (threeDsData.isThreeDsNeed) {
                             obtainMessage(START_3DS, threeDsData)
                         } else {
-                            obtainMessage(SUCCESS)
+                            obtainMessage(SUCCESS, paymentId)
                         }
                     } else {
+                        val cardData = (paySource as? CardDataPaySource)?.cardData
+                                ?: throw IllegalArgumentException()
                         val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
                         if (paymentInfo.isSuccess) {
-                            obtainMessage(SUCCESS)
+                            obtainMessage(SUCCESS, paymentId)
                         } else {
                             obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo)
                         }
@@ -99,7 +120,7 @@ class PaymentProcess internal constructor() {
         this.paymentListeners += paymentListener
         val action = lastKnownAction
         if (action != null) {
-            sendToListener(action,  paymentListener)
+            sendToListener(action, paymentListener)
         }
     }
 
@@ -109,7 +130,7 @@ class PaymentProcess internal constructor() {
 
     fun start(): PaymentProcess {
         if (state != CREATED) {
-            throw IllegalStateException("already in use create another PaymentProcess")
+            throw IllegalStateException("Already in use create another PaymentProcess")
         }
         state = EXECUTING
         thread.start()
@@ -129,9 +150,15 @@ class PaymentProcess internal constructor() {
     private fun sendToListener(action: Int, listener: PaymentListener) {
         listener.apply {
             when (action) {
-                SUCCESS -> onCompleted()
+                SUCCESS -> {
+                    val paymentId = paymentId ?: return
+                    onSuccess(paymentId)
+                }
                 CHARGE_REQUEST_REJECTED, START_3DS -> onUiNeeded(paymentDataUi)
-                EXCEPTION -> onError(lastException ?: return)
+                EXCEPTION -> {
+                    val lastException = lastException ?: return
+                    onError(lastException)
+                }
             }
         }
     }
@@ -142,6 +169,8 @@ class PaymentProcess internal constructor() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             when (msg.what) {
+                SUCCESS -> paymentId = msg.obj as Long
+                EXCEPTION -> lastException = (msg.obj as Exception)
                 CHARGE_REQUEST_REJECTED -> {
                     paymentDataUi.paymentInfo = msg.obj as PaymentInfo
                     paymentDataUi.status = PaymentDataUi.Status.REJECTED
@@ -150,19 +179,9 @@ class PaymentProcess internal constructor() {
                     paymentDataUi.threeDsData = msg.obj as ThreeDsData
                     paymentDataUi.status = PaymentDataUi.Status.THREE_DS_NEEDED
                 }
-                EXCEPTION -> lastException = (msg.obj as Exception)
             }
             sendToListeners(msg.what)
             state = FINISHED
         }
-    }
-
-    interface PaymentListener {
-
-        fun onCompleted()
-
-        fun onUiNeeded(paymentDataUi: PaymentDataUi)
-
-        fun onError(exception: Exception)
     }
 }
