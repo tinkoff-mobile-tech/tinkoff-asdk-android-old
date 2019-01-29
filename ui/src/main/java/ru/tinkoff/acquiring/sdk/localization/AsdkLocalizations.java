@@ -3,6 +3,7 @@ package ru.tinkoff.acquiring.sdk.localization;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -38,6 +39,13 @@ public class AsdkLocalizations {
         } else {
             throw new ClassCastException(context.getClass().getCanonicalName() + " must implement HasAsdkLocalization" );
         }
+    }
+
+    public static void joinTAcqExtra(Intent mainIntent, Intent intentWithTAcq) {
+        setTAcqExtraInt(mainIntent, intentWithTAcq, TAcqIntentExtra.EXTRA_LOCALIZATION_RAW_RESOURCE_ID, 0);
+        setTAcqExtraInt(mainIntent, intentWithTAcq, TAcqIntentExtra.EXTRA_LANGUAGE, -1);
+        setTAcqExtraString(mainIntent, intentWithTAcq, TAcqIntentExtra.EXTRA_LOCALIZATION_FILE_PATH);
+        setTAcqExtraString(mainIntent, intentWithTAcq, "json");
     }
 
     static AsdkLocalization unsafeGet(Context context) {
@@ -169,4 +177,15 @@ public class AsdkLocalizations {
         throw new IllegalArgumentException("localization must contains: " + TextUtils.join(", ", missing));
     }
 
+    private static void setTAcqExtraInt(Intent mainIntent, Intent tAcqIntentExtra, String asdkDataKey, int defaultValue) {
+        int extra = tAcqIntentExtra.getIntExtra(asdkDataKey, defaultValue);
+        mainIntent.putExtra(asdkDataKey, extra);
+    }
+
+    private static void setTAcqExtraString(Intent mainIntent, Intent tAcqIntentExtra, String asdkDataKey) {
+        String extra = tAcqIntentExtra.getStringExtra(asdkDataKey);
+        if (extra != null) {
+            mainIntent.putExtra(asdkDataKey, extra);
+        }
+    }
 }

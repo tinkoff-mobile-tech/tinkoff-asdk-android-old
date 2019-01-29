@@ -119,6 +119,7 @@ public class FullCardScanner implements EditCardView.Actions {
 
     private void startNfcScan(Activity activity) {
         Intent cardFromNfcIntent = new Intent(activity, AsdkNfcScanActivity.class);
+        AsdkLocalizations.joinTAcqExtra(cardFromNfcIntent, activity.getIntent());
         fragment.startActivityForResult(cardFromNfcIntent, REQUEST_CARD_NFC);
     }
 }
