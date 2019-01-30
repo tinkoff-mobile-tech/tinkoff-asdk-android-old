@@ -21,7 +21,8 @@
     <style name="AcquiringTheme.Custom.AttachCard">
         <item name="acqPayAmountPosition">overFields</item>
         <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom.AttachCard</item>
-        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom.AttachCard</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom.AttachCard
+        </item>
         <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.Custom.AttachCard</item>
     </style>
 
@@ -91,11 +92,11 @@
     </style>
 
     <style name="AcquiringPayTitleStyle.AttachCard">
-        <item name="android:visibility">visible</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="AcquiringPayDescriptionStyle.AttachCard">
-        <item name="android:visibility">visible</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <style name="AcquiringPayButtonStyle.AttachCard" parent="AcquiringButtonStyle">
