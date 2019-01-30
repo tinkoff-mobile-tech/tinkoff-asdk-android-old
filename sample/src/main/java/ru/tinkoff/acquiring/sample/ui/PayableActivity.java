@@ -135,7 +135,6 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 .setChargeMode(settings.isRecurrentPayment())
                 .useFirstAttachedCard(settings.useFirstAttachedCard())
                 .setCameraCardScanner(settings.getCameraScanner())
-                .setLanguage(Language.ENGLISH)
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())

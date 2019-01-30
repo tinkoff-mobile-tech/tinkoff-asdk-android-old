@@ -34,6 +34,8 @@
   "ConfirmationLoop.CheckButton": "Check",
   "Confirmation3DS.Title": "Payment",
   "AddCard.Title": "Add card",
+  "AddCard.Attachment.Title": "Attachment Title",
+  "AddCard.Attachment.Description": "Attachment Descriptions",
   "AddCard.AddCardButton": "Add card",
   "AddCard.Dialog.Error.Title": "Error",
   "AddCard.Dialog.Error.Network": "Probably the Internet connection is interrupted, try again later",

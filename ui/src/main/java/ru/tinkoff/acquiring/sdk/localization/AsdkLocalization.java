@@ -77,6 +77,10 @@ public class AsdkLocalization {
 
     @SerializedName("AddCard.Title") public String addCardTitle;
 
+    @SerializedName("AddCard.Attachment.Title") public String addCardAttachmentTitle;
+
+    @SerializedName("AddCard.Attachment.Description") public String addCardAttachmentDescription;
+
     @SerializedName("AddCard.AddCardButton") public String addCardAddCardButton;
 
     @SerializedName("AddCard.Dialog.Error.Title") public String addCardDialogErrorTitle;

@@ -34,6 +34,8 @@
   "ConfirmationLoop.CheckButton": "Проверить",
   "Confirmation3DS.Title": "Оплата",
   "AddCard.Title": "Добавление карты",
+  "AddCard.Attachment.Title": "Заголовок привязки карты",
+  "AddCard.Attachment.Description": "Описание привязки карты",
   "AddCard.AddCardButton": "Добавить",
   "AddCard.Dialog.Error.Title": "Ошибка",
   "AddCard.Dialog.Error.Network": "Вероятно, соединение с интернетом прервано, попробуйте позже",

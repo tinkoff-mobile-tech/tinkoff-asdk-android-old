@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements
                 AttachCardFormActivity
                         .init(params.terminalId, params.secret, params.publicKey)
                         .prepare(params.customerKey, settings.getCheckType(), settings.isCustomKeyboardEnabled(), params.customerEmail)
-                        .setLanguage(Language.RUSSIAN)
                         .setTheme(settings.resolveAttachCardStyle())
                         .setCameraCardScanner(settings.getCameraScanner())
 //                        .setDesignConfiguration(AttachCellType.ATTACH_BUTTON, AttachCellType.SECURE_LOGOS, AttachCellType.PAYMENT_CARD_REQUISITES)
