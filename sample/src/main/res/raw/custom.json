@@ -38,7 +38,7 @@
   "AddCard.Nfc.Fail": "Не удалось распознать карту",
   "AddCard.Dialog.Progress.AddCardMessage": "Добавление карты...",
   "AddCard.Dialog.Error.FallbackMessage": "Что-то пошло не так",
-  "AddCard.NoScanProviders": " ",
+  "AddCard.NoScanProviders": "Отсутствуют провайдеры для сканирования",
   "CardList.Title": "Выберите карту",
   "CardList.NewCard": "Ввести данные новой карты",
   "CardList.Delete": "Удалить",
