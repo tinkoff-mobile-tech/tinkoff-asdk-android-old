@@ -28,7 +28,7 @@
   "Pay.Nfc.Fail": "Failed to scan a card",
   "Pay.NoScanProviders": "There aren't any providers",
   "ConfirmationLoop.Title": "Payment",
-  "ConfirmationLoop.Description": "To verify your card we charged and returned a small amount of money (up to 1,99 Р)\n Please, specify the exact sum including the coins",
+  "ConfirmationLoop.Description": "To verify your card we charged and returned a small amount of money (up to 1,99 ₽)\n Please, specify the exact sum including the coins",
   "ConfirmationLoop.Amount": "Blocked amount",
   "ConfirmationLoop.Dialog.Validation.InvalidAmount": "Please enter correct amount in coins",
   "ConfirmationLoop.CheckButton": "Check",

@@ -28,7 +28,7 @@
   "Pay.Nfc.Fail": "Не удалось распознать карту",
   "Pay.NoScanProviders": "Отсутствуют провайдеры для сканирования",
   "ConfirmationLoop.Title": "Оплата",
-  "ConfirmationLoop.Description": "Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ?)\nПожалуйста, укажите ее с точностью до копеек",
+  "ConfirmationLoop.Description": "Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ₽)\nПожалуйста, укажите ее с точностью до копеек",
   "ConfirmationLoop.Amount": "Заблокированная сумма",
   "ConfirmationLoop.Dialog.Validation.InvalidAmount": "Введите корректную сумму в копейках",
   "ConfirmationLoop.CheckButton": "Проверить",
