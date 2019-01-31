@@ -289,7 +289,7 @@ public class EditCardView extends ViewGroup {
 
                 int pos = Math.max(sel[0] + correction, 0);
 
-                etCardNumber.setSelection(Math.min(formattedCardNumber.length(), pos));
+                etCardNumber.setSelection(Math.min(etCardNumber.length(), pos));
             }
 
             public int countMatchesBeforeIndex(String str, String sub, int border) {
