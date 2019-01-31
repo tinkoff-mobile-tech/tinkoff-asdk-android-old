@@ -24,7 +24,7 @@
   "Pay.Dialog.Cvc.Message": "Для совершения платежа, введите CVC",
   "Pay.Dialog.Cvc.AcceptButton": "OK",
   "Pay.Nfc.Fail": "Не удалось распознать карту",
-  "Pay.NoScanProviders": " ",
+  "Pay.NoScanProviders": "Отсутствуют провайдеры для сканирования",
   "ConfirmationLoop.Title": "Оплата",
   "ConfirmationLoop.Description": "Для подтверждения привязки карты мы списали и вернули небольшую сумму (до 1,99 ?)\nПожалуйста, укажите ее с точностью до копеек",
   "ConfirmationLoop.Amount": "Заблокированная сумма",
