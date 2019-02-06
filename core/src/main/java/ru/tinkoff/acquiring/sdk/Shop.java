@@ -12,11 +12,18 @@ public class Shop implements Serializable {
     private String name;
     @SerializedName("Amount")
     private long amount;
+    @SerializedName("Fee")
+    private String fee;
 
     public Shop(String shopCode, String name, long amount) {
+        this(shopCode, name, amount, null);
+    }
+
+    public Shop(String shopCode, String name, long amount, String fee) {
         this.shopCode = shopCode;
         this.name = name;
         this.amount = amount;
+        this.fee = fee;
     }
 
     public String getShopCode() {
@@ -41,5 +48,13 @@ public class Shop implements Serializable {
 
     public void setAmount(long amount) {
         this.amount = amount;
+    }
+
+    public String getFee() {
+        return fee;
+    }
+
+    public void setFee(String fee) {
+        this.fee = fee;
     }
 }
