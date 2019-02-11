@@ -11,7 +11,7 @@
     <LinearLayout
         style="@style/AcquiringNfcDescriptionTextStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
@@ -23,10 +23,10 @@
             android:src="@drawable/acq_nfc" />
 
         <TextView
+            android:id="@+id/tv_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/acq_nfc_description"
             android:textColor="@color/acq_colorNfcTint" />
 
 
@@ -41,7 +41,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:text="@string/acq_btn_close"
         android:textColor="@drawable/acq_nfc_tint_color_pressable" />
 
 </LinearLayout>

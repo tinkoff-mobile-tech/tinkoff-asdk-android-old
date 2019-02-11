@@ -27,7 +27,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
 
 
@@ -48,36 +48,6 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     public static final int RESULT_ERROR = 500;
     public static final String API_ERROR_NO_CUSTOMER = "7";
-
-    static final String EXTRA_ERROR = "error";
-
-    static final String EXTRA_TERMINAL_KEY = "terminal_key";
-    static final String EXTRA_PASSWORD = "password";
-    static final String EXTRA_PUBLIC_KEY = "public_key";
-
-    static final String EXTRA_ORDER_ID = "order_id";
-    static final String EXTRA_AMOUNT = "amount";
-    static final String EXTRA_TITLE = "title";
-    static final String EXTRA_DESCRIPTION = "description";
-    static final String EXTRA_CARD_ID = "card_id";
-    static final String EXTRA_E_MAIL = "email";
-    static final String EXTRA_CUSTOM_KEYBOARD = "keyboard";
-    static final String EXTRA_CUSTOMER_KEY = "customer_key";
-    static final String EXTRA_RECURRENT_PAYMENT = "recurrent_payment";
-    static final String EXTRA_PAYMENT_ID = "payment_id";
-    static final String EXTRA_RECEIPT_VALUE = "receipt_value";
-    static final String EXTRA_RECEIPTS_VALUE = "receipts_value";
-    static final String EXTRA_SHOPS_VALUE = "shops_value";
-    static final String EXTRA_DATA_VALUE = "data_value";
-    static final String EXTRA_CHARGE_MODE = "charge_mode";
-    static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
-    static final String EXTRA_THEME = "theme";
-    static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
-    static final String EXTRA_DESIGN_CONFIGURATION = "design_configuration";
-    static final String EXTRA_ANDROID_PAY_PARAMS = "android_pay_params";
-    public static final String EXTRA_CARD_DATA = "extra_card_data";
-    public static final String EXTRA_PAYMENT_INFO = "extra_payment_info";
-    public static final String EXTRA_THREE_DS = "extra_three_ds";
 
     static final int RESULT_CODE_CLEAR_CARD = 101;
 
@@ -99,6 +69,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     private boolean useCustomKeyboard;
     private boolean isCardsReady;
     private boolean chargeMode;
+    private AsdkLocalizationProperty asdkLocalizationProperty;
 
     @Override
     public AcquiringSdk getSdk() {
@@ -132,9 +103,9 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        asdkLocalizationProperty = new AsdkLocalizationProperty(this);
         Intent intent = getIntent();
-        int theme = intent.getIntExtra(EXTRA_THEME, 0);
+        int theme = intent.getIntExtra(TAcqIntentExtra.EXTRA_THEME, 0);
         if (theme != 0) {
             setTheme(theme);
         }
@@ -145,32 +116,29 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         setContentView(R.layout.acq_activity);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.acqPayFormTitle, tv, true);
-        String title = getResources().getString(tv.resourceId);
-        setTitle(title);
+        setTitle(getAsdkLocalization().payTitle);
 
         dialogsManager = new DialogsManager(this);
 
-        String terminalKey = intent.getStringExtra(EXTRA_TERMINAL_KEY);
-        String password = intent.getStringExtra(EXTRA_PASSWORD);
-        String publicKey = intent.getStringExtra(EXTRA_PUBLIC_KEY);
-        chargeMode = intent.getBooleanExtra(EXTRA_CHARGE_MODE, false);
+        String terminalKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_TERMINAL_KEY);
+        String password = intent.getStringExtra(TAcqIntentExtra.EXTRA_PASSWORD);
+        String publicKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_PUBLIC_KEY);
+        chargeMode = intent.getBooleanExtra(TAcqIntentExtra.EXTRA_CHARGE_MODE, false);
 
         sdk = new AcquiringSdk(terminalKey, password, publicKey);
         cardManager = new CardManager(sdk);
-        useCustomKeyboard = intent.getBooleanExtra(EXTRA_CUSTOM_KEYBOARD, false);
+        useCustomKeyboard = intent.getBooleanExtra(TAcqIntentExtra.EXTRA_CUSTOM_KEYBOARD, false);
 
         if (savedInstanceState == null) {
             isCardsReady = false;
-            if (intent.hasExtra(EXTRA_PAYMENT_INFO)) {
+            if (intent.hasExtra(TAcqIntentExtra.EXTRA_PAYMENT_INFO)) {
                 showRejected();
-            } else if (intent.hasExtra(EXTRA_THREE_DS)) {
+            } else if (intent.hasExtra(TAcqIntentExtra.EXTRA_THREE_DS)) {
                 showThreeDsData();
             } else {
                 startFinishAuthorized();
                 if (isCardChooseEnable()) {
-                    String customerKey = intent.getStringExtra(EXTRA_CUSTOMER_KEY);
+                    String customerKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY);
                     showProgressDialog();
                     requestCards(customerKey, cardManager);
                 }
@@ -185,8 +153,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     private void showRejected() {
-        Bundle paymentInfoBundle = getIntent().getBundleExtra(EXTRA_PAYMENT_INFO);
-        Bundle cardInfoBundle = getIntent().getBundleExtra(EXTRA_CARD_DATA);
+        Bundle paymentInfoBundle = getIntent().getBundleExtra(TAcqIntentExtra.EXTRA_PAYMENT_INFO);
+        Bundle cardInfoBundle = getIntent().getBundleExtra(TAcqIntentExtra.EXTRA_CARD_DATA);
         Card[] cards = new CardsArrayBundlePacker().unpack(cardInfoBundle);
         final PaymentInfo paymentInfo = new PaymentInfoBundlePacker().unpack(paymentInfoBundle);
 
@@ -208,7 +176,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     private void showThreeDsData() {
-        Bundle threeDsBundle = getIntent().getBundleExtra(EXTRA_THREE_DS);
+        Bundle threeDsBundle = getIntent().getBundleExtra(TAcqIntentExtra.EXTRA_THREE_DS);
         ThreeDsData threeDsData = new ThreeDsBundlePacker().unpack(threeDsBundle);
         start3DS(threeDsData);
     }
@@ -266,10 +234,10 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     public void success() {
         hideProgressDialog();
         final Intent data = new Intent();
-        data.putExtra(EXTRA_PAYMENT_ID, paymentId);
+        data.putExtra(TAcqIntentExtra.EXTRA_PAYMENT_ID, paymentId);
         setResult(RESULT_OK, data);
         if (isCardChooseEnable()) {
-            cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
+            cardManager.clear(getIntent().getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY));
         }
         finish();
     }
@@ -283,7 +251,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     public void showProgressDialog() {
         if (!dialogsManager.isProgressShowing()) {
-            dialogsManager.showProgressDialog(getString(R.string.acq_progress_dialog_text));
+            dialogsManager.showProgressDialog(getAsdkLocalization().payDialogProgressPayMessage);
         }
     }
 
@@ -301,7 +269,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         }
 
         Intent data = new Intent();
-        data.putExtra(EXTRA_ERROR, throwable);
+        data.putExtra(TAcqIntentExtra.EXTRA_ERROR, throwable);
         setResult(RESULT_ERROR, data);
         finish();
     }
@@ -319,15 +287,15 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     public void showErrorDialog(Exception exception) {
         String message = exception.getMessage();
         if (TextUtils.isEmpty(message)) {
-            message = getString(R.string.acq_default_error_message);
+            message = getAsdkLocalization().payDialogErrorFallbackMessage;
         }
-        dialogsManager.showErrorDialog(getString(R.string.acq_default_error_title), message);
+        dialogsManager.showErrorDialog(getAsdkLocalization().payDialogErrorTitle, message);
     }
 
     @Override
     public void noNetwork() {
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_network_error_message);
+        String title = getAsdkLocalization().payDialogErrorTitle;
+        String message = getAsdkLocalization().payDialogErrorNetwork;
         DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -342,10 +310,10 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     public void onCardsReady(Card[] cards) {
         hideProgressDialog();
-        boolean useFirstAttachedCard = getIntent().getBooleanExtra(EXTRA_USE_FIRST_ATTACHED_CARD, true);
+        boolean useFirstAttachedCard = getIntent().getBooleanExtra(TAcqIntentExtra.EXTRA_USE_FIRST_ATTACHED_CARD, true);
         this.cards = filterCards(cards);
         if (!isCardsReady && sourceCard == null && cards != null && cards.length > 0) {
-            String cardId = getIntent().getStringExtra(EXTRA_CARD_ID);
+            String cardId = getIntent().getStringExtra(TAcqIntentExtra.EXTRA_CARD_ID);
             if (cardId != null) {
                 sourceCard = cardManager.getCardById(cardId);
             }
@@ -362,7 +330,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     @Override
     public void onDeleteCard(Card card) {
-        cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
+        cardManager.clear(getIntent().getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY));
         if (sourceCard == card) {
             sourceCard = null;
         }
@@ -395,8 +363,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     @Override
     public void onGooglePayError() {
         hideProgressDialog();
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_default_error_message);
+        String title = getAsdkLocalization().payDialogErrorTitle;
+        String message = getAsdkLocalization().payDialogErrorFallbackMessage;
         dialogsManager.showErrorDialog(title, message);
     }
 
@@ -446,7 +414,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     void startChooseCard() {
-        Fragment fragment = createCardListFragment(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY), chargeMode);
+        Fragment fragment = createCardListFragment(getIntent().getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY), chargeMode);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .addToBackStack("choose_card")
@@ -488,7 +456,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     public boolean isCardChooseEnable() {
-        return getIntent().getStringExtra(EXTRA_CUSTOMER_KEY) != null;
+        return getIntent().getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY) != null;
     }
 
     private void navigateBack() {
@@ -500,11 +468,11 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     public static void dispatchResult(int resultCode, Intent data, OnPaymentListener listener) {
         if (resultCode == RESULT_OK) {
-            listener.onSuccess(data.getLongExtra(EXTRA_PAYMENT_ID, -1L));
+            listener.onSuccess(data.getLongExtra(TAcqIntentExtra.EXTRA_PAYMENT_ID, -1L));
         } else if (resultCode == RESULT_CANCELED) {
             listener.onCancelled();
         } else if (resultCode == RESULT_ERROR) {
-            listener.onError((Exception) data.getSerializableExtra(EXTRA_ERROR));
+            listener.onError((Exception) data.getSerializableExtra(TAcqIntentExtra.EXTRA_ERROR));
         }
     }
 
@@ -522,9 +490,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         return list.toArray(new Card[list.size()]);
     }
 
-    public void showGooglePayError() {
-        String title = getString(R.string.acq_default_error_title);
-        String message = getString(R.string.acq_default_error_message);
-        dialogsManager.showErrorDialog(title, message);
+    @Override
+    public AsdkLocalization getAsdkLocalization() {
+        return asdkLocalizationProperty.getAsdkLocalization();
     }
 }

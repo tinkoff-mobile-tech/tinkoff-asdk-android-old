@@ -32,6 +32,7 @@ import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sdk.GooglePayParams;
 import ru.tinkoff.acquiring.sdk.Item;
+import ru.tinkoff.acquiring.sdk.Language;
 import ru.tinkoff.acquiring.sdk.Money;
 import ru.tinkoff.acquiring.sdk.OnPaymentListener;
 import ru.tinkoff.acquiring.sdk.PayFormActivity;
@@ -137,7 +138,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
                 //.setReceipt(createReceipt())
                 //.setData(createData())
                 .setTheme(settings.resolveStyle())
-                .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
+//                .setDesignConfiguration(PayCellType.PAYMENT_CARD_REQUISITES, PayCellType.PAY_BUTTON, PayCellType.SECURE_LOGOS)
                 .setGooglePayParams(settings.isGooglePayEnabled() ? googlePayParams : null)
                 .startActivityForResult(this, REQUEST_CODE_PAY);
     }

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ru.tinkoff.acquiring.sdk.R;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 
 import static ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType.ATTACH_BUTTON;
 import static ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType.PAYMENT_CARD_REQUISITES;
@@ -44,23 +47,31 @@ public class AttachCellInflater {
 
     public View inflate(ViewGroup container) {
         validate(PAYMENT_CARD_REQUISITES, ATTACH_BUTTON, SECURE_LOGOS);
-
+        AsdkLocalization localization = AsdkLocalizations.require(container.getContext());
         View root = inflater.inflate(R.layout.acq_fragment_attach_card_base, container, false);
         container = root.findViewById(R.id.ll_container_layout);
+        View inflatedView = null;
         for (AttachCellType cellType : cellTypes) {
             switch (cellType) {
-                case TITLE:
-                    inflater.inflate(R.layout.acq_cell_product_title, container, true);
+                case TITLE: {
+                    inflatedView = inflater.inflate(R.layout.acq_cell_product_title, container, true);
+                    ((TextView) inflatedView.findViewById(R.id.tv_title)).setText(localization.addCardAttachmentTitle);
                     break;
-                case DESCRIPTION:
-                    inflater.inflate(R.layout.acq_cell_product_description, container, true);
+                }
+                case DESCRIPTION: {
+                    inflatedView = inflater.inflate(R.layout.acq_cell_product_description, container, true);
+                    ((TextView) inflatedView.findViewById(R.id.tv_description)).setText(localization.addCardAttachmentDescription);
                     break;
-                case PAYMENT_CARD_REQUISITES:
+                }
+                case PAYMENT_CARD_REQUISITES: {
                     inflater.inflate(R.layout.acq_cell_payment_card_requisites_attach, container, true);
                     break;
-                case EMAIL:
-                    inflater.inflate(R.layout.acq_cell_email, container, true);
+                }
+                case EMAIL: {
+                    inflatedView = inflater.inflate(R.layout.acq_cell_email, container, true);
+                    ((TextView) inflatedView.findViewById(R.id.et_email)).setHint(localization.payEmail);
                     break;
+                }
                 case ATTACH_BUTTON:
                     inflater.inflate(R.layout.acq_cell_attach_button, container, true);
                     break;

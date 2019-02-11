@@ -1,14 +1,7 @@
 package ru.tinkoff.acquiring.payment
 
 import android.app.Activity
-import ru.tinkoff.acquiring.sdk.AcquiringSdk
-import ru.tinkoff.acquiring.sdk.CardData
-import ru.tinkoff.acquiring.sdk.CardsArrayBundlePacker
-import ru.tinkoff.acquiring.sdk.Money
-import ru.tinkoff.acquiring.sdk.PayFormActivity
-import ru.tinkoff.acquiring.sdk.PayFormStarter
-import ru.tinkoff.acquiring.sdk.PaymentInfoBundlePacker
-import ru.tinkoff.acquiring.sdk.ThreeDsBundlePacker
+import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 
 /**
@@ -78,10 +71,10 @@ class TinkoffPay constructor(
     private fun PayFormStarter.addPaymentUiData(paymentDataUi: PaymentDataUi): PayFormStarter {
         paymentDataUi.apply {
             if (card != null && paymentInfo != null) {
-                intent.putExtra(PayFormActivity.EXTRA_CARD_DATA, CardsArrayBundlePacker().pack(arrayOf(paymentDataUi.card)))
-                intent.putExtra(PayFormActivity.EXTRA_PAYMENT_INFO, PaymentInfoBundlePacker().pack(paymentDataUi.paymentInfo))
+                intent.putExtra(TAcqIntentExtra.EXTRA_CARD_DATA, CardsArrayBundlePacker().pack(arrayOf(paymentDataUi.card)))
+                intent.putExtra(TAcqIntentExtra.EXTRA_PAYMENT_INFO, PaymentInfoBundlePacker().pack(paymentDataUi.paymentInfo))
             } else if (threeDsData != null) {
-                intent.putExtra(PayFormActivity.EXTRA_THREE_DS, ThreeDsBundlePacker().pack(threeDsData))
+                intent.putExtra(TAcqIntentExtra.EXTRA_THREE_DS, ThreeDsBundlePacker().pack(threeDsData))
             }
         }
         return this

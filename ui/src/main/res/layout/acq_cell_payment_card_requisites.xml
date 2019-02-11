@@ -20,8 +20,7 @@
             android:id="@+id/tv_src_card_choose_btn"
             style="?acqAccentTextStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/acq_change_card_label" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
+import ru.tinkoff.acquiring.sdk.localization.HasAsdkLocalization;
 import ru.tinkoff.acquiring.sdk.nfc.AsdkNfcScanActivity;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
@@ -23,11 +26,14 @@ public class FullCardScanner implements EditCardView.Actions {
     @NonNull
     private final Fragment fragment;
 
+    private String noScanProvidersMessage;
+
     @Nullable
     private final ICameraCardScanner cameraCardScanner;
 
-    public FullCardScanner(@NonNull Fragment fragment, @Nullable ICameraCardScanner cameraCardScanner) {
+    public FullCardScanner(@NonNull Fragment fragment, @Nullable ICameraCardScanner cameraCardScanner, String noScanProvidersMessage) {
         this.fragment = fragment;
+        this.noScanProvidersMessage = noScanProvidersMessage;
         if (cameraCardScanner != null) {
             this.cameraCardScanner = cameraCardScanner;
         } else {
@@ -42,7 +48,11 @@ public class FullCardScanner implements EditCardView.Actions {
         boolean cameraEnabled = isCameraEnable();
         if (nfcEnable && cameraEnabled) {
             AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            CharSequence items[] = activity.getResources().getStringArray(R.array.acq_scan_types);
+            AsdkLocalization localization = ((HasAsdkLocalization) editCardView.getContext()).getAsdkLocalization();
+            CharSequence items[] = new CharSequence[] {
+                    localization.payDialogCardScanCamera,
+                    localization.payDialogCardScanNfc
+            };
             builder.setItems(items, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int i) {
@@ -60,7 +70,7 @@ public class FullCardScanner implements EditCardView.Actions {
         } else if (nfcEnable) {
             startNfcScan(activity);
         } else {
-            Toast.makeText(activity, R.string.acq_no_scan_providers, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, noScanProvidersMessage, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -109,6 +119,7 @@ public class FullCardScanner implements EditCardView.Actions {
 
     private void startNfcScan(Activity activity) {
         Intent cardFromNfcIntent = new Intent(activity, AsdkNfcScanActivity.class);
+        AsdkLocalizations.joinTAcqExtra(cardFromNfcIntent, activity.getIntent());
         fragment.startActivityForResult(cardFromNfcIntent, REQUEST_CARD_NFC);
     }
 }

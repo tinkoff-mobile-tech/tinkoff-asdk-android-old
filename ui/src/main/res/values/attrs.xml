@@ -14,7 +14,6 @@
     <attr name="acqKeyboardStyle" format="integer" />
     <attr name="acqViewDivider" format="dimension" />
     <attr name="acqContentBlockDivider" format="dimension" />
-    <attr name="acqPayFormTitle" format="string" />
 
     <attr name="acqCardIcons" format="integer" />
     <attr name="acqVisaIcon" format="reference" />
@@ -40,7 +39,5 @@
         <enum name="buttonUnderFieldsIconsUnderBottom" value="4" />
     </attr>
 
-    <attr name="acqPayWithAmountFormat" format="string|reference" />
-    <attr name="acqMoneyAmountFormat" format="string|reference" />
 
 </resources>

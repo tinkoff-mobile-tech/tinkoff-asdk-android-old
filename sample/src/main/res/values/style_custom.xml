@@ -15,22 +15,18 @@
         <item name="acqPayEmailStyle">@style/AcquiringPayEmailStyle.Custom</item>
         <item name="acqPayAmountPosition">overFields</item>
         <item name="acqPayButtonAndIconPosition">iconsUnderFieldsButtonOnBottom</item>
-        <item name="acqPayFormTitle">@string/acq_screen_title_custom</item>
-        <item name="acqPayWithAmountFormat">@string/acq_pay_with_amount_custom</item>
-        <item name="acqMoneyAmountFormat">@string/acq_money_amount_format_custom</item>
         <item name="acqKeyboardStyle">@style/AcquiringKeyboardStyle.Custom</item>
     </style>
 
     <style name="AcquiringTheme.Custom.AttachCard">
-        <item name="acqPayFormTitle">@string/attachment_toolbar_title</item>
         <item name="acqPayAmountPosition">overFields</item>
         <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.Custom.AttachCard</item>
-        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom.AttachCard</item>
+        <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.Custom.AttachCard
+        </item>
         <item name="acqButtonStyle">@style/AcquiringPayButtonStyle.Custom.AttachCard</item>
     </style>
 
     <style name="AcquiringTheme.AttachCard">
-        <item name="acqPayFormTitle">@string/attachment_toolbar_title</item>
         <item name="acqPayAmountPosition">overFields</item>
         <item name="acqPayTitleStyle">@style/AcquiringPayTitleStyle.AttachCard</item>
         <item name="acqPayDescriptionStyle">@style/AcquiringPayDescriptionStyle.AttachCard</item>

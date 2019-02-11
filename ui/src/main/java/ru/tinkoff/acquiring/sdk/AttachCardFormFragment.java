@@ -24,6 +24,8 @@ import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellInflater;
 import ru.tinkoff.acquiring.sdk.inflate.attach.AttachCellType;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
@@ -71,7 +73,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        int[] intTypes = getActivity().getIntent().getIntArrayExtra(AttachCardFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        int[] intTypes = getActivity().getIntent().getIntArrayExtra(TAcqIntentExtra.EXTRA_DESIGN_CONFIGURATION);
         AttachCellType[] cellTypes = AttachCellType.toPayCellTypeArray(intTypes);
         View root = AttachCellInflater.from(inflater, cellTypes).inflate(container);
         initViews(root);
@@ -79,7 +81,11 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         AttachCardFormActivity activity = (AttachCardFormActivity) getActivity();
         cardManager = new CardManager(activity.getSdk());
 
-        cardScanner = new FullCardScanner(this, (ICameraCardScanner) getActivity().getIntent().getSerializableExtra(AttachCardFormActivity.EXTRA_CAMERA_CARD_SCANNER));
+        cardScanner = new FullCardScanner(
+                this,
+                (ICameraCardScanner) getActivity().getIntent().getSerializableExtra(TAcqIntentExtra.EXTRA_CAMERA_CARD_SCANNER),
+                AsdkLocalizations.require(this).addCardNoScanProviders
+        );
         editCardView.setCardSystemIconsHolder(new ThemeCardLogoCache(getActivity()));
         editCardView.setActions(cardScanner);
         if (!cardScanner.isScanEnable()) {
@@ -96,7 +102,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
         }
 
         resolveButtonAndIconsPosition(root);
-
+        attachButton.setText(AsdkLocalizations.require(this).addCardAddCardButton);
         attachButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +134,7 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
             ICreditCard card = cardScanner.parseNfcData(data);
             setCreditCardData(card);
         } else if (cardScanner.isNfcError(requestCode, resultCode)) {
-            Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), AsdkLocalizations.require(this).addCardNfcFail, Toast.LENGTH_SHORT).show();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -167,9 +173,9 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
             @Override
             public void run() {
                 try {
-                    String customerKey = intent.getStringExtra(AttachCardFormActivity.EXTRA_CUSTOMER_KEY);
-                    String checkType = intent.getStringExtra(AttachCardFormActivity.EXTRA_CHECK_TYPE);
-                    Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(AttachCardFormActivity.EXTRA_DATA);
+                    String customerKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY);
+                    String checkType = intent.getStringExtra(TAcqIntentExtra.EXTRA_CHECK_TYPE);
+                    Map<String, String> data = (Map<String, String>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_DATA);
 
                     AttachCardResponse response = cardManager.attachCard(customerKey, checkType, cardData, email, data);
 
@@ -197,11 +203,17 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
 
     private void initViews(View root) {
         editCardView = root.findViewById(R.id.ecv_card);
+        AsdkLocalization localization = AsdkLocalizations.require(this);
+        editCardView.setHints(
+            localization.payCardPanHint,
+            localization.payCardExpireDateHint,
+            localization.payCardCvcHint
+        );
         emailView = root.findViewById(R.id.et_email);
         attachButton = root.findViewById(R.id.btn_attach);
         customKeyboard = root.findViewById(R.id.acq_keyboard);
 
-        final String email = getActivity().getIntent().getStringExtra(AttachCardFormActivity.EXTRA_EMAIL);
+        final String email = getActivity().getIntent().getStringExtra(TAcqIntentExtra.EXTRA_E_MAIL);
         if (email != null && emailView != null) {
             emailView.setText(email);
         }
@@ -273,12 +285,13 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
     }
 
     private boolean validateInput(EditCardView cardView, String email) {
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         if (!cardView.isFilledAndCorrect()) {
-            Toast.makeText(getActivity(), R.string.acq_invalid_card, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), localization.payDialogValidationInvalidCard, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(getActivity(), R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), localization.payDialogValidationInvalidEmail, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

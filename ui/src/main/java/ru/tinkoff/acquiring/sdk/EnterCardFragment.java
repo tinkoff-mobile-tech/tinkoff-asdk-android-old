@@ -21,7 +21,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -39,7 +38,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +59,7 @@ import com.google.android.gms.wallet.WalletConstants;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -68,6 +67,8 @@ import java.util.regex.Pattern;
 
 import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellInflater;
 import ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder;
 import ru.tinkoff.acquiring.sdk.utils.Base64;
 import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
@@ -84,18 +85,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private static final int PAY_FORM_MAX_LENGTH = 20;
 
-    private static final int AMOUNT_POSITION_INDEX = 0;
-    private static final int BUTTON_POSITION_INDEX = 1;
-    private static final int PAY_WITH_AMOUNT_FORMAT_INDEX = 2;
-    private static final int MONEY_AMOUNT_FORMAT_INDEX = 3;
-
     private static final int AMOUNT_POSITION_OVER_FIELDS = 0;
-
-    private static final int BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM = 0;
-    private static final int ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS = 1;
-    private static final int ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM = 2;
-    private static final int ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS = 3;
-    private static final int BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM = 4;
 
     private static final String RECURRING_TYPE_KEY = "recurringType";
     private static final String RECURRING_TYPE_VALUE = "12";
@@ -130,40 +120,32 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private boolean chargeMode;
     private int amountPositionMode;
-    private int buttonAndIconsPositionMode;
-    private String payAmountFormat;
-    private String moneyAmountFormat;
     private PaymentInfo rejectedPaymentInfo;
 
     private PaymentsClient paymentsClient;
 
     public static EnterCardFragment newInstance(boolean chargeMode) {
         Bundle args = new Bundle();
-        args.putBoolean(PayFormActivity.EXTRA_CHARGE_MODE, chargeMode);
+        args.putBoolean(TAcqIntentExtra.EXTRA_CHARGE_MODE, chargeMode);
         EnterCardFragment fragment = new EnterCardFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        TypedArray typedArray = context.getTheme().obtainStyledAttributes(new int[]{R.attr.acqPayAmountPosition, R.attr.acqPayButtonAndIconPosition, R.attr.acqPayWithAmountFormat, R.attr.acqMoneyAmountFormat});
-        amountPositionMode = typedArray.getInt(AMOUNT_POSITION_INDEX, AMOUNT_POSITION_OVER_FIELDS);
-        buttonAndIconsPositionMode = typedArray.getInt(BUTTON_POSITION_INDEX, BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM);
-        payAmountFormat = typedArray.getString(PAY_WITH_AMOUNT_FORMAT_INDEX);
-        moneyAmountFormat = typedArray.getString(MONEY_AMOUNT_FORMAT_INDEX);
-        typedArray.recycle();
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        int[] intTypes = getActivity().getIntent().getIntArrayExtra(PayFormActivity.EXTRA_DESIGN_CONFIGURATION);
+        int[] intTypes = getActivity().getIntent().getIntArrayExtra(TAcqIntentExtra.EXTRA_DESIGN_CONFIGURATION);
         PayCellType[] cellTypes = PayCellType.toPayCellTypeArray(intTypes);
         View view = PayCellInflater.from(inflater, cellTypes).inflate(container);
 
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         ecvCard = view.findViewById(R.id.ecv_card);
+        ecvCard.setHints(
+                localization.payCardPanHint,
+                localization.payCardExpireDateHint,
+                localization.payCardCvcHint
+        );
 
         tvSrcCardLabel = view.findViewById(R.id.tv_src_card_label);
         tvDescription = view.findViewById(R.id.tv_description);
@@ -171,6 +153,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         tvAmount = view.findViewById(R.id.tv_amount);
         tvChooseCardButton = view.findViewById(R.id.tv_src_card_choose_btn);
         btnPay = view.findViewById(R.id.btn_pay);
+        btnPay.setText(AsdkLocalizations.require(this).payPayButton);
         btnGooglePay = view.findViewById(R.id.rl_google_play_button);
         if (btnGooglePay != null) {
             btnGooglePay.setEnabled(false);
@@ -180,7 +163,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         etEmail = view.findViewById(R.id.et_email);
 
         final FragmentActivity activity = getActivity();
-        cardScanner = new FullCardScanner(this, (ICameraCardScanner) activity.getIntent().getSerializableExtra(PayFormActivity.EXTRA_CAMERA_CARD_SCANNER));
+        cardScanner = new FullCardScanner(
+                this,
+                (ICameraCardScanner) activity.getIntent().getSerializableExtra(TAcqIntentExtra.EXTRA_CAMERA_CARD_SCANNER),
+                AsdkLocalizations.require(this).payNoScanProviders
+        );
         ecvCard.setCardSystemIconsHolder(new ThemeCardLogoCache(activity));
         ecvCard.setActions(cardScanner);
         if (!cardScanner.isScanEnable()) {
@@ -189,7 +176,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         customKeyboard = view.findViewById(R.id.acq_keyboard);
 
-        googlePayParams = activity.getIntent().getParcelableExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS);
+        googlePayParams = activity.getIntent().getParcelableExtra(TAcqIntentExtra.EXTRA_ANDROID_PAY_PARAMS);
         boolean isUsingCustomKeyboard = ((PayFormActivity) activity).shouldUseCustomKeyboard();
         if (isUsingCustomKeyboard) {
 
@@ -214,7 +201,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         srcCardChooser.setVisibility(View.GONE);
 
-        chargeMode = getArguments().getBoolean(PayFormActivity.EXTRA_CHARGE_MODE);
+        chargeMode = getArguments().getBoolean(TAcqIntentExtra.EXTRA_CHARGE_MODE);
         if (chargeMode) {
             setRecurrentModeForCardView(true);
             ecvCard.setRecurrentPaymentMode(true);
@@ -227,8 +214,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             }
         }
 
-        resolveButtonAndIconsPosition(view);
-
         return view;
     }
 
@@ -239,37 +224,46 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         final Intent intent = getActivity().getIntent();
 
-        final String email = intent.getStringExtra(PayFormActivity.EXTRA_E_MAIL);
+        final String email = intent.getStringExtra(TAcqIntentExtra.EXTRA_E_MAIL);
         if (email != null && etEmail != null) {
             etEmail.setText(email);
         }
 
-        final String title = intent.getStringExtra(PayFormActivity.EXTRA_TITLE);
+        final String title = intent.getStringExtra(TAcqIntentExtra.EXTRA_TITLE);
         if (tvTitle != null) {
             tvTitle.setText(title);
         }
 
-        String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
+        String description = intent.getStringExtra(TAcqIntentExtra.EXTRA_DESCRIPTION);
         if (tvDescription != null) {
             tvDescription.setText(description);
         }
 
-        final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
+        final Money amount = (Money) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_AMOUNT);
 
-        String amountTextWithRubbles = amount != null ? amount.toHumanReadableString() : "";
         String amountText = amount != null ? amount.toString() : "";
 
-        if (amountPositionMode == AMOUNT_POSITION_OVER_FIELDS && tvAmount != null) {
-            if (TextUtils.isEmpty(moneyAmountFormat)) {
-                tvAmount.setText(amountTextWithRubbles);
-            } else {
-                tvAmount.setText(String.format(moneyAmountFormat, amountText));
+        AsdkLocalization localization = AsdkLocalizations.require(this);
+        if (tvAmount != null) {
+            try {
+                if (localization.payMoneyAmountFormat != null) {
+                    tvAmount.setText(String.format(localization.payMoneyAmountFormat, amountText));
+                } else {
+                    tvAmount.setText(amountText);
+                }
+            } catch (IllegalFormatException e) {
+                tvAmount.setText(amountText);
             }
-        } else if (TextUtils.isEmpty(payAmountFormat)) {
-            String text = btnPay.getText().toString();
-            btnPay.setText(text + " " + amountTextWithRubbles);
-        } else {
-            btnPay.setText(String.format(payAmountFormat, amountText));
+        }
+
+        try {
+            if (localization.payPayButtonFormat != null) {
+                btnPay.setText(String.format(localization.payPayButtonFormat, amountText));
+            } else {
+                btnPay.setText(localization.payPayButton);
+            }
+        } catch (IllegalFormatException e) {
+            btnPay.setText(localization.payPayButton);
         }
 
         btnPay.setOnClickListener(new View.OnClickListener() {
@@ -417,7 +411,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private PaymentDataRequest createPaymentDataRequest() {
         Intent intent = getActivity().getIntent();
 
-        String description = intent.getStringExtra(PayFormActivity.EXTRA_DESCRIPTION);
+        String description = intent.getStringExtra(TAcqIntentExtra.EXTRA_DESCRIPTION);
         String price = getFormattedPrice();
 
         TransactionInfo transactionInfo = TransactionInfo.newBuilder()
@@ -453,92 +447,46 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private String getFormattedPrice() {
         Intent intent = getActivity().getIntent();
-        Money money = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
+        Money money = (Money) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_AMOUNT);
         BigDecimal bigDecimal = new BigDecimal(money.getCoins());
         bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return bigDecimal.toString();
     }
 
     private void setRecurrentModeForCardView(boolean recurrentMode) {
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         if (recurrentMode) {
             ecvCard.setEnabled(false);
             ecvCard.setFocusable(false);
             ecvCard.clearFocus();
             ecvCard.setFullCardNumberModeEnable(false);
-            ecvCard.setCardHint(getString(R.string.acq_recurrent_mode_card_hint));
+            ecvCard.setHints(
+                    localization.payCardPanHintRecurrent,
+                    localization.payCardExpireDateHint,
+                    localization.payCardCvcHint
+            );
         } else {
             ecvCard.setEnabled(true);
             ecvCard.setFocusable(true);
             ecvCard.setFullCardNumberModeEnable(true);
-            ecvCard.setCardHint(ecvCard.getCardNumberHint());
-        }
-    }
-
-    private void resolveButtonAndIconsPosition(View root) {
-        LinearLayout containerLayout = (LinearLayout) root.findViewById(R.id.ll_container_layout);
-        View buttons = root.findViewById(R.id.pay_buttons_layout);
-        View space = root.findViewById(R.id.space);
-        View secureIcons = root.findViewById(R.id.iv_secure_icons);
-        switch (buttonAndIconsPositionMode) {
-            case BUTTON_UNDER_FIELDS_ICONS_ON_BOTTOM:
-                break;
-            case ICONS_ON_BOTTOM_BUTTON_UNDER_ICONS:
-                containerLayout.removeView(buttons);
-                containerLayout.addView(buttons);
-                break;
-            case ICONS_UNDER_FIELDS_BUTTON_ON_BOTTOM:
-                containerLayout.removeView(secureIcons);
-                removeSpace(containerLayout, space);
-                containerLayout.removeView(buttons);
-                containerLayout.addView(secureIcons);
-                addSpace(containerLayout, space);
-                containerLayout.addView(buttons);
-                break;
-            case ICONS_UNDER_FIELDS_BUTTON_UNDER_ICONS:
-                containerLayout.removeView(secureIcons);
-                removeSpace(containerLayout, space);
-                containerLayout.removeView(buttons);
-                containerLayout.addView(secureIcons);
-                containerLayout.addView(buttons);
-                break;
-            case BUTTON_UNDER_FIELDS_ICONS_UNDER_BOTTOM:
-                removeSpace(containerLayout, space);
-                break;
-        }
-    }
-
-    private void addSpace(ViewGroup container, View space) {
-        if (space != null) {
-            container.addView(space);
-        }
-    }
-
-    private void removeSpace(ViewGroup container, View space) {
-        if (space != null) {
-            container.removeView(space);
-        }
-    }
-
-    private Language resolveLanguage() {
-        Locale locale = getResources().getConfiguration().locale;
-        String language = locale.getLanguage();
-
-        if (language != null && language.toLowerCase().startsWith("ru")) {
-            return null;
-        } else {
-            return Language.ENGLISH;
+            ecvCard.setHints(
+                    localization.payCardPanHint,
+                    localization.payCardExpireDateHint,
+                    localization.payCardCvcHint
+            );
         }
     }
 
     private boolean validateInput(EditCardView cardView, String enteredEmail) {
-        int errorMessage = 0;
+        String errorMessage = null;
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         if (!cardView.isFilledAndCorrect()) {
-            errorMessage = R.string.acq_invalid_card;
+            errorMessage = localization.payDialogValidationInvalidCard;
         } else if (!isEmailValid(enteredEmail)) {
-            errorMessage = R.string.acq_invalid_email;
+            errorMessage = localization.payDialogValidationInvalidEmail;
         }
 
-        if (errorMessage != 0) {
+        if (errorMessage != null) {
             makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -551,19 +499,19 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     }
 
     private InitRequestBuilder createInitRequestBuilder(Intent intent) {
-        final String password = intent.getStringExtra(PayFormActivity.EXTRA_PASSWORD);
-        final String terminalKey = intent.getStringExtra(PayFormActivity.EXTRA_TERMINAL_KEY);
+        final String password = intent.getStringExtra(TAcqIntentExtra.EXTRA_PASSWORD);
+        final String terminalKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_TERMINAL_KEY);
 
         final InitRequestBuilder builder = new InitRequestBuilder(password, terminalKey);
 
-        final String orderId = intent.getStringExtra(PayFormActivity.EXTRA_ORDER_ID);
-        final String customerKey = intent.getStringExtra(PayFormActivity.EXTRA_CUSTOMER_KEY);
-        String title = intent.getStringExtra(PayFormActivity.EXTRA_TITLE);
+        final String orderId = intent.getStringExtra(TAcqIntentExtra.EXTRA_ORDER_ID);
+        final String customerKey = intent.getStringExtra(TAcqIntentExtra.EXTRA_CUSTOMER_KEY);
+        String title = intent.getStringExtra(TAcqIntentExtra.EXTRA_TITLE);
         if (title != null && title.length() > PAY_FORM_MAX_LENGTH) {
             title = title.substring(0, PAY_FORM_MAX_LENGTH);
         }
-        final Money amount = (Money) intent.getSerializableExtra(PayFormActivity.EXTRA_AMOUNT);
-        final boolean recurrentPayment = intent.getBooleanExtra(PayFormActivity.EXTRA_RECURRENT_PAYMENT, false);
+        final Money amount = (Money) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_AMOUNT);
+        final boolean recurrentPayment = intent.getBooleanExtra(TAcqIntentExtra.EXTRA_RECURRENT_PAYMENT, false);
 
         builder.setOrderId(orderId)
                 .setCustomerKey(customerKey)
@@ -571,23 +519,22 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 .setAmount(amount.getCoins())
                 .setRecurrent(recurrentPayment);
 
-        final Language language = resolveLanguage();
+        final Language language = AsdkLocalizations.resolveLanguageByCurrentLocale(requireActivity()) == Language.ENGLISH ? Language.ENGLISH : null;
         if (language != null) {
             builder.setLanguage(language.toString());
         }
 
-        final Receipt receiptValue = (Receipt) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPT_VALUE);
+        final Receipt receiptValue = (Receipt) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_RECEIPT_VALUE);
         if (receiptValue != null) {
             builder.setReceipt(receiptValue);
         }
 
-        final List<Receipt> receipts = (List<Receipt>) intent.getSerializableExtra(PayFormActivity.EXTRA_RECEIPTS_VALUE);
-        final List<Shop> shops = (List<Shop>) intent.getSerializableExtra(PayFormActivity.EXTRA_SHOPS_VALUE);
+        final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_DATA_VALUE);
+        final List<Receipt> receipts = (List<Receipt>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_RECEIPT_VALUE);
+        final List<Shop> shops = (List<Shop>) intent.getSerializableExtra(TAcqIntentExtra.EXTRA_SHOPS_VALUE);
         if (shops != null) {
             builder.setShops(shops, receipts);
         }
-
-        final Map<String, String> dataValue = (Map<String, String>) intent.getSerializableExtra(PayFormActivity.EXTRA_DATA_VALUE);
         if (dataValue != null) {
             builder.setData(dataValue);
         }
@@ -638,7 +585,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             ICreditCard card = cardScanner.parseNfcData(data);
             setCreditCardData(card);
         } else if (cardScanner.isNfcError(requestCode, resultCode)) {
-            Toast.makeText(getContext(), R.string.acq_nfc_scan_failed, Toast.LENGTH_SHORT).show();
+            AsdkLocalization localization = AsdkLocalizations.require(this);
+            Toast.makeText(getContext(), localization.payNfcFail, Toast.LENGTH_SHORT).show();
         } else {
             if (resultCode == Activity.RESULT_OK && (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE)) {
                 ((PayFormActivity) getActivity()).showProgressDialog();
@@ -666,7 +614,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         final String enteredEmail = getEmail();
         if (!isEmailValid(enteredEmail)) {
-            makeText(getActivity(), R.string.acq_invalid_email, Toast.LENGTH_SHORT).show();
+            makeText(getActivity(), AsdkLocalizations.require(this).payDialogValidationInvalidEmail, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -728,7 +676,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;
-                    if (cause != null && cause instanceof NetworkException) {
+                    if (cause instanceof NetworkException) {
                         msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK);
                     } else {
                         msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);
@@ -753,7 +701,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 boolean hasCard = sourceCard != null;
                 boolean needClearCardView = needClearCardView(activity);
                 srcCardChooser.setVisibility(cards != null && cards.length > 0 ? View.VISIBLE : View.GONE);
-                tvSrcCardLabel.setText(getLabel(chargeMode, hasCard));
+                tvSrcCardLabel.setText(getLabel(hasCard));
                 if (chargeMode) {
                     if (hasCard) {
                         ecvCard.setRecurrentPaymentMode(true);
@@ -788,9 +736,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             activity.selectCardById(paymentInfo.getCardId());
         }
 
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.acq_complete_payment)
-                .setPositiveButton(R.string.acq_complete_payment_ok, new DialogInterface.OnClickListener() {
+        builder.setTitle(localization.payDialogCvcMessage)
+                .setPositiveButton(localization.payDialogCvcAcceptButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Card selectedCard = activity.getSourceCard();
@@ -826,13 +775,12 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         return bundle != null;
     }
 
-    private String getLabel(boolean chargeMode, boolean hasCard) {
+    private String getLabel(boolean hasCard) {
+        AsdkLocalization localization = AsdkLocalizations.require(this);
         if (hasCard) {
-            return getString(R.string.acq_saved_card_label);
-        } else if (chargeMode) {
-            return "";
+            return localization.payCardSavedCard;
         } else {
-            return getString(R.string.acq_new_card_label);
+            return localization.payCardNewCard;
         }
     }
 

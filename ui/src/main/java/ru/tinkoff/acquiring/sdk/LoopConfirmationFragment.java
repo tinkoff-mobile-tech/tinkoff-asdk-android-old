@@ -11,9 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
+
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 
 /**
  * @author Vitaliy Markus
@@ -52,6 +56,10 @@ public class LoopConfirmationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.acq_fragment_loop_confirmation, container, false);
+        AsdkLocalization localization = AsdkLocalizations.require(this);
+        ((TextView) root.findViewById(R.id.tv_title)).setText(localization.confirmationLoopDescription);
+        ((EditText) root.findViewById(R.id.et_amount)).setHint(localization.confirmationLoopAmount);
+        ((TextView) root.findViewById(R.id.btn_check)).setText(localization.confirmationLoopCheckButton);
         initViews(root);
         resolveButtonAndIconsPosition(root);
         return root;
@@ -73,7 +81,7 @@ public class LoopConfirmationFragment extends Fragment {
                     String value = MoneyUtils.normalize(amountView.getText().toString());
                     amount = Money.ofRubles(new BigDecimal(value)).getCoins();
                 } catch (Exception e) {
-                    Toast.makeText(activity, R.string.acq_attaching_card_loop_parse_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, AsdkLocalizations.require(LoopConfirmationFragment.this).confirmationLoopDialogValidationInvalidAmount, Toast.LENGTH_SHORT).show();
                     return;
                 }
 

@@ -9,7 +9,7 @@ dependencies {
     api("com.google.android.gms:play-services-wallet:11.6.2") {
         exclude module: 'support-v4'
     }
-
+    implementation "com.google.code.gson:gson:$gsonVersion"
     api project(':core')
 }
 

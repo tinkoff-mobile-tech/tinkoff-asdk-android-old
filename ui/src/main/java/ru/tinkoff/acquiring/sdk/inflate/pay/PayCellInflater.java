@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ru.tinkoff.acquiring.sdk.R;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalization;
+import ru.tinkoff.acquiring.sdk.localization.AsdkLocalizations;
 
 import static ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType.PAYMENT_CARD_REQUISITES;
 import static ru.tinkoff.acquiring.sdk.inflate.pay.PayCellType.PAY_BUTTON;
@@ -45,7 +48,7 @@ public class PayCellInflater {
 
     public View inflate(ViewGroup container) {
         validate(PAYMENT_CARD_REQUISITES, PAY_BUTTON, SECURE_LOGOS);
-
+        AsdkLocalization localization = AsdkLocalizations.require(container.getContext());
         View root = inflater.inflate(R.layout.acq_fragment_enter_card_base, container, false);
         container = root.findViewById(R.id.ll_container_layout);
         for (PayCellType cellType : cellTypes) {
@@ -56,15 +59,21 @@ public class PayCellInflater {
                 case PRODUCT_DESCRIPTION:
                     inflater.inflate(R.layout.acq_cell_product_description, container, true);
                     break;
-                case AMOUNT:
-                    inflater.inflate(R.layout.acq_cell_amount, container, true);
+                case AMOUNT: {
+                    View view = inflater.inflate(R.layout.acq_cell_amount, container, true);
+                    ((TextView)view.findViewById(R.id.tv_amount_label)).setText(localization.payMoneyAmountLabel);
                     break;
-                case PAYMENT_CARD_REQUISITES:
-                    inflater.inflate(R.layout.acq_cell_payment_card_requisites, container, true);
+                }
+                case PAYMENT_CARD_REQUISITES: {
+                    View view = inflater.inflate(R.layout.acq_cell_payment_card_requisites, container, true);
+                    ((TextView)view.findViewById(R.id.tv_src_card_choose_btn)).setText(localization.payCardChangeCard);
                     break;
-                case EMAIL:
-                    inflater.inflate(R.layout.acq_cell_email, container, true);
+                }
+                case EMAIL: {
+                    View view = inflater.inflate(R.layout.acq_cell_email, container, true);
+                    ((TextView) view.findViewById(R.id.et_email)).setHint(localization.payEmail);
                     break;
+                }
                 case PAY_BUTTON:
                     inflater.inflate(R.layout.acq_cell_pay_button, container, true);
                     break;
