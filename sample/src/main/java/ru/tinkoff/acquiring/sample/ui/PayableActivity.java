@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.wallet.WalletConstants;
+import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
 
 import java.util.HashMap;
 
@@ -117,6 +118,8 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         String terminalId = settings.getTerminalId();
         GooglePayParams googlePayParams = new GooglePayParams.Builder()
                 .setEnvironment(SessionParams.GPAY_ENVIRONMENT)
+                .setTheme(WalletConstants.THEME_DARK)
+                .setBuyButtonAppearance(WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT)
                 .build();
         SessionParams sessionParams = SessionParams.get(terminalId);
         PayFormActivity

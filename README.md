@@ -151,6 +151,7 @@ SDK состоит из следующих модулей:
                     .setAddressRequired(false)
                     .setPhoneRequired(false)
                     .setTheme(WalletConstants.THEME_LIGHT)
+                    .setBuyButtonAppearance(WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT)
                     .setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                     .build();
 ```
