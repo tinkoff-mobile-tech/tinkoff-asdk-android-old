@@ -39,6 +39,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +75,9 @@ import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
 import static android.widget.Toast.makeText;
+import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK;
+import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT;
+import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT_WITH_BORDER;
 
 /**
  * @author a.shishkin1
@@ -190,6 +194,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         customKeyboard = view.findViewById(R.id.acq_keyboard);
 
         googlePayParams = activity.getIntent().getParcelableExtra(PayFormActivity.EXTRA_ANDROID_PAY_PARAMS);
+        initGooglePayButton();
+
         boolean isUsingCustomKeyboard = ((PayFormActivity) activity).shouldUseCustomKeyboard();
         if (isUsingCustomKeyboard) {
 
@@ -361,12 +367,39 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
     private void initGoogleApiClient() {
         Wallet.WalletOptions options = new Wallet.WalletOptions.Builder()
                 .setEnvironment(googlePayParams.getEnvironment())
+                .setTheme(googlePayParams.getTheme())
                 .build();
 
         googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Wallet.API, options)
                 .build();
         googleApiClient.connect();
+    }
+
+    private void initGooglePayButton() {
+        if (googlePayParams != null) {
+            ImageView gPayImage = btnGooglePay.findViewById(R.id.rl_google_play_image);
+            ImageView gPayOverlay = btnGooglePay.findViewById(R.id.rl_google_play_overlay);
+            switch (googlePayParams.getBuyButtonAppearance()) {
+                case ANDROID_PAY_DARK: {
+                    btnGooglePay.setBackgroundResource(R.drawable.gpay_button_no_shadow_background_dark);
+                    gPayImage.setImageResource(R.drawable.gpay_button_content_dark);
+                    gPayOverlay.setImageResource(R.drawable.gpay_button_overlay_dark);
+                    break;
+                }
+                case ANDROID_PAY_LIGHT_WITH_BORDER: {
+                    btnGooglePay.setBackgroundResource(R.drawable.gpay_button_background);
+                    gPayImage.setImageResource(R.drawable.gpay_button_content);
+                    gPayOverlay.setImageResource(R.drawable.gpay_button_overlay);
+                    break;
+                }
+                default: {
+                    btnGooglePay.setBackgroundResource(R.drawable.gpay_button_no_shadow_background);
+                    gPayImage.setImageResource(R.drawable.gpay_button_content);
+                    gPayOverlay.setImageResource(R.drawable.gpay_button_overlay);
+                }
+            }
+        }
     }
 
     private void initGooglePay() {
@@ -379,6 +412,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
         Wallet.WalletOptions options = new Wallet.WalletOptions.Builder()
                 .setEnvironment(googlePayParams.getEnvironment())
+                .setTheme(googlePayParams.getTheme())
                 .build();
 
         paymentsClient = Wallet.getPaymentsClient(getActivity(), options);

@@ -51,7 +51,7 @@ final public class GooglePayParams implements Parcelable {
         private boolean isAddressRequired = false;
         private int environment = WalletConstants.ENVIRONMENT_TEST;
         private int buyButtonText = WalletFragmentStyle.BuyButtonText.BUY_WITH;
-        private int buyButtonAppearance = WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK;
+        private int buyButtonAppearance = WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT;
         private int theme = WalletConstants.THEME_LIGHT;
 
         public Builder setCountryCode(String countryCode) {
