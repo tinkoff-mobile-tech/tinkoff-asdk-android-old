@@ -160,12 +160,18 @@ public class AcquiringApi {
                 requestContentStream = connection.getOutputStream();
                 requestContentStream.write(requestBodyBytes);
             }
-
-            responseReader = new InputStreamReader(connection.getInputStream());
-            final String response = read(responseReader);
-            Journal.log(String.format("=== Got server response: %s", response));
-
-            result = gson.fromJson(response, responseClass);
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 200 && responseCode < 300) {
+                responseReader = new InputStreamReader(connection.getInputStream());
+                final String response = read(responseReader);
+                Journal.log(String.format("=== Got server success response: %s", response));
+                result = gson.fromJson(response, responseClass);
+            } else {
+                responseReader = new InputStreamReader(connection.getErrorStream());
+                final String response = read(responseReader);
+                Journal.log(String.format("=== Got server error response: %s", response));
+                throw new NetworkException("Unable to execute request " + request.getApiMethod());
+            }
 
         } catch (IOException e) {
             throw new NetworkException("Unable to execute request " + request.getApiMethod(), e);
@@ -183,10 +189,11 @@ public class AcquiringApi {
             String details = result.getDetails();
             if (message != null && details != null) {
                 throw new AcquiringApiException(result, String.format("%s: %s", message, details));
+            } else if (message != null) {
+                throw new AcquiringApiException(result, message);
             } else {
                 throw new AcquiringApiException(result);
             }
-
         }
 
         return result;

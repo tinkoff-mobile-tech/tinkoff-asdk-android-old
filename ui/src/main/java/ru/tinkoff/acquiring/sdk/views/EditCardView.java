@@ -42,8 +42,6 @@ import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.UpdateAppearance;
 import android.util.AttributeSet;
-import android.util.FloatProperty;
-import android.util.IntProperty;
 import android.util.Property;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -55,6 +53,8 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
+
+import java.util.regex.Pattern;
 
 import ru.tinkoff.acquiring.sdk.R;
 import ru.tinkoff.acquiring.sdk.utils.CardValidator;
@@ -211,6 +211,8 @@ public class EditCardView extends ViewGroup {
 
             int[] sel = new int[2];
 
+            Pattern mirPattern = Pattern.compile("^220[0-4]");
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -227,10 +229,15 @@ public class EditCardView extends ViewGroup {
                 if (!TextUtils.isEmpty(number)) {
                     etCardNumber.removeTextChangedListener(this);
                     char firstChar = number.charAt(0);
-                    if (firstChar == '2' || firstChar == '4' || firstChar == '5') {
-                        cardFormatter.setType(CardFormatter.DEFAULT); // master card and visa xxxx xxxx xxxx xxxx
-                    } else if (firstChar == '6') {
-                        cardFormatter.setType(CardFormatter.MAESTRO); // maestro xxxxxxxx xxxx...x
+
+                    if (number.length() >= 4) {
+                        if (mirPattern.matcher(number).find()) {
+                            cardFormatter.setType(CardFormatter.MIR);
+                        } else if (firstChar == '2' || firstChar == '4' || firstChar == '5') {
+                            cardFormatter.setType(CardFormatter.DEFAULT); // master card and visa xxxx xxxx xxxx xxxx
+                        } else if (firstChar == '6') {
+                            cardFormatter.setType(CardFormatter.MAESTRO); // maestro xxxxxxxx xxxx...x
+                        }
                     } else {
                         cardFormatter.setType(CardFormatter.UNKNOWN);
                     }
@@ -1031,11 +1038,13 @@ public class EditCardView extends ViewGroup {
         public static final int UNKNOWN = 0;
         public static final int DEFAULT = 1;
         public static final int MAESTRO = 2;
+        public static final int MIR = 3;
 
         private int type;
         private int maxLength;
         private int[] defaultRangers = new int[]{19};
         private int[] maestroRangers = new int[]{14, 15, 16, 17, 18, 19, 20};
+        private int[] mirRangers = new int[]{18, 19, 20};
         private int[] unknownRangers = new int[]{Integer.MAX_VALUE - 3};
 
         public String format(String input, CharSequence delimiter) {
@@ -1076,6 +1085,8 @@ public class EditCardView extends ViewGroup {
                 return defaultRangers;
             if (type == MAESTRO)
                 return maestroRangers;
+            if (type == MIR)
+                return mirRangers;
             return unknownRangers;
         }
 
@@ -1084,7 +1095,7 @@ public class EditCardView extends ViewGroup {
         }
 
         protected String doFormat(String cardNumber, CharSequence delimiter) {
-            if (type == DEFAULT) {
+            if (type == MIR && cardNumber.length() <= 16 || type == DEFAULT) {
                 char[] chars = cardNumber.toCharArray();
                 StringBuilder cardNumberBuilder = new StringBuilder(cardNumber);
 
@@ -1097,7 +1108,7 @@ public class EditCardView extends ViewGroup {
 
                 return cardNumberBuilder.toString().trim();
             }
-            if (type == MAESTRO) {
+            if (type == MIR || type == MAESTRO) {
                 int length = cardNumber.length();
 
                 if (length < 8)
