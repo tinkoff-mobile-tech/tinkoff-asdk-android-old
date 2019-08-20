@@ -344,7 +344,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         }
 
         Card[] cards = activity.getCards();
-        if (cards != null) {
+        if (rejectedPaymentInfo == null && cards != null) {
             onCardReady();
         }
 
