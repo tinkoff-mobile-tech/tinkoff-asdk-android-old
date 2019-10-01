@@ -65,6 +65,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_CUSTOMER_KEY = "customer_key";
     static final String EXTRA_RECURRENT_PAYMENT = "recurrent_payment";
     static final String EXTRA_PAYMENT_ID = "payment_id";
+    static final String EXTRA_PAYMENT_CARD_ID = "payment_card_id";
     static final String EXTRA_RECEIPT_VALUE = "receipt_value";
     static final String EXTRA_RECEIPTS_VALUE = "receipts_value";
     static final String EXTRA_SHOPS_VALUE = "shops_value";
@@ -267,6 +268,9 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         hideProgressDialog();
         final Intent data = new Intent();
         data.putExtra(EXTRA_PAYMENT_ID, paymentId);
+        if (sourceCard != null) {
+            data.putExtra(EXTRA_PAYMENT_CARD_ID, sourceCard.getCardId());
+        }
         setResult(RESULT_OK, data);
         if (isCardChooseEnable()) {
             cardManager.clear(getIntent().getStringExtra(EXTRA_CUSTOMER_KEY));
@@ -500,7 +504,9 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     public static void dispatchResult(int resultCode, Intent data, OnPaymentListener listener) {
         if (resultCode == RESULT_OK) {
-            listener.onSuccess(data.getLongExtra(EXTRA_PAYMENT_ID, -1L));
+            long paymentId = data.getLongExtra(EXTRA_PAYMENT_ID, -1L);
+            String cardId = data.getStringExtra(EXTRA_PAYMENT_CARD_ID);
+            listener.onSuccess(paymentId, cardId);
         } else if (resultCode == RESULT_CANCELED) {
             listener.onCancelled();
         } else if (resultCode == RESULT_ERROR) {
