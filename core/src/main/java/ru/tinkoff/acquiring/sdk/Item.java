@@ -6,11 +6,9 @@ import java.io.Serializable;
 
 /**
  * @author Vitaliy Markus
- *         Информация о товаре.
+ * Информация о товаре.
  */
 public class Item implements Serializable {
-
-    private static final int QUANTITY_SCALE_FACTOR = 3;
 
     @SerializedName("Name")
     private String name;
@@ -33,6 +31,18 @@ public class Item implements Serializable {
     @SerializedName("ShopCode")
     private String shopCode;
 
+    @SerializedName("AgentData")
+    private AgentData agentData;
+
+    @SerializedName("SupplierInfo")
+    private SupplierInfo supplierInfo;
+
+    @SerializedName("PaymentObject")
+    private PaymentObject paymentObject;
+
+    @SerializedName("PaymentMethod")
+    private PaymentMethod paymentMethod;
+
     /**
      * @param name     Наименование товара. Максимальная длина строки – 128 символов.
      * @param price    Сумма в копейках. Целочисленное значение не более 10 знаков.
@@ -43,7 +53,7 @@ public class Item implements Serializable {
     public Item(String name, Long price, double quantity, Long amount, Tax tax) {
         this.name = name;
         this.price = price;
-        this.quantity = round(quantity, QUANTITY_SCALE_FACTOR);
+        this.quantity = round(quantity);
         this.amount = amount;
         this.tax = tax;
     }
@@ -90,7 +100,39 @@ public class Item implements Serializable {
         this.shopCode = shopCode;
     }
 
-    private static double round(double value, int scale) {
-        return Math.round(value * Math.pow(10, scale)) / Math.pow(10, scale);
+    private static double round(double value) {
+        return Math.round(value * 1000.0) / 1000.0;
+    }
+
+    public AgentData getAgentData() {
+        return agentData;
+    }
+
+    public void setAgentData(AgentData agentData) {
+        this.agentData = agentData;
+    }
+
+    public SupplierInfo getSupplierInfo() {
+        return supplierInfo;
+    }
+
+    public void setSupplierInfo(SupplierInfo supplierInfo) {
+        this.supplierInfo = supplierInfo;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentObject getPaymentObject() {
+        return paymentObject;
+    }
+
+    public void setPaymentObject(PaymentObject paymentObject) {
+        this.paymentObject = paymentObject;
     }
 }
