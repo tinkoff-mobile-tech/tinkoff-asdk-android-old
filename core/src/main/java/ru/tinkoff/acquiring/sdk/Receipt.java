@@ -25,6 +25,18 @@ public class Receipt implements Serializable {
     @SerializedName("Phone")
     private String phone;
 
+    @SerializedName("AgentData")
+    private AgentData agentData;
+
+    @SerializedName("SupplierInfo")
+    private SupplierInfo supplierInfo;
+
+    @SerializedName("Customer")
+    private String customer;
+
+    @SerializedName("CustomerInn")
+    private String customerInn;
+
     /**
      * @param items    Массив содержащий в себе информацию о товарах.
      * @param email    Емейл.
@@ -70,5 +82,37 @@ public class Receipt implements Serializable {
 
     public void setShopCode(String shopCode) {
         this.shopCode = shopCode;
+    }
+
+    public AgentData getAgentData() {
+        return agentData;
+    }
+
+    public void setAgentData(AgentData agentData) {
+        this.agentData = agentData;
+    }
+
+    public SupplierInfo getSupplierInfo() {
+        return supplierInfo;
+    }
+
+    public void setSupplierInfo(SupplierInfo supplierInfo) {
+        this.supplierInfo = supplierInfo;
+    }
+
+    public String getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
+
+    public String getCustomerInn() {
+        return customerInn;
+    }
+
+    public void setCustomerInn(String customerInn) {
+        this.customerInn = customerInn;
     }
 }

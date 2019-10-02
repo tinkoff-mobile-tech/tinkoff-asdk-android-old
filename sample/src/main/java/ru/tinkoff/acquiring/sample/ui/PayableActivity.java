@@ -18,6 +18,7 @@ package ru.tinkoff.acquiring.sample.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,8 +29,8 @@ import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
 
 import java.util.HashMap;
 
-import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.R;
+import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
 import ru.tinkoff.acquiring.sdk.GooglePayParams;
 import ru.tinkoff.acquiring.sdk.Item;
@@ -92,7 +93,7 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
     }
 
     @Override
-    public void onSuccess(long paymentId) {
+    public void onSuccess(long paymentId, @Nullable String cardId) {
         PaymentResultActivity.start(this, paymentAmount);
     }
 

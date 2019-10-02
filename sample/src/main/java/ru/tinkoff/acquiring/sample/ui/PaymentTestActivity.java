@@ -21,11 +21,16 @@ import ru.tinkoff.acquiring.payment.TinkoffPay;
 import ru.tinkoff.acquiring.sample.R;
 import ru.tinkoff.acquiring.sample.SessionParams;
 import ru.tinkoff.acquiring.sample.SettingsSdkManager;
+import ru.tinkoff.acquiring.sdk.AgentData;
+import ru.tinkoff.acquiring.sdk.AgentSign;
 import ru.tinkoff.acquiring.sdk.CardData;
 import ru.tinkoff.acquiring.sdk.Item;
 import ru.tinkoff.acquiring.sdk.Money;
+import ru.tinkoff.acquiring.sdk.PaymentMethod;
+import ru.tinkoff.acquiring.sdk.PaymentObject;
 import ru.tinkoff.acquiring.sdk.Receipt;
 import ru.tinkoff.acquiring.sdk.Shop;
+import ru.tinkoff.acquiring.sdk.SupplierInfo;
 import ru.tinkoff.acquiring.sdk.Tax;
 import ru.tinkoff.acquiring.sdk.Taxation;
 
@@ -119,6 +124,27 @@ public class PaymentTestActivity extends AppCompatActivity {
         ArrayList<Receipt> receipts = new ArrayList<>();
         Item[] items = new Item[1];
         Item item = new Item("Название товара 1", 2000L, 2D, 4000L, Tax.VAT_10);
+
+        AgentData agentData = new AgentData();
+        agentData.setAgentSign(AgentSign.BANK_PAYING_AGENT);
+        agentData.setOperationName("Позиция чека 1");
+        agentData.setPhones(new String[]{"+823456781012141611"});
+        agentData.setReceiverPhones(new String[]{"+923456781012141611", "+133456781012141611"});
+        agentData.setTransferPhones(new String[]{"+136456781012141611"});
+        agentData.setOperationName("Tinkoff");
+        agentData.setOperatorAddress("г. Тольятти");
+        agentData.setOperatorInn("7710140679");
+        item.setAgentData(agentData);
+
+        SupplierInfo supplierInfo = new SupplierInfo();
+        supplierInfo.setPhones(new String[]{"88001007755", "+74959565555"});
+        supplierInfo.setName("СПАО \"Ингосстрах\"");
+        supplierInfo.setInn("7705042179");
+        item.setSupplierInfo(supplierInfo);
+
+        item.setPaymentMethod(PaymentMethod.FULL_PREPAYMENT);
+        item.setPaymentObject(PaymentObject.LOTTERY_PRIZE);
+
         items[0] = item;
         Receipt receipt = new Receipt("100", items, "email@test.ru", Taxation.OSN);
         receipts.add(receipt);

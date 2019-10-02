@@ -19,6 +19,7 @@ package ru.tinkoff.acquiring.sample.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -144,8 +145,8 @@ public class CartActivity extends PayableActivity implements CartListAdapter.Del
     }
 
     @Override
-    public void onSuccess(long paymentId) {
-        super.onSuccess(paymentId);
+    public void onSuccess(long paymentId, @Nullable String cardId) {
+        super.onSuccess(paymentId, cardId);
         Cart.getInstance().clear();
         refreshContentView();
     }

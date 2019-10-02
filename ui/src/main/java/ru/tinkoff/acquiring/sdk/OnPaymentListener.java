@@ -16,6 +16,8 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import android.support.annotation.Nullable;
+
 /**
  * Коллбек позволяющий получать уведомления о статусе проведения платежа
  *
@@ -25,8 +27,10 @@ public interface OnPaymentListener {
 
     /**
      * Вызывается в случае, если платеж прошел успешно
+     * @param paymentId - идентификатор платежа
+     * @param cardId - идентификатор карты, присутствует если при оплате использовалась привязанная карта
      */
-    void onSuccess(long paymentId);
+    void onSuccess(long paymentId, @Nullable String cardId);
 
     /**
      * Вызывается, если платеж отменен пользователем
