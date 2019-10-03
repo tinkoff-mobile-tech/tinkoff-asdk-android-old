@@ -2,7 +2,9 @@ package ru.tinkoff.acquiring.sdk;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SupplierInfo {
+import java.io.Serializable;
+
+public class SupplierInfo implements Serializable {
 
     @SerializedName("Phones")
     private String[] phones;
