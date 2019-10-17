@@ -2,7 +2,8 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=3600)][search.maven]
 
-![PayFormActivity][img-pay]
+![pay_form_empty](images/pay_form_empty.png)
+![pay_form](images/pay_form.png)
 
 Acquiring SDK позволяет интегрировать [Интернет-Эквайринг Tinkoff][acquiring] в мобильные приложения для платформы Android.
 
@@ -191,6 +192,5 @@ PayFormActivity
 [payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
 [sdk-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/AcquiringSdk.html
 [javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
-[img-pay]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/res/pay2.png
 [receipt-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
 [init-documentation]: https://oplata.tinkoff.ru/landing/develop/documentation/cmp/Init
