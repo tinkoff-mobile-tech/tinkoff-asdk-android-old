@@ -2,8 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=3600)][search.maven]
 
-![pay_form_empty](images/pay_form_empty.png)
-![pay_form](images/pay_form.png)
+<img src="images/pay_form_empty.png" width="320"> <img src="images/pay_form.png" width="320">
 
 Acquiring SDK позволяет интегрировать [Интернет-Эквайринг Tinkoff][acquiring] в мобильные приложения для платформы Android.
 
