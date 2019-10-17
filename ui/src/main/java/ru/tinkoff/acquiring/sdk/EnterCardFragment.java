@@ -76,7 +76,6 @@ import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
 import static android.widget.Toast.makeText;
 import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK;
-import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT;
 import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT_WITH_BORDER;
 
 /**
@@ -141,9 +140,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private PaymentsClient paymentsClient;
 
-    public static EnterCardFragment newInstance(boolean chargeMode) {
+    public static EnterCardFragment newInstance(boolean chargeMode, boolean showGooglePayOnStart) {
         Bundle args = new Bundle();
         args.putBoolean(PayFormActivity.EXTRA_CHARGE_MODE, chargeMode);
+        args.putBoolean(PayFormActivity.EXTRA_SHOW_GOOGLE_PAY_ON_START, showGooglePayOnStart);
         EnterCardFragment fragment = new EnterCardFragment();
         fragment.setArguments(args);
         return fragment;
@@ -178,6 +178,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         btnGooglePay = view.findViewById(R.id.rl_google_play_button);
         if (btnGooglePay != null) {
             btnGooglePay.setEnabled(false);
+            boolean showGooglePayOnStart = getArguments().getBoolean(PayFormActivity.EXTRA_SHOW_GOOGLE_PAY_ON_START);
+            if (!showGooglePayOnStart) {
+                View googlePayContainer = view.findViewById(R.id.fl_android_pay_placeholder);
+                googlePayContainer.setVisibility(View.GONE);
+            }
         }
         srcCardChooser = view.findViewById(R.id.ll_src_card_chooser);
 
@@ -352,7 +357,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             initGoogleApiClient();
             initGooglePay();
         } else {
-            hideGooglePayButton();
+            changeGooglePayButtonVisibility(View.GONE);
         }
     }
 
@@ -424,10 +429,10 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                     if (result) {
                         showGooglePayButton();
                     } else {
-                        hideGooglePayButton();
+                        changeGooglePayButtonVisibility(View.GONE);
                     }
                 } catch (ApiException e) {
-                    hideGooglePayButton();
+                    changeGooglePayButtonVisibility(View.GONE);
                 }
             }
         });
@@ -435,16 +440,20 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
     private void showGooglePayButton() {
         if (btnGooglePay != null) {
+            boolean showGooglePayOnStart = getArguments().getBoolean(PayFormActivity.EXTRA_SHOW_GOOGLE_PAY_ON_START);
+            if (!showGooglePayOnStart) {
+                changeGooglePayButtonVisibility(View.VISIBLE);
+            }
             btnGooglePay.setEnabled(true);
         }
     }
 
-    private void hideGooglePayButton() {
+    private void changeGooglePayButtonVisibility(int visibility) {
         View view = getView();
         if (view != null) {
             View container = view.findViewById(R.id.fl_android_pay_placeholder);
             TransitionManager.beginDelayedTransition((ViewGroup) view.findViewById(R.id.pay_buttons_layout));
-            container.setVisibility(View.GONE);
+            container.setVisibility(visibility);
         }
     }
 

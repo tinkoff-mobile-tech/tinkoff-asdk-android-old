@@ -71,6 +71,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     static final String EXTRA_SHOPS_VALUE = "shops_value";
     static final String EXTRA_DATA_VALUE = "data_value";
     static final String EXTRA_CHARGE_MODE = "charge_mode";
+    static final String EXTRA_SHOW_GOOGLE_PAY_ON_START = "show_google_pay_on_start";
     static final String EXTRA_USE_FIRST_ATTACHED_CARD = "use_first_saved_card";
     static final String EXTRA_THEME = "theme";
     static final String EXTRA_CAMERA_CARD_SCANNER = "card_scanner";
@@ -434,7 +435,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     protected EnterCardFragment createEnterCardFragment(boolean chargeMode) {
-        return EnterCardFragment.newInstance(chargeMode);
+        boolean showGooglePayOnStart = getIntent().getBooleanExtra(EXTRA_SHOW_GOOGLE_PAY_ON_START, true);
+        return EnterCardFragment.newInstance(chargeMode, showGooglePayOnStart);
     }
 
     protected CardListFragment createCardListFragment(String customerKey, boolean chargeMode) {
