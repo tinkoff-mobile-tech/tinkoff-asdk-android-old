@@ -115,6 +115,12 @@ public class PayFormStarter {
         return this;
     }
 
+    public PayFormStarter setShowGooglePayOnStart(boolean showGooglePayOnStart) {
+        checkIntent();
+        intent.putExtra(PayFormActivity.EXTRA_SHOW_GOOGLE_PAY_ON_START, showGooglePayOnStart);
+        return this;
+    }
+
     public PayFormStarter useFirstAttachedCard(boolean use) {
         checkIntent();
         intent.putExtra(PayFormActivity.EXTRA_USE_FIRST_ATTACHED_CARD, use);
