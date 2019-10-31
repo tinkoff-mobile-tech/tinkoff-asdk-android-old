@@ -16,7 +16,7 @@ Acquiring SDK позволяет интегрировать [Интернет-Э
 - Поддержка Google Pay
 
 ### Требования
-Для работы Tinkoff Acquiring SDK необходим Android версии 4.0 и выше (API level 14).
+Для работы Tinkoff Acquiring SDK необходим Android версии 4.4 и выше (API level 19).
 
 ### Подключение
 Для подключения SDK добавьте в [_build.gradle_][build-config] вашего проекта следующую зависимость:
