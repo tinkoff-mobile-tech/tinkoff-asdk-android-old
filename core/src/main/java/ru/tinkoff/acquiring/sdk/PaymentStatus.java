@@ -37,7 +37,8 @@ public enum PaymentStatus {
     REJECTED,
     UNKNOWN,
     LOOP_CHECKING,
-    COMPLETED;
+    COMPLETED,
+    AUTH_FAILED;
 
     private static final String TDS_CHECKING_STRING = "3DS_CHECKING";
     private static final String TDS_CHECKED_STRING = "3DS_CHECKED";
@@ -48,8 +49,14 @@ public enum PaymentStatus {
                 return THREE_DS_CHECKING;
             case TDS_CHECKED_STRING:
                 return THREE_DS_CHECKED;
-            default:
-                return PaymentStatus.valueOf(stringValue);
+            default: {
+                for (PaymentStatus status : values()) {
+                    if (status.toString().equals(stringValue)) {
+                        return status;
+                    }
+                }
+                return UNKNOWN;
+            }
         }
     }
 
