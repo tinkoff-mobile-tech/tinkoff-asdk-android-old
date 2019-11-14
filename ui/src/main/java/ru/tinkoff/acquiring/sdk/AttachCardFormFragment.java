@@ -182,6 +182,8 @@ public class AttachCardFormFragment extends Fragment implements OnBackPressedLis
                         CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.START_3DS, threeDsData).sendToTarget();
                     } else if (status == PaymentStatus.LOOP_CHECKING) {
                         AttachCardFormHandler.INSTANCE.obtainMessage(AttachCardFormHandler.SHOW_LOOP_CONFIRMATIONS, response.getRequestKey()).sendToTarget();
+                    } else {
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, new AcquiringSdkException(new IllegalStateException("PaymentState = " + status))).sendToTarget();
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
