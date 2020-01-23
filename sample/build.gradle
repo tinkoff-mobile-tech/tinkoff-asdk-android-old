@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    api "com.android.support:appcompat-v7:$supportVersion"
+    api 'androidx.appcompat:appcompat:1.1.0'
     implementation project(':ui')
     implementation project(':card-io')
     implementation project(':payment')

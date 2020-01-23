@@ -24,11 +24,11 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.transition.TransitionManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.transition.TransitionManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -75,8 +75,6 @@ import ru.tinkoff.acquiring.sdk.views.BankKeyboard;
 import ru.tinkoff.acquiring.sdk.views.EditCardView;
 
 import static android.widget.Toast.makeText;
-import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_DARK;
-import static com.google.android.gms.wallet.fragment.WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT_WITH_BORDER;
 
 /**
  * @author a.shishkin1
@@ -386,13 +384,13 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
             ImageView gPayImage = btnGooglePay.findViewById(R.id.rl_google_play_image);
             ImageView gPayOverlay = btnGooglePay.findViewById(R.id.rl_google_play_overlay);
             switch (googlePayParams.getBuyButtonAppearance()) {
-                case ANDROID_PAY_DARK: {
+                case GooglePayParams.ANDROID_PAY_DARK: {
                     btnGooglePay.setBackgroundResource(R.drawable.gpay_button_no_shadow_background_dark);
                     gPayImage.setImageResource(R.drawable.gpay_button_content_dark);
                     gPayOverlay.setImageResource(R.drawable.gpay_button_overlay_dark);
                     break;
                 }
-                case ANDROID_PAY_LIGHT_WITH_BORDER: {
+                case GooglePayParams.ANDROID_PAY_LIGHT_WITH_BORDER: {
                     btnGooglePay.setBackgroundResource(R.drawable.gpay_button_background);
                     gPayImage.setImageResource(R.drawable.gpay_button_content);
                     gPayOverlay.setImageResource(R.drawable.gpay_button_overlay);

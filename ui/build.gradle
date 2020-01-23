@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply from: '../gradle/versions.gradle'
 
 dependencies {
-    api "com.android.support:appcompat-v7:$supportVersion"
-    api "com.android.support:support-v4:$supportVersion"
-    api "com.android.support:transition:$supportVersion"
+    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'androidx.transition:transition:1.2.0'
     implementation "ru.tinkoff.core:core-nfc:${coreVersion}"
-    api("com.google.android.gms:play-services-wallet:11.6.2") {
+    api("com.google.android.gms:play-services-wallet:18.0.0") {
         exclude module: 'support-v4'
     }
 

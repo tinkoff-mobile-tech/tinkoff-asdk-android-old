@@ -16,7 +16,7 @@
 
 package ru.tinkoff.acquiring.sdk;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Коллбек позволяющий получать уведомления о статусе проведения платежа
