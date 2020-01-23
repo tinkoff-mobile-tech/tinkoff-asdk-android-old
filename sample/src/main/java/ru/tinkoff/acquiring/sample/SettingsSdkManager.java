@@ -3,7 +3,7 @@ package ru.tinkoff.acquiring.sample;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.StyleRes;
+import androidx.annotation.StyleRes;
 
 import ru.tinkoff.acquiring.sample.camera.DemoCameraScanner;
 import ru.tinkoff.acquiring.sdk.ICameraCardScanner;

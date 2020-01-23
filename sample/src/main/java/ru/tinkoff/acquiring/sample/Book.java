@@ -18,7 +18,7 @@ package ru.tinkoff.acquiring.sample;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 import java.util.Locale;
 

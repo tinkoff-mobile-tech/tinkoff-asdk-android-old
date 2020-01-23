@@ -2,7 +2,7 @@ package ru.tinkoff.acquiring.sdk;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.StyleRes;
+import androidx.annotation.StyleRes;
 
 import java.util.HashMap;
 

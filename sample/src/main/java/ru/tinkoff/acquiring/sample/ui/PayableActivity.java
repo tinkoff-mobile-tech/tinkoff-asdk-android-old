@@ -18,14 +18,13 @@ package ru.tinkoff.acquiring.sample.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.wallet.WalletConstants;
-import com.google.android.gms.wallet.fragment.WalletFragmentStyle;
 
 import java.util.HashMap;
 
@@ -120,7 +119,6 @@ public abstract class PayableActivity extends AppCompatActivity implements OnPay
         GooglePayParams googlePayParams = new GooglePayParams.Builder()
                 .setEnvironment(SessionParams.GPAY_ENVIRONMENT)
                 .setTheme(WalletConstants.THEME_DARK)
-                .setBuyButtonAppearance(WalletFragmentStyle.BuyButtonAppearance.ANDROID_PAY_LIGHT)
                 .build();
         SessionParams sessionParams = SessionParams.get(terminalId);
         PayFormActivity
