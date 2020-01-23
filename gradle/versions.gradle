@@ -1,11 +1,11 @@
 ext {
     compileSdk = 28
-    minSdk = 14
+    minSdk = 19
     targetSdk = 28
     buildTools = '28.0.3'
 
     supportVersion = "28.0.0"
-    coreVersion = '3.2.13'
+    coreVersion = '3.3.17'
     gsonVersion = '2.8.5'
 
 }
