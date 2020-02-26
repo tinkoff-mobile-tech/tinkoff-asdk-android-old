@@ -13,6 +13,7 @@ class PaymentDataUi internal constructor() {
     internal var recurrentPayment: Boolean = false
     internal var card: Card? = null
     internal var threeDsData: ThreeDsData? = null
+    internal val collectedDeviceData: MutableMap<String, String> = mutableMapOf()
     var status: Status? = null
 
     enum class Status {

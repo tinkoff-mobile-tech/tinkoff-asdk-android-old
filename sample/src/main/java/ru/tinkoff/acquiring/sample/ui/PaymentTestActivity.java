@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.payment.MarketPlaceData;
@@ -33,6 +34,8 @@ import ru.tinkoff.acquiring.sdk.Shop;
 import ru.tinkoff.acquiring.sdk.SupplierInfo;
 import ru.tinkoff.acquiring.sdk.Tax;
 import ru.tinkoff.acquiring.sdk.Taxation;
+import ru.tinkoff.acquiring.sdk.ThreeDsFragment;
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 
 /**
  * @author Stanislav Mukhametshin
@@ -71,6 +74,12 @@ public class PaymentTestActivity extends AppCompatActivity {
         tinkoffPay.pay(cardData, paymentData)
                 .start()
                 .subscribe(new PaymentListener() {
+
+                    @Override
+                    public Map<String, String> onCollectDeviceData(Check3dsVersionResponse response) {
+                        return tinkoffPay.collectDeviceData(PaymentTestActivity.this, response);
+                    }
+
                     @Override
                     public void onSuccess(long paymentId) {
                         Toast.makeText(PaymentTestActivity.this, "onSuccess ", Toast.LENGTH_SHORT).show();
@@ -100,7 +109,7 @@ public class PaymentTestActivity extends AppCompatActivity {
     }
 
     private CardData randomCard() {
-        return new CardData("4300000000000777", "11/22", "111");
+        return new CardData("2201382000000047", "12/20", "111");
     }
 
     private PaymentData randomPaymentInfo() {

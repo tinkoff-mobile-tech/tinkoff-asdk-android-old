@@ -73,7 +73,9 @@ public class AttachCardResponse extends AcquiringResponse {
     public ThreeDsData getThreeDsData() {
         if (threeDsData == null) {
             if (status == PaymentStatus.THREE_DS_CHECKING) {
-                threeDsData = new ThreeDsData(requestKey, acsUrl, md, paReq);
+                threeDsData = new ThreeDsData(requestKey, acsUrl);
+                threeDsData.setMd(md);
+                threeDsData.setPaReq(paReq);
             } else {
                 threeDsData = ThreeDsData.EMPTY_THREE_DS_DATA;
             }

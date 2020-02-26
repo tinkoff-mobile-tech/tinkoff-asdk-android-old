@@ -1,15 +1,10 @@
 package ru.tinkoff.acquiring.payment
 
 import android.app.Activity
-import ru.tinkoff.acquiring.sdk.AcquiringSdk
-import ru.tinkoff.acquiring.sdk.CardData
-import ru.tinkoff.acquiring.sdk.CardsArrayBundlePacker
-import ru.tinkoff.acquiring.sdk.Money
-import ru.tinkoff.acquiring.sdk.PayFormActivity
-import ru.tinkoff.acquiring.sdk.PayFormStarter
-import ru.tinkoff.acquiring.sdk.PaymentInfoBundlePacker
-import ru.tinkoff.acquiring.sdk.ThreeDsBundlePacker
+import android.content.Context
+import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse
 
 /**
  * @author Stanislav Mukhametshin
@@ -73,6 +68,10 @@ class TinkoffPay constructor(
                 }
                 .additionalParams()
                 .startActivityForResult(activity, requestCode)
+    }
+
+    fun collectDeviceData(context: Context, response: Check3dsVersionResponse): MutableMap<String, String>? {
+        return ThreeDsFragment.collectData(context, response)
     }
 
     private fun PayFormStarter.addPaymentUiData(paymentDataUi: PaymentDataUi): PayFormStarter {

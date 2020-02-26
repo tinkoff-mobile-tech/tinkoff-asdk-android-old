@@ -21,12 +21,15 @@ package ru.tinkoff.acquiring.sdk;
  */
 public class ThreeDsData {
 
-    private final Long paymentId;
-    private final String requestKey;
-    private final String acsUrl;
-    private final String md;
-    private final String paReq;
-    private final boolean isThreeDsNeed;
+    private Long paymentId;
+    private String requestKey;
+    private String acsUrl;
+    private String md;
+    private String paReq;
+    private boolean isThreeDsNeed;
+    private ThreeDsVersion version;
+    private String tdsServerTransId;
+    private String acsTransId;
 
     public static final ThreeDsData EMPTY_THREE_DS_DATA = new ThreeDsData();
 
@@ -39,22 +42,20 @@ public class ThreeDsData {
         this.paReq = null;
     }
 
-    public ThreeDsData(Long paymentId, String acsUrl, String md, String paReq) {
+    public ThreeDsData(Long paymentId, String acsUrl, ThreeDsVersion version) {
         this.isThreeDsNeed = true;
         this.paymentId = paymentId;
         this.requestKey = null;
         this.acsUrl = acsUrl;
-        this.md = md;
-        this.paReq = paReq;
+        this.version = version;
     }
 
-    public ThreeDsData(String requestKey, String acsUrl, String md, String paReq) {
+    public ThreeDsData(String requestKey, String acsUrl) {
         this.isThreeDsNeed = true;
         this.paymentId = null;
         this.requestKey = requestKey;
         this.acsUrl = acsUrl;
-        this.md = md;
-        this.paReq = paReq;
+        this.version = null;
     }
 
     public Long getPaymentId() {
@@ -87,6 +88,34 @@ public class ThreeDsData {
 
     public boolean isAttaching() {
         return paymentId == null && requestKey != null;
+    }
+
+    public ThreeDsVersion getVersion() {
+        return version;
+    }
+
+    public String getTdsServerTransId() {
+        return tdsServerTransId;
+    }
+
+    public void setTdsServerTransId(String tdsServerTransId) {
+        this.tdsServerTransId = tdsServerTransId;
+    }
+
+    public String getAcsTransId() {
+        return acsTransId;
+    }
+
+    public void setAcsTransId(String acsTransId) {
+        this.acsTransId = acsTransId;
+    }
+
+    public void setMd(String md) {
+        this.md = md;
+    }
+
+    public void setPaReq(String paReq) {
+        this.paReq = paReq;
     }
 
     @Override

@@ -1,5 +1,9 @@
 package ru.tinkoff.acquiring.sdk;
 
+import androidx.annotation.Nullable;
+
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
+
 /**
  * @author Vitaliy Markus
  */

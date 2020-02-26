@@ -16,7 +16,11 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.security.PublicKey;
+import java.util.Enumeration;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
@@ -25,6 +29,8 @@ import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.AttachCardRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequestBuilder;
+import ru.tinkoff.acquiring.sdk.requests.Check3dsVersionRequest;
+import ru.tinkoff.acquiring.sdk.requests.Check3dsVersionRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequestBuilder;
 import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
@@ -41,6 +47,7 @@ import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequest;
 import ru.tinkoff.acquiring.sdk.requests.SubmitRandomAmountRequestBuilder;
 import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
 import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
@@ -124,26 +131,46 @@ public class AcquiringSdk extends Journal {
         return executeInitRequest(request);
     }
 
+    //TODO doc
+    public Check3dsVersionResponse check3DsVersion(final long paymentId, final CardData cardData) {
+        final Check3dsVersionRequest request = new Check3dsVersionRequestBuilder(password, terminalKey)
+                .setPaymentId(paymentId)
+                .setCardData(cardData.encode(publicKey))
+                .build();
+
+        try {
+            return api.check3DsVersion(request);
+        } catch (AcquiringApiException | NetworkException e) {
+            throw new AcquiringSdkException(e);
+        }
+    }
+
     /**
      * Подтверждает инициированный платеж передачей карточных данных
      *
      * @param paymentId уникальный идентификатор транзакции в системе Банка
      * @param cardData  данные карты
      * @param infoEmail email, на который будет отправлена квитанция об оплате
+     * @param deviceData TODO
      * @return Объект ThreeDsData если терминал требует прохождения 3DS, иначе null
      */
     public ThreeDsData finishAuthorize(final long paymentId,
                                        final CardData cardData,
-                                       final String infoEmail) {
-        final FinishAuthorizeRequest request = new FinishAuthorizeRequestBuilder(password, terminalKey)
+                                       final String infoEmail,
+                                       final Map<String, String> deviceData) {
+        final FinishAuthorizeRequestBuilder requestBuilder = new FinishAuthorizeRequestBuilder(password, terminalKey)
                 .setPaymentId(paymentId)
                 .setSendEmail(infoEmail != null)
                 .setCardData(cardData.encode(publicKey))
                 .setEmail(infoEmail)
-                .build();
+                .setData(deviceData);
+
+        if (deviceData != null) {
+            requestBuilder.setIp(getIpAddress());
+        }
 
         try {
-            return api.finishAuthorize(request).getThreeDsData();
+            return api.finishAuthorize(requestBuilder.build()).getThreeDsData();
         } catch (AcquiringApiException | NetworkException e) {
             throw new AcquiringSdkException(e);
         }
@@ -375,4 +402,20 @@ public class AcquiringSdk extends Journal {
         }
     }
 
+    private String getIpAddress() {
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface networkInterface = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            //ignore
+        }
+        return "";
+    }
 }

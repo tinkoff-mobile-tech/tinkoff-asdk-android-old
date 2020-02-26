@@ -23,19 +23,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 
 
 /**
@@ -101,6 +106,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     private boolean useCustomKeyboard;
     private boolean isCardsReady;
     private boolean chargeMode;
+    private final Map<String, String> deviceData = new HashMap<>();
 
     @Override
     public AcquiringSdk getSdk() {
@@ -117,6 +123,10 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     Card getSourceCard() {
         return sourceCard;
+    }
+
+    Map<String, String> getDeviceData() {
+        return deviceData;
     }
 
     void setSourceCard(Card sourceCard) {
@@ -342,6 +352,12 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+    }
+
+    @Override
+    public synchronized void collect3dsData(@Nullable Check3dsVersionResponse response) {
+        deviceData.putAll(ThreeDsFragment.collectData(this, response));
+        notify();
     }
 
     @Override

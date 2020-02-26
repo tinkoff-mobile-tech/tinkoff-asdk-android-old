@@ -4,13 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import ru.tinkoff.acquiring.sdk.AcquiringSdk
-import ru.tinkoff.acquiring.sdk.Card
-import ru.tinkoff.acquiring.sdk.CardData
-import ru.tinkoff.acquiring.sdk.CardStatus
-import ru.tinkoff.acquiring.sdk.PaymentInfo
-import ru.tinkoff.acquiring.sdk.ThreeDsData
+import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse
 
 /**
  * @author Stanislav Mukhametshin
@@ -20,6 +16,7 @@ class PaymentProcess internal constructor() {
     private val handler = PaymentHandler()
     private lateinit var thread: Thread
     private lateinit var requestBuilder: InitRequestBuilder
+    private var check3dsVersionResponse: Check3dsVersionResponse? = null
     private var paymentListeners: Set<PaymentListener> = HashSet()
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
@@ -32,6 +29,7 @@ class PaymentProcess internal constructor() {
         private const val START_3DS = 2
         private const val CHARGE_REQUEST_REJECTED = 3
         private const val EXCEPTION = 4
+        private const val COLLECT_3DS_DATA = 5
 
         private const val CREATED = 0
         private const val EXECUTING = 1
@@ -73,33 +71,52 @@ class PaymentProcess internal constructor() {
                 val paymentId = sdk.init(requestBuilder)
 
                 if (Thread.interrupted()) throw InterruptedException()
+                var threeDsData: ThreeDsData? = null
 
-                handler.run {
-                    if (!chargeMode || paySource is GPayTokenPaySource) {
-                        val threeDsData = when (paySource) {
-                            is CardDataPaySource -> sdk.finishAuthorize(paymentId, paySource.cardData, email)
-                            is GPayTokenPaySource -> sdk.finishAuthorize(paymentId, paySource.token, email)
-                            else -> throw IllegalArgumentException()
-                        }
+                if (paySource is GPayTokenPaySource) {
+                    threeDsData = sdk.finishAuthorize(paymentId, paySource.token, email)
+                } else {
+                    val cardData = (paySource as? CardDataPaySource)?.cardData
+                            ?: throw IllegalArgumentException()
 
-                        if (Thread.interrupted()) throw InterruptedException()
-
-                        if (threeDsData.isThreeDsNeed) {
-                            obtainMessage(START_3DS, threeDsData)
-                        } else {
-                            obtainMessage(SUCCESS, paymentId)
-                        }
-                    } else {
-                        val cardData = (paySource as? CardDataPaySource)?.cardData
-                                ?: throw IllegalArgumentException()
+                    if (chargeMode) {
                         val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
                         if (paymentInfo.isSuccess) {
-                            obtainMessage(SUCCESS, paymentId)
+                            handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
                         } else {
-                            obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo)
+                            handler.obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget()
+                        }
+                    } else {
+                        val versionResponse = sdk.check3DsVersion(paymentId, cardData)
+                        if (versionResponse.version == ThreeDsVersion.TWO) {
+                            val threeDsUrl = versionResponse.threeDsMethodUrl
+
+                            if (threeDsUrl != null && threeDsUrl.isNotEmpty()) {
+                                handler.obtainMessage(COLLECT_3DS_DATA, versionResponse).sendToTarget()
+                            } else {
+                                handler.obtainMessage(COLLECT_3DS_DATA, null).sendToTarget()
+                            }
+
+                            synchronized(paymentDataUi.collectedDeviceData) {
+                                if (paymentDataUi.collectedDeviceData.isEmpty()) {
+                                    (paymentDataUi.collectedDeviceData as Object).wait()
+                                }
+                            }
+
+                            threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, paymentDataUi.collectedDeviceData)
+
+                        } else {
+                            threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
                         }
                     }
-                }.sendToTarget()
+                }
+
+                if (threeDsData != null && threeDsData.isThreeDsNeed) {
+                    handler.obtainMessage(START_3DS, threeDsData).sendToTarget()
+                } else {
+                    handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
+                }
+
             } catch (e: Exception) {
                 handler.obtainMessage(EXCEPTION, e).sendToTarget()
             }
@@ -154,6 +171,12 @@ class PaymentProcess internal constructor() {
                     val paymentId = paymentId ?: return
                     onSuccess(paymentId)
                 }
+                COLLECT_3DS_DATA -> {
+                    synchronized(paymentDataUi.collectedDeviceData) {
+                        onCollectDeviceData(check3dsVersionResponse)?.let { paymentDataUi.collectedDeviceData.putAll(it) }
+                        (paymentDataUi.collectedDeviceData as Object).notify()
+                    }
+                }
                 CHARGE_REQUEST_REJECTED, START_3DS -> onUiNeeded(paymentDataUi)
                 EXCEPTION -> {
                     val lastException = lastException ?: return
@@ -175,13 +198,20 @@ class PaymentProcess internal constructor() {
                     paymentDataUi.paymentInfo = msg.obj as PaymentInfo
                     paymentDataUi.status = PaymentDataUi.Status.REJECTED
                 }
+                COLLECT_3DS_DATA -> {
+                    check3dsVersionResponse = if (msg.obj != null) {
+                        msg.obj as Check3dsVersionResponse
+                    } else null
+                }
                 START_3DS -> {
                     paymentDataUi.threeDsData = msg.obj as ThreeDsData
                     paymentDataUi.status = PaymentDataUi.Status.THREE_DS_NEEDED
                 }
             }
             sendToListeners(msg.what)
-            state = FINISHED
+            if (msg.what != COLLECT_3DS_DATA) {
+                state = FINISHED
+            }
         }
     }
 }

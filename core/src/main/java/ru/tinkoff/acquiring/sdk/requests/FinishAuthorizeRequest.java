@@ -16,6 +16,7 @@
 
 package ru.tinkoff.acquiring.sdk.requests;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,8 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
     private String cvv;
     private String googlePayToken;
     private String source;
+    private String ip;
+    private Map<String, String> data;
 
     public FinishAuthorizeRequest() {
         super("FinishAuthorize");
@@ -50,6 +53,10 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
         putIfNotNull(EMAIL, email, map);
         putIfNotNull(SOURCE, source, map);
         putIfNotNull(ANDROID_PAY_TOKEN, googlePayToken, map);
+        putIfNotNull(IP, ip, map);
+        if (data != null) {
+            putDataIfNonNull(map);
+        }
 
         return map;
     }
@@ -59,6 +66,7 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
         Set<String> result = new HashSet<>();
         result.add(CARD_ID);
         result.add(CVV);
+        result.add(DATA);
         return result;
     }
 
@@ -124,6 +132,34 @@ final public class FinishAuthorizeRequest extends AcquiringRequest {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Map<String, String> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
+    public Boolean is3DsVersionV2() {
+        return data != null && ip != null;
+    }
+
+    private void putDataIfNonNull(Map<String, Object> map) {
+        HashMap<String, String> dataMap = new HashMap<>();
+        if (data != null) {
+            dataMap.putAll(data);
+        }
+        map.put(DATA, dataMap);
     }
 }
 

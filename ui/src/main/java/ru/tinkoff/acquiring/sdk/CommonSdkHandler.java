@@ -7,6 +7,8 @@ import android.os.Message;
 import java.util.HashSet;
 import java.util.Set;
 
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
+
 /**
  * @author Vitaliy Markus
  */
@@ -20,6 +22,7 @@ public class CommonSdkHandler extends Handler {
     public static final int START_3DS = 3;
     public static final int SHOW_ERROR_DIALOG = 4;
     public static final int NO_NETWORK = 5;
+    public static final int COLLECT_3DS_DATA = 6;
 
     public CommonSdkHandler() {
         super(Looper.getMainLooper());
@@ -68,6 +71,18 @@ public class CommonSdkHandler extends Handler {
             case NO_NETWORK:
                 for (IBaseSdkActivity activity : callbacks) {
                     activity.noNetwork();
+                }
+                return;
+            case COLLECT_3DS_DATA:
+                for (IBaseSdkActivity activity : callbacks) {
+                    synchronized (((PayFormActivity) activity).getDeviceData()) {
+                        if (msg.obj == null) {
+                            ((IPayFormActivity)activity).collect3dsData(null);
+                        } else {
+                            ((IPayFormActivity)activity).collect3dsData((Check3dsVersionResponse) msg.obj);
+                        }
+                        ((PayFormActivity) activity).getDeviceData().notify();
+                    }
                 }
                 return;
         }
