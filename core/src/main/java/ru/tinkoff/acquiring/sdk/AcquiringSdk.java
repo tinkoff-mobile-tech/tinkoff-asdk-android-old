@@ -131,7 +131,13 @@ public class AcquiringSdk extends Journal {
         return executeInitRequest(request);
     }
 
-    //TODO doc
+    /**
+     * Проверяет поддерживаемую версию 3DS протокола по карточным данным из входящих параметров
+     *
+     * @param paymentId уникальный идентификатор транзакции в системе Банка
+     * @param cardData  данные карты
+     * @return возвращает результат запроса
+     */
     public Check3dsVersionResponse check3DsVersion(final long paymentId, final CardData cardData) {
         final Check3dsVersionRequest request = new Check3dsVersionRequestBuilder(password, terminalKey)
                 .setPaymentId(paymentId)
@@ -148,10 +154,10 @@ public class AcquiringSdk extends Journal {
     /**
      * Подтверждает инициированный платеж передачей карточных данных
      *
-     * @param paymentId уникальный идентификатор транзакции в системе Банка
-     * @param cardData  данные карты
-     * @param infoEmail email, на который будет отправлена квитанция об оплате
-     * @param deviceData TODO
+     * @param paymentId  уникальный идентификатор транзакции в системе Банка
+     * @param cardData   данные карты
+     * @param infoEmail  email, на который будет отправлена квитанция об оплате
+     * @param deviceData объект, содержащий дополнительные параметры в виде “ключ”:”значение”
      * @return Объект ThreeDsData если терминал требует прохождения 3DS, иначе null
      */
     public ThreeDsData finishAuthorize(final long paymentId,
@@ -180,7 +186,7 @@ public class AcquiringSdk extends Journal {
      * Подтверждает инициированный платеж передачей токена Google Pay
      *
      * @param paymentId уникальный идентификатор транзакции в системе Банка
-     * @param token  токен полученный от Google Pay
+     * @param token     токен полученный от Google Pay
      * @param infoEmail email, на который будет отправлена квитанция об оплате
      * @return Объект ThreeDsData если терминал требует прохождения 3DS, иначе null
      */
