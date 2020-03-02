@@ -27,9 +27,11 @@ public class ThreeDsData {
     private String md;
     private String paReq;
     private boolean isThreeDsNeed;
-    private ThreeDsVersion version;
     private String tdsServerTransId;
     private String acsTransId;
+
+    private ThreeDsVersion version;
+    private String versionName;
 
     public static final ThreeDsData EMPTY_THREE_DS_DATA = new ThreeDsData();
 
@@ -55,7 +57,6 @@ public class ThreeDsData {
         this.paymentId = null;
         this.requestKey = requestKey;
         this.acsUrl = acsUrl;
-        this.version = null;
     }
 
     public Long getPaymentId() {
@@ -129,4 +130,11 @@ public class ThreeDsData {
     }
 
 
+    public void setVersionName(String version) {
+        this.versionName = version;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
 }

@@ -125,7 +125,12 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         return sourceCard;
     }
 
-    Map<String, String> getDeviceData() {
+    Map<String, String> getDeviceData() throws InterruptedException {
+        synchronized (deviceData) {
+            while (deviceData.isEmpty()) {
+                deviceData.wait();
+            }
+        }
         return deviceData;
     }
 
@@ -355,9 +360,11 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     }
 
     @Override
-    public synchronized void collect3dsData(@Nullable Check3dsVersionResponse response) {
-        deviceData.putAll(ThreeDsFragment.collectData(this, response));
-        notify();
+    public void collect3dsData(@Nullable Check3dsVersionResponse response) {
+        synchronized (deviceData) {
+            deviceData.putAll(ThreeDsFragment.collectData(this, response));
+            deviceData.notify();
+        }
     }
 
     @Override

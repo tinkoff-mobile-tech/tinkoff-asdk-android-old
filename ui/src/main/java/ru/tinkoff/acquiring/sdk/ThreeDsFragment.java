@@ -161,7 +161,7 @@ public class ThreeDsFragment extends Fragment {
         try {
             creqData.put("threeDSServerTransID", data.getTdsServerTransId());
             creqData.put("acsTransID", data.getAcsTransId());
-            creqData.put("messageVersion", data.getVersion().toString());
+            creqData.put("messageVersion", data.getVersionName());
             creqData.put("challengeWindowSize", "05");
             creqData.put("messageType", "CReq");
         } catch (JSONException e) {

@@ -75,13 +75,10 @@ public class CommonSdkHandler extends Handler {
                 return;
             case COLLECT_3DS_DATA:
                 for (IBaseSdkActivity activity : callbacks) {
-                    synchronized (((PayFormActivity) activity).getDeviceData()) {
-                        if (msg.obj == null) {
-                            ((IPayFormActivity)activity).collect3dsData(null);
-                        } else {
-                            ((IPayFormActivity)activity).collect3dsData((Check3dsVersionResponse) msg.obj);
-                        }
-                        ((PayFormActivity) activity).getDeviceData().notify();
+                    if (msg.obj == null) {
+                        ((IPayFormActivity) activity).collect3dsData(null);
+                    } else {
+                        ((IPayFormActivity) activity).collect3dsData((Check3dsVersionResponse) msg.obj);
                     }
                 }
                 return;

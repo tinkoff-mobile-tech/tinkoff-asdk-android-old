@@ -88,7 +88,7 @@ class PaymentProcess internal constructor() {
                         }
                     } else {
                         val versionResponse = sdk.check3DsVersion(paymentId, cardData)
-                        if (versionResponse.version == ThreeDsVersion.TWO) {
+                        if (ThreeDsVersion.fromValue(versionResponse.version) == ThreeDsVersion.TWO) {
                             val threeDsUrl = versionResponse.threeDsMethodUrl
 
                             if (threeDsUrl != null && threeDsUrl.isNotEmpty()) {
@@ -108,6 +108,8 @@ class PaymentProcess internal constructor() {
                         } else {
                             threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
                         }
+
+                        threeDsData.versionName = versionResponse.version
                     }
                 }
 
@@ -210,6 +212,7 @@ class PaymentProcess internal constructor() {
             }
             sendToListeners(msg.what)
             if (msg.what != COLLECT_3DS_DATA) {
+                paymentDataUi.collectedDeviceData.clear()
                 state = FINISHED
             }
         }

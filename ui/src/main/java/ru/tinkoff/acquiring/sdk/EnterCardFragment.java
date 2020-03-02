@@ -750,11 +750,11 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
 
                     if (!chargeMode || googlePayToken != null) {
                         final ThreeDsData threeDsData;
-                        Map<String, String> deviceData;
+
                         if (googlePayToken == null) {
                             final Check3dsVersionResponse versionResponse = sdk.check3DsVersion(paymentId, cardData);
 
-                            if (versionResponse.getVersion() == ThreeDsVersion.TWO) {
+                            if (ThreeDsVersion.fromValue(versionResponse.getVersion()) == ThreeDsVersion.TWO) {
                                 final String threeDsUrl = versionResponse.getThreeDsMethodUrl();
 
                                 if (threeDsUrl != null && !threeDsUrl.isEmpty()) {
@@ -763,19 +763,15 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                                     CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, null).sendToTarget();
                                 }
 
-                                PayFormActivity activity = (PayFormActivity) getActivity();
-                                synchronized (activity.getDeviceData()) {
-                                    if (activity.getDeviceData().isEmpty()) {
-                                        activity.getDeviceData().wait();
-                                    }
-                                }
-
-                                deviceData = activity.getDeviceData();
+                                Map<String, String> deviceData = ((PayFormActivity) getActivity()).getDeviceData();
                                 threeDsData = sdk.finishAuthorize(paymentId, cardData, email, deviceData);
 
                             } else {
                                 threeDsData = sdk.finishAuthorize(paymentId, cardData, email, null);
                             }
+
+                            threeDsData.setVersionName(versionResponse.getVersion());
+
                         } else {
                             threeDsData = sdk.finishAuthorize(paymentId, googlePayToken, email);
                         }
@@ -793,6 +789,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                             PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget();
                         }
                     }
+
+                    ((PayFormActivity) getActivity()).getDeviceData().clear();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;

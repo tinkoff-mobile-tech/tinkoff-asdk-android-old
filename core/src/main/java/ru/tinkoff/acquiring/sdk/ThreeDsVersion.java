@@ -5,8 +5,8 @@ package ru.tinkoff.acquiring.sdk;
  */
 public enum ThreeDsVersion {
 
-    ONE("1.0.0"),
-    TWO("2.1.0");
+    ONE("1"),
+    TWO("2");
 
     private final String version;
 
@@ -21,7 +21,7 @@ public enum ThreeDsVersion {
 
     public static ThreeDsVersion fromValue(String value) {
         for (ThreeDsVersion version : values()) {
-            if (value.equals(version.toString())) {
+            if (value.startsWith(version.toString())) {
                 return version;
             }
         }
