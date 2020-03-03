@@ -1,10 +1,8 @@
 package ru.tinkoff.acquiring.payment
 
 import android.app.Activity
-import android.content.Context
 import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
-import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse
 
 /**
  * @author Stanislav Mukhametshin
@@ -46,32 +44,32 @@ class TinkoffPay constructor(
                  paymentDataUi: PaymentDataUi,
                  requestCode: Int,
                  additionalParams: PayFormStarter.() -> PayFormStarter = { this }) {
-        PayFormActivity
-                .init(sdk.terminalKey, sdk.password, publicKey)
-                .prepare(paymentData.orderId,
-                        Money.ofCoins(paymentData.coins),
-                        paymentData.title,
-                        paymentData.description,
-                        paymentDataUi.paymentInfo?.cardId ?: cardId,
-                        paymentData.email,
-                        paymentDataUi.recurrentPayment,
-                        true)
-                .setCustomerKey(paymentData.customerKey)
-                .setChargeMode(paymentDataUi.recurrentPayment)
-                .useFirstAttachedCard(true)
-                .addPaymentUiData(paymentDataUi)
-                .setTheme(R.style.AcquiringTheme)
-                .apply {
-                    paymentData.marketPlaceData?.apply {
-                        setShops(shops, receipts)
+        if (paymentDataUi.status == PaymentDataUi.Status.COLLECT_3DS_DATA) {
+            paymentDataUi.deviceDataStorage.putData(ThreeDsFragment.collectData(activity, paymentDataUi.check3dsVersionResponse))
+        } else {
+            PayFormActivity
+                    .init(sdk.terminalKey, sdk.password, publicKey)
+                    .prepare(paymentData.orderId,
+                            Money.ofCoins(paymentData.coins),
+                            paymentData.title,
+                            paymentData.description,
+                            paymentDataUi.paymentInfo?.cardId ?: cardId,
+                            paymentData.email,
+                            paymentDataUi.recurrentPayment,
+                            true)
+                    .setCustomerKey(paymentData.customerKey)
+                    .setChargeMode(paymentDataUi.recurrentPayment)
+                    .useFirstAttachedCard(true)
+                    .addPaymentUiData(paymentDataUi)
+                    .setTheme(R.style.AcquiringTheme)
+                    .apply {
+                        paymentData.marketPlaceData?.apply {
+                            setShops(shops, receipts)
+                        }
                     }
-                }
-                .additionalParams()
-                .startActivityForResult(activity, requestCode)
-    }
-
-    fun collectDeviceData(context: Context, response: Check3dsVersionResponse): MutableMap<String, String>? {
-        return ThreeDsFragment.collectData(context, response)
+                    .additionalParams()
+                    .startActivityForResult(activity, requestCode)
+        }
     }
 
     private fun PayFormStarter.addPaymentUiData(paymentDataUi: PaymentDataUi): PayFormStarter {

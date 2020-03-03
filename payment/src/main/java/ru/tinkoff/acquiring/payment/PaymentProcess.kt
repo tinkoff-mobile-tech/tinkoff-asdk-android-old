@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * @author Stanislav Mukhametshin
@@ -16,7 +18,6 @@ class PaymentProcess internal constructor() {
     private val handler = PaymentHandler()
     private lateinit var thread: Thread
     private lateinit var requestBuilder: InitRequestBuilder
-    private var check3dsVersionResponse: Check3dsVersionResponse? = null
     private var paymentListeners: Set<PaymentListener> = HashSet()
     private val paymentDataUi = PaymentDataUi()
     private var lastException: Exception? = null
@@ -88,25 +89,17 @@ class PaymentProcess internal constructor() {
                         }
                     } else {
                         val versionResponse = sdk.check3DsVersion(paymentId, cardData)
-                        if (ThreeDsVersion.fromValue(versionResponse.version) == ThreeDsVersion.TWO) {
+                        threeDsData = if (versionResponse.serverTransId != null) {
                             val threeDsUrl = versionResponse.threeDsMethodUrl
-
                             if (threeDsUrl != null && threeDsUrl.isNotEmpty()) {
                                 handler.obtainMessage(COLLECT_3DS_DATA, versionResponse).sendToTarget()
                             } else {
                                 handler.obtainMessage(COLLECT_3DS_DATA, null).sendToTarget()
                             }
 
-                            synchronized(paymentDataUi.collectedDeviceData) {
-                                if (paymentDataUi.collectedDeviceData.isEmpty()) {
-                                    (paymentDataUi.collectedDeviceData as Object).wait()
-                                }
-                            }
-
-                            threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, paymentDataUi.collectedDeviceData)
-
+                            sdk.finishAuthorize(paymentId, paySource.cardData, email, paymentDataUi.deviceDataStorage.data)
                         } else {
-                            threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
+                            sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
                         }
 
                         threeDsData.versionName = versionResponse.version
@@ -121,6 +114,8 @@ class PaymentProcess internal constructor() {
 
             } catch (e: Exception) {
                 handler.obtainMessage(EXCEPTION, e).sendToTarget()
+            } finally {
+                paymentDataUi.deviceDataStorage.clearData()
             }
         })
         return this
@@ -173,13 +168,7 @@ class PaymentProcess internal constructor() {
                     val paymentId = paymentId ?: return
                     onSuccess(paymentId)
                 }
-                COLLECT_3DS_DATA -> {
-                    synchronized(paymentDataUi.collectedDeviceData) {
-                        onCollectDeviceData(check3dsVersionResponse)?.let { paymentDataUi.collectedDeviceData.putAll(it) }
-                        (paymentDataUi.collectedDeviceData as Object).notify()
-                    }
-                }
-                CHARGE_REQUEST_REJECTED, START_3DS -> onUiNeeded(paymentDataUi)
+                CHARGE_REQUEST_REJECTED, START_3DS, COLLECT_3DS_DATA -> onUiNeeded(paymentDataUi)
                 EXCEPTION -> {
                     val lastException = lastException ?: return
                     onError(lastException)
@@ -201,9 +190,10 @@ class PaymentProcess internal constructor() {
                     paymentDataUi.status = PaymentDataUi.Status.REJECTED
                 }
                 COLLECT_3DS_DATA -> {
-                    check3dsVersionResponse = if (msg.obj != null) {
+                    paymentDataUi.check3dsVersionResponse = if (msg.obj != null) {
                         msg.obj as Check3dsVersionResponse
                     } else null
+                    paymentDataUi.status = PaymentDataUi.Status.COLLECT_3DS_DATA
                 }
                 START_3DS -> {
                     paymentDataUi.threeDsData = msg.obj as ThreeDsData
@@ -212,7 +202,6 @@ class PaymentProcess internal constructor() {
             }
             sendToListeners(msg.what)
             if (msg.what != COLLECT_3DS_DATA) {
-                paymentDataUi.collectedDeviceData.clear()
                 state = FINISHED
             }
         }

@@ -35,7 +35,6 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +105,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     private boolean useCustomKeyboard;
     private boolean isCardsReady;
     private boolean chargeMode;
-    private final Map<String, String> deviceData = new HashMap<>();
+
+    private final DeviceDataStorage deviceDataStorage = new DeviceDataStorage();
 
     @Override
     public AcquiringSdk getSdk() {
@@ -125,13 +125,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         return sourceCard;
     }
 
-    Map<String, String> getDeviceData() throws InterruptedException {
-        synchronized (deviceData) {
-            while (deviceData.isEmpty()) {
-                deviceData.wait();
-            }
-        }
-        return deviceData;
+    DeviceDataStorage getDeviceDataStorage() {
+        return deviceDataStorage;
     }
 
     void setSourceCard(Card sourceCard) {
@@ -361,10 +356,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     @Override
     public void collect3dsData(@Nullable Check3dsVersionResponse response) {
-        synchronized (deviceData) {
-            deviceData.putAll(ThreeDsFragment.collectData(this, response));
-            deviceData.notify();
-        }
+       deviceDataStorage.putData(ThreeDsFragment.collectData(this, response));
     }
 
     @Override

@@ -30,7 +30,6 @@ public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
     private static final String PA_REQ = "paReq";
     private static final String TDS_SERVER_TRANS_ID = "tdsServerTransId";
     private static final String ACS_TRANS_ID = "acsTransId";
-    private static final String VERSION = "version";
     private static final String VERSION_NAME = "versionName";
     private static final String IS_NEED = "isThreeDsNeed";
 
@@ -46,23 +45,15 @@ public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
             if (bundle.containsKey(PAYMENT_ID)) {
                 long paymentId = bundle.getLong(PAYMENT_ID);
-                ThreeDsVersion version = ThreeDsVersion.fromValue(bundle.getString(VERSION));
 
-                ThreeDsData threeDsData = new ThreeDsData(paymentId, acsUrl, version);
+                ThreeDsData threeDsData = new ThreeDsData(paymentId, acsUrl);
 
-                if (version == ThreeDsVersion.TWO) {
-                    String tdsServerTransId = bundle.getString(TDS_SERVER_TRANS_ID);
-                    String acsTransId = bundle.getString(ACS_TRANS_ID);
-
-                    threeDsData.setTdsServerTransId(tdsServerTransId);
-                    threeDsData.setAcsTransId(acsTransId);
-
-                } else if (version == ThreeDsVersion.ONE) {
-                    String md = bundle.getString(MD);
-                    String paReq = bundle.getString(PA_REQ);
-
-                    threeDsData.setMd(md);
-                    threeDsData.setPaReq(paReq);
+                if (bundle.containsKey(TDS_SERVER_TRANS_ID)) {
+                    threeDsData.setTdsServerTransId(bundle.getString(TDS_SERVER_TRANS_ID));
+                    threeDsData.setAcsTransId(bundle.getString(ACS_TRANS_ID));
+                } else {
+                    threeDsData.setMd(bundle.getString(MD));
+                    threeDsData.setPaReq(bundle.getString(PA_REQ));
                 }
 
                 if (bundle.containsKey(VERSION_NAME)) {
@@ -74,12 +65,10 @@ public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
             } else {
                 String requestKey = bundle.getString(REQUEST_KEY);
-                String md = bundle.getString(MD);
-                String paReq = bundle.getString(PA_REQ);
 
                 ThreeDsData threeDsData = new ThreeDsData(requestKey, acsUrl);
-                threeDsData.setMd(md);
-                threeDsData.setPaReq(paReq);
+                threeDsData.setMd(bundle.getString(MD));
+                threeDsData.setPaReq(bundle.getString(PA_REQ));
                 return threeDsData;
             }
         }
@@ -96,13 +85,12 @@ public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
         if (paymentId != null) {
             result.putLong(PAYMENT_ID, paymentId);
-            result.putString(VERSION, entity.getVersion().toString());
 
             if (entity.getVersionName() != null) {
                 result.putString(VERSION_NAME, entity.getVersionName());
             }
 
-            if (entity.getVersion() == ThreeDsVersion.TWO) {
+            if (entity.getTdsServerTransId() != null) {
                 result.putString(TDS_SERVER_TRANS_ID, entity.getTdsServerTransId());
                 result.putString(ACS_TRANS_ID, entity.getAcsTransId());
             } else {

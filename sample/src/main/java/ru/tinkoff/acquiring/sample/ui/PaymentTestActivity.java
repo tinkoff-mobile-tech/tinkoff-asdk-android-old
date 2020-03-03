@@ -3,15 +3,15 @@ package ru.tinkoff.acquiring.sample.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Random;
 
 import ru.tinkoff.acquiring.payment.MarketPlaceData;
@@ -34,8 +34,6 @@ import ru.tinkoff.acquiring.sdk.Shop;
 import ru.tinkoff.acquiring.sdk.SupplierInfo;
 import ru.tinkoff.acquiring.sdk.Tax;
 import ru.tinkoff.acquiring.sdk.Taxation;
-import ru.tinkoff.acquiring.sdk.ThreeDsFragment;
-import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 
 /**
  * @author Stanislav Mukhametshin
@@ -74,12 +72,6 @@ public class PaymentTestActivity extends AppCompatActivity {
         tinkoffPay.pay(cardData, paymentData)
                 .start()
                 .subscribe(new PaymentListener() {
-
-                    @Override
-                    public Map<String, String> onCollectDeviceData(Check3dsVersionResponse response) {
-                        return tinkoffPay.collectDeviceData(PaymentTestActivity.this, response);
-                    }
-
                     @Override
                     public void onSuccess(long paymentId) {
                         Toast.makeText(PaymentTestActivity.this, "onSuccess ", Toast.LENGTH_SHORT).show();

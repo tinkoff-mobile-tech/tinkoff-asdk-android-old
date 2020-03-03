@@ -754,7 +754,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         if (googlePayToken == null) {
                             final Check3dsVersionResponse versionResponse = sdk.check3DsVersion(paymentId, cardData);
 
-                            if (ThreeDsVersion.fromValue(versionResponse.getVersion()) == ThreeDsVersion.TWO) {
+                            if (versionResponse.getServerTransId() != null) {
                                 final String threeDsUrl = versionResponse.getThreeDsMethodUrl();
 
                                 if (threeDsUrl != null && !threeDsUrl.isEmpty()) {
@@ -763,7 +763,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                                     CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, null).sendToTarget();
                                 }
 
-                                Map<String, String> deviceData = ((PayFormActivity) getActivity()).getDeviceData();
+                                Map<String, String> deviceData = ((PayFormActivity) getActivity()).getDeviceDataStorage().getData();
                                 threeDsData = sdk.finishAuthorize(paymentId, cardData, email, deviceData);
 
                             } else {
@@ -789,8 +789,6 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                             PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget();
                         }
                     }
-
-                    ((PayFormActivity) getActivity()).getDeviceData().clear();
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
                     Message msg;
@@ -800,6 +798,9 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);
                     }
                     msg.sendToTarget();
+                } finally {
+                    PayFormActivity activity = ((PayFormActivity) getActivity());
+                    if (activity != null) activity.getDeviceDataStorage().clearData();
                 }
             }
         }).start();

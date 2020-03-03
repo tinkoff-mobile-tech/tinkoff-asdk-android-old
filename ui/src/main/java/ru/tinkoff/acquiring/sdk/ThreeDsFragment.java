@@ -60,7 +60,7 @@ public class ThreeDsFragment extends Fragment {
     private static final String THREE_DS_CALLED_FLAG = "Y";
     private static final String THREE_DS_NOT_CALLED_FLAG = "N";
 
-    private static final String[] CANCEL_ACTIONS = new String[] {"cancel.do", "cancel=true"};
+    private static final String[] CANCEL_ACTIONS = new String[]{"cancel.do", "cancel=true"};
 
     private WebView wvThreeDs;
     private ThreeDsData data;
@@ -139,7 +139,7 @@ public class ThreeDsFragment extends Fragment {
 
         try {
             String params;
-            if (data.getVersion() == ThreeDsVersion.TWO) {
+            if (data.getTdsServerTransId() != null) {
                 termUrl = sdk.getUrl(SUBMIT_3DS_AUTHORIZATION_V2) + "/" + SUBMIT_3DS_AUTHORIZATION_V2;
                 String base64 = prepareCreqParams();
                 params = "creq=" + URLEncoder.encode(base64, "UTF-8");
@@ -178,7 +178,7 @@ public class ThreeDsFragment extends Fragment {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
 
-            for (String cancel: CANCEL_ACTIONS) {
+            for (String cancel : CANCEL_ACTIONS) {
                 if (url.contains(cancel)) {
                     canceled = true;
                     Activity activity = (Activity) view.getContext();
