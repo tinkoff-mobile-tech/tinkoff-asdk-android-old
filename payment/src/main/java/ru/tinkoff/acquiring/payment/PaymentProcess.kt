@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.util.Log
 import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse
-import java.util.concurrent.locks.ReentrantLock
 
 /**
  * @author Stanislav Mukhametshin

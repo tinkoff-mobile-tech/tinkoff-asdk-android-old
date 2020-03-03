@@ -36,7 +36,6 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
 import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
@@ -356,7 +355,7 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     @Override
     public void collect3dsData(@Nullable Check3dsVersionResponse response) {
-       deviceDataStorage.putData(ThreeDsFragment.collectData(this, response));
+        deviceDataStorage.putData(ThreeDsFragment.collectData(this, response));
     }
 
     @Override
