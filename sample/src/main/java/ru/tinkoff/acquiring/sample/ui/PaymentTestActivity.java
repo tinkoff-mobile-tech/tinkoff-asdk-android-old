@@ -3,12 +3,13 @@ package ru.tinkoff.acquiring.sample.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -100,7 +101,7 @@ public class PaymentTestActivity extends AppCompatActivity {
     }
 
     private CardData randomCard() {
-        return new CardData("4300000000000777", "11/22", "111");
+        return new CardData("2201382000000047", "12/20", "111");
     }
 
     private PaymentData randomPaymentInfo() {

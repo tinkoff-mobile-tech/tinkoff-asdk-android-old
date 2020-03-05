@@ -17,6 +17,7 @@
 package ru.tinkoff.acquiring.sdk.requests;
 
 import java.security.PublicKey;
+import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.AcquiringSdk;
 
@@ -76,6 +77,16 @@ final public class FinishAuthorizeRequestBuilder extends AcquiringRequestBuilder
      */
     public FinishAuthorizeRequestBuilder setEmail(final String email) {
         request.setEmail(email);
+        return this;
+    }
+
+    public FinishAuthorizeRequestBuilder setIp(final String ip) {
+        request.setIp(ip);
+        return this;
+    }
+
+    public FinishAuthorizeRequestBuilder setData(final Map<String, String> data) {
+        request.setData(data);
         return this;
     }
 

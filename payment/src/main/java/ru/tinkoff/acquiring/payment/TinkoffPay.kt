@@ -1,14 +1,7 @@
 package ru.tinkoff.acquiring.payment
 
 import android.app.Activity
-import ru.tinkoff.acquiring.sdk.AcquiringSdk
-import ru.tinkoff.acquiring.sdk.CardData
-import ru.tinkoff.acquiring.sdk.CardsArrayBundlePacker
-import ru.tinkoff.acquiring.sdk.Money
-import ru.tinkoff.acquiring.sdk.PayFormActivity
-import ru.tinkoff.acquiring.sdk.PayFormStarter
-import ru.tinkoff.acquiring.sdk.PaymentInfoBundlePacker
-import ru.tinkoff.acquiring.sdk.ThreeDsBundlePacker
+import ru.tinkoff.acquiring.sdk.*
 import ru.tinkoff.acquiring.sdk.requests.InitRequestBuilder
 
 /**
@@ -51,28 +44,32 @@ class TinkoffPay constructor(
                  paymentDataUi: PaymentDataUi,
                  requestCode: Int,
                  additionalParams: PayFormStarter.() -> PayFormStarter = { this }) {
-        PayFormActivity
-                .init(sdk.terminalKey, sdk.password, publicKey)
-                .prepare(paymentData.orderId,
-                        Money.ofCoins(paymentData.coins),
-                        paymentData.title,
-                        paymentData.description,
-                        paymentDataUi.paymentInfo?.cardId ?: cardId,
-                        paymentData.email,
-                        paymentDataUi.recurrentPayment,
-                        true)
-                .setCustomerKey(paymentData.customerKey)
-                .setChargeMode(paymentDataUi.recurrentPayment)
-                .useFirstAttachedCard(true)
-                .addPaymentUiData(paymentDataUi)
-                .setTheme(R.style.AcquiringTheme)
-                .apply {
-                    paymentData.marketPlaceData?.apply {
-                        setShops(shops, receipts)
+        if (paymentDataUi.status == PaymentDataUi.Status.COLLECT_3DS_DATA) {
+            paymentDataUi.deviceDataStorage.putData(ThreeDsFragment.collectData(activity, paymentDataUi.check3dsVersionResponse))
+        } else {
+            PayFormActivity
+                    .init(sdk.terminalKey, sdk.password, publicKey)
+                    .prepare(paymentData.orderId,
+                            Money.ofCoins(paymentData.coins),
+                            paymentData.title,
+                            paymentData.description,
+                            paymentDataUi.paymentInfo?.cardId ?: cardId,
+                            paymentData.email,
+                            paymentDataUi.recurrentPayment,
+                            true)
+                    .setCustomerKey(paymentData.customerKey)
+                    .setChargeMode(paymentDataUi.recurrentPayment)
+                    .useFirstAttachedCard(true)
+                    .addPaymentUiData(paymentDataUi)
+                    .setTheme(R.style.AcquiringTheme)
+                    .apply {
+                        paymentData.marketPlaceData?.apply {
+                            setShops(shops, receipts)
+                        }
                     }
-                }
-                .additionalParams()
-                .startActivityForResult(activity, requestCode)
+                    .additionalParams()
+                    .startActivityForResult(activity, requestCode)
+        }
     }
 
     private fun PayFormStarter.addPaymentUiData(paymentDataUi: PaymentDataUi): PayFormStarter {

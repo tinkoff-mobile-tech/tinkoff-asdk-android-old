@@ -21,12 +21,15 @@ package ru.tinkoff.acquiring.sdk;
  */
 public class ThreeDsData {
 
-    private final Long paymentId;
-    private final String requestKey;
-    private final String acsUrl;
-    private final String md;
-    private final String paReq;
-    private final boolean isThreeDsNeed;
+    private Long paymentId;
+    private String requestKey;
+    private String acsUrl;
+    private String md;
+    private String paReq;
+    private boolean isThreeDsNeed;
+    private String tdsServerTransId;
+    private String acsTransId;
+    private String versionName;
 
     public static final ThreeDsData EMPTY_THREE_DS_DATA = new ThreeDsData();
 
@@ -39,22 +42,18 @@ public class ThreeDsData {
         this.paReq = null;
     }
 
-    public ThreeDsData(Long paymentId, String acsUrl, String md, String paReq) {
+    public ThreeDsData(Long paymentId, String acsUrl) {
         this.isThreeDsNeed = true;
         this.paymentId = paymentId;
         this.requestKey = null;
         this.acsUrl = acsUrl;
-        this.md = md;
-        this.paReq = paReq;
     }
 
-    public ThreeDsData(String requestKey, String acsUrl, String md, String paReq) {
+    public ThreeDsData(String requestKey, String acsUrl) {
         this.isThreeDsNeed = true;
         this.paymentId = null;
         this.requestKey = requestKey;
         this.acsUrl = acsUrl;
-        this.md = md;
-        this.paReq = paReq;
     }
 
     public Long getPaymentId() {
@@ -89,6 +88,38 @@ public class ThreeDsData {
         return paymentId == null && requestKey != null;
     }
 
+    public String getTdsServerTransId() {
+        return tdsServerTransId;
+    }
+
+    public void setTdsServerTransId(String tdsServerTransId) {
+        this.tdsServerTransId = tdsServerTransId;
+    }
+
+    public String getAcsTransId() {
+        return acsTransId;
+    }
+
+    public void setAcsTransId(String acsTransId) {
+        this.acsTransId = acsTransId;
+    }
+
+    public void setMd(String md) {
+        this.md = md;
+    }
+
+    public void setPaReq(String paReq) {
+        this.paReq = paReq;
+    }
+
+    public void setVersionName(String version) {
+        this.versionName = version;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
     @Override
     public String toString() {
         return "Data: " +
@@ -98,6 +129,4 @@ public class ThreeDsData {
                 paReq + ", " +
                 isThreeDsNeed + ";";
     }
-
-
 }

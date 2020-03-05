@@ -53,6 +53,7 @@ public class AcquiringRequest {
     public static final String CHECK_TYPE = "CheckType";
     public static final String REQUEST_KEY = "RequestKey";
     public static final String SOURCE = "Source";
+    public static final String IP = "IP";
     public static final String ANDROID_PAY_TOKEN = "EncryptedPaymentData";
     public static final String[] IGNORED_FIELDS_VALUES = new String[]{DATA, RECEIPT, RECEIPTS, SHOPS};
     public static final Set<String> IGNORED_FIELDS = new HashSet<>(Arrays.asList(IGNORED_FIELDS_VALUES));

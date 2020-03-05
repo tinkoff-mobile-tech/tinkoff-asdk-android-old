@@ -26,10 +26,14 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +41,7 @@ import ru.tinkoff.acquiring.sdk.requests.AcquiringRequest;
 import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.AttachCardRequest;
 import ru.tinkoff.acquiring.sdk.requests.ChargeRequest;
+import ru.tinkoff.acquiring.sdk.requests.Check3dsVersionRequest;
 import ru.tinkoff.acquiring.sdk.requests.FinishAuthorizeRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetAddCardStateRequest;
 import ru.tinkoff.acquiring.sdk.requests.GetCardListRequest;
@@ -48,6 +53,7 @@ import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
 import ru.tinkoff.acquiring.sdk.responses.AddCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.AttachCardResponse;
 import ru.tinkoff.acquiring.sdk.responses.ChargeResponse;
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 import ru.tinkoff.acquiring.sdk.responses.FinishAuthorizeResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetAddCardStateResponse;
 import ru.tinkoff.acquiring.sdk.responses.GetCardListResponse;
@@ -98,6 +104,10 @@ public class AcquiringApi {
 
     InitResponse init(final InitRequest request) throws AcquiringApiException, NetworkException {
         return performRequest(request, InitResponse.class);
+    }
+
+    Check3dsVersionResponse check3DsVersion(Check3dsVersionRequest request) throws AcquiringApiException, NetworkException {
+        return performRequest(request, Check3dsVersionResponse.class);
     }
 
     FinishAuthorizeResponse finishAuthorize(final FinishAuthorizeRequest request) throws AcquiringApiException, NetworkException {
@@ -157,6 +167,12 @@ public class AcquiringApi {
                 connection.setDoOutput(true);
                 connection.setRequestProperty("Content-type", useV1Api(request.getApiMethod()) ? FORM_URL_ENCODED : JSON);
                 connection.setRequestProperty("Content-length", String.valueOf(requestBodyBytes.length));
+
+                if (request instanceof FinishAuthorizeRequest && ((FinishAuthorizeRequest) request).is3DsVersionV2()) {
+                    connection.setRequestProperty("User-Agent", System.getProperty("http.agent"));
+                    connection.setRequestProperty("Accept", JSON);
+                }
+
                 requestContentStream = connection.getOutputStream();
                 requestContentStream.write(requestBodyBytes);
             }

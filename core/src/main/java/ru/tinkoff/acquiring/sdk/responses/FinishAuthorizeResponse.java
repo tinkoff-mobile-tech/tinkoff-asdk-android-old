@@ -45,6 +45,12 @@ final public class FinishAuthorizeResponse extends AcquiringResponse {
     @SerializedName("PaReq")
     private String paReq;
 
+    @SerializedName("TdsServerTransId")
+    private String tdsServerTransId;
+
+    @SerializedName("AcsTransId")
+    private String acsTransId;
+
     @SerializedName("Status")
     private PaymentStatus status;
 
@@ -55,7 +61,14 @@ final public class FinishAuthorizeResponse extends AcquiringResponse {
             if (status == PaymentStatus.CONFIRMED || status == PaymentStatus.AUTHORIZED) {
                 threeDsData = ThreeDsData.EMPTY_THREE_DS_DATA;
             } else if (status == PaymentStatus.THREE_DS_CHECKING) {
-                threeDsData = new ThreeDsData(paymentId, acsUrl, md, paReq);
+                threeDsData = new ThreeDsData(paymentId, acsUrl);
+                if (md != null && paReq != null) {
+                    threeDsData.setMd(md);
+                    threeDsData.setPaReq(paReq);
+                } else if (tdsServerTransId != null && acsTransId != null) {
+                    threeDsData.setTdsServerTransId(tdsServerTransId);
+                    threeDsData.setAcsTransId(acsTransId);
+                }
             } else {
                 throw new AcquiringSdkException(new IllegalStateException("incorrect PaymentStatus " + status));
             }

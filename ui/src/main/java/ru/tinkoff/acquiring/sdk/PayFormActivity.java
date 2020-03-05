@@ -23,19 +23,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import ru.tinkoff.acquiring.sdk.responses.AcquiringResponse;
+import ru.tinkoff.acquiring.sdk.responses.Check3dsVersionResponse;
 
 
 /**
@@ -102,6 +105,8 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     private boolean isCardsReady;
     private boolean chargeMode;
 
+    private final DeviceDataStorage deviceDataStorage = new DeviceDataStorage();
+
     @Override
     public AcquiringSdk getSdk() {
         return sdk;
@@ -117,6 +122,10 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
 
     Card getSourceCard() {
         return sourceCard;
+    }
+
+    DeviceDataStorage getDeviceDataStorage() {
+        return deviceDataStorage;
     }
 
     void setSourceCard(Card sourceCard) {
@@ -342,6 +351,11 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
         };
         dialogsManager.showErrorDialog(title, message, onClickListener);
         hideProgressDialog();
+    }
+
+    @Override
+    public void collect3dsData(@Nullable Check3dsVersionResponse response) {
+        deviceDataStorage.putData(ThreeDsFragment.collectData(this, response));
     }
 
     @Override
