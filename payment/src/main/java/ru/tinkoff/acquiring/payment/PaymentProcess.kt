@@ -23,12 +23,17 @@ class PaymentProcess internal constructor() {
     private var paymentId: Long? = null
     private var state: Int = CREATED
 
+    private var sdk: AcquiringSdk? = null
+    private var paySource: PaySource? = null
+    private var email: String? = null
+
     private companion object {
         private const val SUCCESS = 1
         private const val START_3DS = 2
         private const val CHARGE_REQUEST_REJECTED = 3
-        private const val EXCEPTION = 4
-        private const val COLLECT_3DS_DATA = 5
+        private const val THREE_DS_V2_REJECTED = 4
+        private const val EXCEPTION = 5
+        private const val COLLECT_3DS_DATA = 6
 
         private const val CREATED = 0
         private const val EXECUTING = 1
@@ -62,7 +67,12 @@ class PaymentProcess internal constructor() {
     internal fun initPaymentThread(sdk: AcquiringSdk,
                                    paySource: PaySource,
                                    email: String?,
-                                   chargeMode: Boolean): PaymentProcess {
+                                   chargeMode: Boolean,
+                                   isThreeDsV2Rejected: Boolean = false): PaymentProcess {
+        this.sdk = sdk
+        this.paySource = paySource
+        this.email = email
+
         paymentDataUi.card = (paySource as? CardDataPaySource)?.cardData?.map()
 
         thread = Thread(Runnable {
@@ -86,21 +96,26 @@ class PaymentProcess internal constructor() {
                             handler.obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget()
                         }
                     } else {
-                        val versionResponse = sdk.check3DsVersion(paymentId, cardData)
-                        threeDsData = if (versionResponse.serverTransId != null) {
-                            val threeDsUrl = versionResponse.threeDsMethodUrl
-                            if (threeDsUrl != null && threeDsUrl.isNotEmpty()) {
-                                handler.obtainMessage(COLLECT_3DS_DATA, versionResponse).sendToTarget()
+
+                        if (isThreeDsV2Rejected) {
+                            sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
+                        } else {
+                            val versionResponse = sdk.check3DsVersion(paymentId, cardData)
+                            threeDsData = if (versionResponse.serverTransId != null) {
+                                val threeDsUrl = versionResponse.threeDsMethodUrl
+                                if (threeDsUrl != null && threeDsUrl.isNotEmpty()) {
+                                    handler.obtainMessage(COLLECT_3DS_DATA, versionResponse).sendToTarget()
+                                } else {
+                                    handler.obtainMessage(COLLECT_3DS_DATA, null).sendToTarget()
+                                }
+
+                                sdk.finishAuthorize(paymentId, paySource.cardData, email, paymentDataUi.deviceDataStorage.data)
                             } else {
-                                handler.obtainMessage(COLLECT_3DS_DATA, null).sendToTarget()
+                                sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
                             }
 
-                            sdk.finishAuthorize(paymentId, paySource.cardData, email, paymentDataUi.deviceDataStorage.data)
-                        } else {
-                            sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
+                            threeDsData.versionName = versionResponse.version
                         }
-
-                        threeDsData.versionName = versionResponse.version
                     }
                 }
 
@@ -110,8 +125,13 @@ class PaymentProcess internal constructor() {
                     handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
                 }
 
-            } catch (e: Exception) {
-                handler.obtainMessage(EXCEPTION, e).sendToTarget()
+            } catch (ex: Exception) {
+                val cause = ex.cause
+                if (cause is AcquiringApiException && cause.response.errorCode == AcquiringApi.API_ERROR_CODE_3DSV2_NOT_SUPPORTED) {
+                    handler.obtainMessage(THREE_DS_V2_REJECTED).sendToTarget()
+                } else {
+                    handler.obtainMessage(EXCEPTION, ex).sendToTarget()
+                }
             } finally {
                 paymentDataUi.deviceDataStorage.clearData()
             }
@@ -187,6 +207,10 @@ class PaymentProcess internal constructor() {
                     paymentDataUi.paymentInfo = msg.obj as PaymentInfo
                     paymentDataUi.status = PaymentDataUi.Status.REJECTED
                 }
+                THREE_DS_V2_REJECTED -> {
+                    state = CREATED
+                    initPaymentThread(sdk!!, paySource!!, email, chargeMode = false, isThreeDsV2Rejected = true).start()
+                }
                 COLLECT_3DS_DATA -> {
                     paymentDataUi.check3dsVersionResponse = if (msg.obj != null) {
                         msg.obj as Check3dsVersionResponse
@@ -199,7 +223,7 @@ class PaymentProcess internal constructor() {
                 }
             }
             sendToListeners(msg.what)
-            if (msg.what != COLLECT_3DS_DATA) {
+            if (msg.what != COLLECT_3DS_DATA && msg.what != THREE_DS_V2_REJECTED) {
                 state = FINISHED
             }
         }
