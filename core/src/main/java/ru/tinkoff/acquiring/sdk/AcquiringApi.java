@@ -67,6 +67,8 @@ import ru.tinkoff.acquiring.sdk.responses.SubmitRandomAmountResponse;
  */
 public class AcquiringApi {
 
+    public static final String API_ERROR_CODE_3DSV2_NOT_SUPPORTED = "106";
+
     private static final String API_URL_RELEASE = "https://securepay.tinkoff.ru/rest";
     private static final String API_URL_DEBUG = "https://rest-api-test.tcsbank.ru/rest";
     private static final String API_URL_RELEASE_V2 = "https://securepay.tinkoff.ru/v2";

@@ -3,7 +3,9 @@ package ru.tinkoff.acquiring.sdk;
 /**
  * @author Vitaliy Markus
  */
-public interface IChargeRejectPerformer {
+public interface IPaymentRejectPerformer {
 
     void onChargeRequestRejected(PaymentInfo paymentInfo);
+
+    void onThreeDsV2Rejected();
 }

@@ -23,7 +23,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -81,7 +80,7 @@ import static android.widget.Toast.makeText;
 /**
  * @author a.shishkin1
  */
-public class EnterCardFragment extends Fragment implements ICardInterest, IChargeRejectPerformer, OnBackPressedListener {
+public class EnterCardFragment extends Fragment implements ICardInterest, IPaymentRejectPerformer, OnBackPressedListener {
 
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 5;
 
@@ -299,7 +298,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 activity.showProgressDialog();
 
                 InitRequestBuilder requestBuilder = createInitRequestBuilder(intent);
-                initPayment(sdk, requestBuilder, cardData, null, enteredEmail, chargeMode);
+                initPayment(sdk, requestBuilder, cardData, null, enteredEmail, chargeMode, false);
             }
         });
 
@@ -716,7 +715,7 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
         final PayFormActivity activity = (PayFormActivity) getActivity();
         activity.showProgressDialog();
         InitRequestBuilder requestBuilder = createInitRequestBuilder(activity.getIntent());
-        initPayment(sdk, requestBuilder, null, googlePayToken, enteredEmail, chargeMode);
+        initPayment(sdk, requestBuilder, null, googlePayToken, enteredEmail, chargeMode, false);
     }
 
     private void setCreditCardData(ICreditCard card) {
@@ -738,7 +737,8 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                              final CardData cardData,
                              final String googlePayToken,
                              final String email,
-                             final boolean chargeMode) {
+                             final boolean chargeMode,
+                             final boolean threeDsV2Rejected) {
 
         new Thread(new Runnable() {
             @Override
@@ -752,25 +752,29 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                         final ThreeDsData threeDsData;
 
                         if (googlePayToken == null) {
-                            final Check3dsVersionResponse versionResponse = sdk.check3DsVersion(paymentId, cardData);
 
-                            if (versionResponse.getServerTransId() != null) {
-                                final String threeDsUrl = versionResponse.getThreeDsMethodUrl();
-
-                                if (threeDsUrl != null && !threeDsUrl.isEmpty()) {
-                                    CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, versionResponse).sendToTarget();
-                                } else {
-                                    CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, null).sendToTarget();
-                                }
-
-                                Map<String, String> deviceData = ((PayFormActivity) getActivity()).getDeviceDataStorage().getData();
-                                threeDsData = sdk.finishAuthorize(paymentId, cardData, email, deviceData);
-
-                            } else {
+                            if (threeDsV2Rejected) {
                                 threeDsData = sdk.finishAuthorize(paymentId, cardData, email, null);
-                            }
+                            } else {
+                                final Check3dsVersionResponse versionResponse = sdk.check3DsVersion(paymentId, cardData);
 
-                            threeDsData.setVersionName(versionResponse.getVersion());
+                                if (versionResponse.getServerTransId() != null) {
+                                    final String threeDsUrl = versionResponse.getThreeDsMethodUrl();
+
+                                    if (threeDsUrl != null && !threeDsUrl.isEmpty()) {
+                                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, versionResponse).sendToTarget();
+                                    } else {
+                                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.COLLECT_3DS_DATA, null).sendToTarget();
+                                    }
+
+                                    Map<String, String> deviceData = ((PayFormActivity) getActivity()).getDeviceDataStorage().getData();
+                                    threeDsData = sdk.finishAuthorize(paymentId, cardData, email, deviceData);
+
+                                    threeDsData.setVersionName(versionResponse.getVersion());
+                                } else {
+                                    threeDsData = sdk.finishAuthorize(paymentId, cardData, email, null);
+                                }
+                            }
 
                         } else {
                             threeDsData = sdk.finishAuthorize(paymentId, googlePayToken, email);
@@ -791,13 +795,20 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                     }
                 } catch (Exception e) {
                     Throwable cause = e.getCause();
-                    Message msg;
-                    if (cause != null && cause instanceof NetworkException) {
-                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK);
+
+                    if (cause instanceof NetworkException) {
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.NO_NETWORK).sendToTarget();
+                    } else if (cause instanceof AcquiringApiException) {
+                        String errorCode = ((AcquiringApiException) cause).getResponse().getErrorCode();
+
+                        if (errorCode.equals(AcquiringApi.API_ERROR_CODE_3DSV2_NOT_SUPPORTED)) {
+                            PayFormHandler.INSTANCE.obtainMessage(PayFormHandler.THREE_DS_V2_REJECTED).sendToTarget();
+                        } else {
+                            CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e).sendToTarget();
+                        }
                     } else {
-                        msg = CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e);
+                        CommonSdkHandler.INSTANCE.obtainMessage(CommonSdkHandler.EXCEPTION, e).sendToTarget();
                     }
-                    msg.sendToTarget();
                 } finally {
                     PayFormActivity activity = ((PayFormActivity) getActivity());
                     if (activity != null) activity.getDeviceDataStorage().clearData();
@@ -873,6 +884,13 @@ public class EnterCardFragment extends Fragment implements ICardInterest, ICharg
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    @Override
+    public void onThreeDsV2Rejected() {
+        InitRequestBuilder requestBuilder = createInitRequestBuilder(getActivity().getIntent());
+        PayFormActivity activity = (PayFormActivity) getActivity();
+        initPayment(sdk, requestBuilder, getCardData(activity), null, getEmail(), false, true);
     }
 
     private void prepareEditableCardView(Card sourceCard, boolean hasCard, boolean needClearCardView) {
