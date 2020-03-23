@@ -232,7 +232,6 @@ public class ThreeDsFragment extends Fragment {
 
     private static String getTimeZoneOffset() {
         int offsetMills = TimeZone.getDefault().getRawOffset();
-        String prefix = offsetMills >= 0 ? "-" : "+";
-        return prefix + TimeUnit.MILLISECONDS.toMinutes(offsetMills);
+        return String.valueOf(TimeUnit.MILLISECONDS.toMinutes(offsetMills));
     }
 }
