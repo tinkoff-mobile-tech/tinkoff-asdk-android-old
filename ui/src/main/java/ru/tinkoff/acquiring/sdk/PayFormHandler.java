@@ -35,6 +35,7 @@ class PayFormHandler extends Handler {
     public static final int PAYMENT_INIT_COMPLETED = 2;
     public static final int CHARGE_REQUEST_REJECTED = 3;
     public static final int ANDROID_PAY_ERROR = 4;
+    public static final int THREE_DS_V2_REJECTED = 5;
 
     public PayFormHandler() {
         super(Looper.getMainLooper());
@@ -73,6 +74,11 @@ class PayFormHandler extends Handler {
             case CHARGE_REQUEST_REJECTED:
                 for (IPayFormActivity activity : callbacks) {
                     activity.onChargeRequestRejected((PaymentInfo) msg.obj);
+                }
+                return;
+            case THREE_DS_V2_REJECTED:
+                for (IPayFormActivity activity : callbacks) {
+                    activity.onThreeDsV2Rejected();
                 }
                 return;
             case ANDROID_PAY_ERROR:

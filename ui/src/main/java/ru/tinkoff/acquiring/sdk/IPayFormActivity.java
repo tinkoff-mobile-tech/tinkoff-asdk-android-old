@@ -17,6 +17,8 @@ public interface IPayFormActivity extends IBaseSdkActivity {
 
     void onChargeRequestRejected(PaymentInfo paymentInfo);
 
+    void onThreeDsV2Rejected();
+
     void onGooglePayError();
 
     void collect3dsData(@Nullable Check3dsVersionResponse response);

@@ -406,8 +406,16 @@ public class PayFormActivity extends AppCompatActivity implements FragmentsCommu
     public void onChargeRequestRejected(PaymentInfo paymentInfo) {
         hideProgressDialog();
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (fragment != null && fragment instanceof IChargeRejectPerformer) {
-            ((IChargeRejectPerformer) fragment).onChargeRequestRejected(paymentInfo);
+        if (fragment instanceof IPaymentRejectPerformer) {
+            ((IPaymentRejectPerformer) fragment).onChargeRequestRejected(paymentInfo);
+        }
+    }
+
+    @Override
+    public void onThreeDsV2Rejected() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment instanceof IPaymentRejectPerformer) {
+            ((IPaymentRejectPerformer) fragment).onThreeDsV2Rejected();
         }
     }
 
