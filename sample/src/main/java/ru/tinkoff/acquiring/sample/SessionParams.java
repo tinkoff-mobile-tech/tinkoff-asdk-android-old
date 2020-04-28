@@ -42,7 +42,7 @@ public class SessionParams {
     private static final String SDK_TERMINAL_ID = "TestSDK";
     private static final String NON_3DS_TERMINAL_ID = "sdkNon3DS";
 
-    private static final String PASSWORD = "12345678";
+    private static final String PASSWORD = "5l9v23g7hlhqchyb";
     private static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5Yg3RyEkszggDVMDHCAG\n" +
             "zJm0mYpYT53BpasrsKdby8iaWJVACj8ueR0Wj3Tu2BY64HdIoZFvG0v7UqSFztE/\n" +
             "zUvnznbXVYguaUcnRdwao9gLUQO2I/097SHF9r++BYI0t6EtbbcWbfi755A1EWfu\n" +
