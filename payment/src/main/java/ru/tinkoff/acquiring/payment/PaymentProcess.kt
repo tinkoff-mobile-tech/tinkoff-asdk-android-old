@@ -82,23 +82,24 @@ class PaymentProcess internal constructor() {
                 if (Thread.interrupted()) throw InterruptedException()
                 var threeDsData: ThreeDsData? = null
 
-                if (paySource is GPayTokenPaySource) {
-                    threeDsData = sdk.finishAuthorize(paymentId, paySource.token, email)
+                if (chargeMode) {
+                    val paymentInfo = sdk.charge(paymentId, (paySource as CardDataPaySource).cardData.rebillId)
+                    if (paymentInfo.isSuccess) {
+                        handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
+                    } else {
+                        handler.obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget()
+                    }
                 } else {
-                    val cardData = (paySource as? CardDataPaySource)?.cardData
-                            ?: throw IllegalArgumentException()
 
-                    if (chargeMode) {
-                        val paymentInfo = sdk.charge(paymentId, cardData.rebillId)
-                        if (paymentInfo.isSuccess) {
-                            handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
-                        } else {
-                            handler.obtainMessage(CHARGE_REQUEST_REJECTED, paymentInfo).sendToTarget()
-                        }
+                    if (paySource is GPayTokenPaySource) {
+                        threeDsData = sdk.finishAuthorize(paymentId, paySource.token, email)
                     } else {
 
+                        val cardData = (paySource as? CardDataPaySource)?.cardData
+                                ?: throw IllegalArgumentException()
+
                         if (isThreeDsV2Rejected) {
-                            sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
+                            threeDsData = sdk.finishAuthorize(paymentId, paySource.cardData, email, null)
                         } else {
                             val versionResponse = sdk.check3DsVersion(paymentId, cardData)
                             threeDsData = if (versionResponse.serverTransId != null) {
@@ -117,12 +118,11 @@ class PaymentProcess internal constructor() {
                             threeDsData.versionName = versionResponse.version
                         }
                     }
-                }
-
-                if (threeDsData != null && threeDsData.isThreeDsNeed) {
-                    handler.obtainMessage(START_3DS, threeDsData).sendToTarget()
-                } else {
-                    handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
+                    if (threeDsData != null && threeDsData.isThreeDsNeed) {
+                        handler.obtainMessage(START_3DS, threeDsData).sendToTarget()
+                    } else {
+                        handler.obtainMessage(SUCCESS, paymentId).sendToTarget()
+                    }
                 }
 
             } catch (ex: Exception) {
