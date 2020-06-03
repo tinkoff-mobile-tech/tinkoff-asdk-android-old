@@ -1,6 +1,7 @@
 # Tinkoff Acquiring SDK for Android
 
-[![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=3600)][search.maven]
+### Внимание! Версия Acquiring SDK 1.* больше не поддерживается. Новая версия 2.* находится в репозитории [AcquiringSdkAndroid][asdk2]
+#### По всем вопросам и помощи в миграции, пожалуйста, обращайтесь в Поддержку</b>
 
 <img src="images/pay_form_empty.png" width="320"> <img src="images/pay_form.png" width="320">
 
@@ -193,3 +194,4 @@ PayFormActivity
 [javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
 [receipt-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
 [init-documentation]: https://oplata.tinkoff.ru/landing/develop/documentation/cmp/Init
+[asdk2]: https://github.com/TinkoffCreditSystems/AcquiringSdkAndroid
