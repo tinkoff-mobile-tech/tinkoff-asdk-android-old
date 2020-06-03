@@ -1,6 +1,19 @@
 # Tinkoff Acquiring SDK for Android
 
-[![Maven Central](https://img.shields.io/maven-central/v/ru.tinkoff.acquiring/ui.svg?maxAge=3600)][search.maven]
+### Внимание! Появилась новая версия Acquiring SDK 2.0, которая теперь находится в репозитории [AcquiringSdkAndroid][asdk2]
+#### Рекомендуем перейти на новую версию библиотеки.
+
+#### В версии 2.0 появились новые возможности:
+- поддержка оплаты через Систему быстрых платежей
+- поддержка тёмной темы
+- возможность оплаты через Google Pay без открытия экрана SDK
+- возможность добавления собственной локализации форм
+- новый современный дизайн экранов
+
+Кроме этого, теперь библиотека написана на Kotlin, а также улучшен и переработан API библиотеки.
+
+#### По всем вопросам и помощи в миграции, пожалуйста, обращайтесь в Поддержку</b>
+<br/>
 
 <img src="images/pay_form_empty.png" width="320"> <img src="images/pay_form.png" width="320">
 
@@ -193,3 +206,4 @@ PayFormActivity
 [javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
 [receipt-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
 [init-documentation]: https://oplata.tinkoff.ru/landing/develop/documentation/cmp/Init
+[asdk2]: https://github.com/TinkoffCreditSystems/AcquiringSdkAndroid
