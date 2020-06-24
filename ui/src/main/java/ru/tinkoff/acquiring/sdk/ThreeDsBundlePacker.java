@@ -100,6 +100,8 @@ public class ThreeDsBundlePacker implements IBundlePacker<ThreeDsData> {
 
         } else {
             result.putString(REQUEST_KEY, entity.getRequestKey());
+            result.putString(MD, entity.getMd());
+            result.putString(PA_REQ, entity.getPaReq());
         }
 
         result.putString(ASC_URL, entity.getAcsUrl());
