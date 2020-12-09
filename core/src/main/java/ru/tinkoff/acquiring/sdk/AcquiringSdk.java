@@ -16,11 +16,15 @@
 
 package ru.tinkoff.acquiring.sdk;
 
+import java.math.BigInteger;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import ru.tinkoff.acquiring.sdk.requests.AddCardRequest;
@@ -415,7 +419,11 @@ public class AcquiringSdk extends Journal {
                 for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
                     if (!inetAddress.isLoopbackAddress()) {
-                        return inetAddress.getHostAddress();
+                        if (inetAddress instanceof Inet6Address) {
+                            return formatIpv6Address(inetAddress);
+                        } else {
+                            return inetAddress.getHostAddress();
+                        }
                     }
                 }
             }
@@ -423,5 +431,25 @@ public class AcquiringSdk extends Journal {
             //ignore
         }
         return "";
+    }
+
+    private String formatIpv6Address(InetAddress address) {
+        String strAddress = new BigInteger(1, address.getAddress()).toString(16);
+        List<String> strings = new ArrayList<>();
+
+        int i = 0;
+        while (i < strAddress.length()) {
+            strings.add(strAddress.substring(i, Math.min(i + 4, strAddress.length())));
+            i += 4;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int j = 0; j < strings.size(); j++) {
+            stringBuilder.append(strings.get(j));
+            if (j != strings.size() - 1) {
+                stringBuilder.append(":");
+            }
+        }
+        return stringBuilder.toString();
     }
 }
