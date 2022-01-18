@@ -89,7 +89,7 @@ public class ThreeDsFragment extends Fragment {
                 //ignore
             }
 
-            String dataBase64 = Base64.encodeToString(threeDsMethodData.toString().getBytes(), Base64.DEFAULT).trim();
+            String dataBase64 = Base64.encodeToString(threeDsMethodData.toString().getBytes(), Base64.NO_PADDING).trim();
             String params;
             try {
                 params = "threeDSMethodData=" + URLEncoder.encode(dataBase64, "UTF-8");
@@ -167,7 +167,7 @@ public class ThreeDsFragment extends Fragment {
         } catch (JSONException e) {
             //ignore
         }
-        return Base64.encodeToString(creqData.toString().getBytes(), Base64.DEFAULT).trim();
+        return Base64.encodeToString(creqData.toString().getBytes(), Base64.NO_PADDING).trim();
     }
 
     private class ThisWebViewClient extends WebViewClient {

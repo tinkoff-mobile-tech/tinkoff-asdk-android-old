@@ -198,11 +198,11 @@ PayFormActivity
 [search.maven]: http://search.maven.org/#search|ga|1|ru.tinkoff.acquiring.ui
 [build-config]: https://developer.android.com/studio/build/index.html
 [support-email]: mailto:oplata@tinkoff.ru
-[issues]: https://github.com/TinkoffCreditSystems/tinkoff-asdk-android/issues
+[issues]: https://github.com/Tinkoff/tinkoff-asdk-android/issues
 [acquiring]: https://t.tinkoff.ru/
-[payform-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
-[sdk-class-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/AcquiringSdk.html
-[javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/
-[receipt-javadoc]: http://tinkoffcreditsystems.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
+[payform-class-javadoc]: http://tinkoff.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/PayFormActivity.html
+[sdk-class-javadoc]: http://tinkoff.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/AcquiringSdk.html
+[javadoc]: http://tinkoff.github.io/tinkoff-asdk-android/javadoc/
+[receipt-javadoc]: http://tinkoff.github.io/tinkoff-asdk-android/javadoc/ru/tinkoff/acquiring/sdk/Receipt.html
 [init-documentation]: https://oplata.tinkoff.ru/landing/develop/documentation/cmp/Init
-[asdk2]: https://github.com/TinkoffCreditSystems/AcquiringSdkAndroid
+[asdk2]: https://github.com/Tinkoff/AcquiringSdkAndroid
